@@ -30,5 +30,26 @@
       ],
       "llm_usada": "Claude Opus 4.6"
     }
+    },
+    {
+      "sprint_numero": 2,
+      "sprint_nome": "Core Engine & Mesa de Jogo",
+      "status": "concluida",
+      "inicio": "2026-04-12T20:50:00Z",
+      "fim": "2026-04-12T20:53:00Z",
+      "tasks_total": 6,
+      "tasks_concluidas": 6,
+      "resumo": "Engine base agnóstica de rules separada da UI (`lib/truco/rules.ts`) permitindo Baralho Sujo/Limpo. Estado reativo transferido para `stores/useGameStore.ts` com isolamento de UI. `GameOverlay` reconstruído inteiro usando Framer Motion para renderizar cartas (`PlayingCard`) dinamicamente sob as ações do estado e `PlayerAvatar` posicionados em cruz com chat bots integrados.",
+      "arquivos_criados": [
+        "src/lib/truco/rules.ts", "src/stores/useGameStore.ts", "src/components/PlayingCard.tsx", "src/components/PlayerAvatar.tsx"
+      ],
+      "bugs_encontrados": [],
+      "decisoes_importantes": [
+        "Extração da lógica para Força Relativa/Absoluta pura, possibilitando TDD e manilhas customizadas",
+        "Layout do GameOverlay usa 'absolute inset-0' com flexbox de pods",
+        "Animações dinâmicas injetadas com 'layout' e whileHover nativos do Framer Motion em cada PlayingCard"
+      ],
+      "llm_usada": "Gemini 3.1 Pro (High)"
+    }
   ]
 }
