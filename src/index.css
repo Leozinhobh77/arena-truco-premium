@@ -1,0 +1,741 @@
+/* ============================================================
+   ARENA TRUCO PREMIUM — index.css
+   Obsidian & Gold Design System — Native App Feel v4.0
+   ============================================================ */
+
+/* 1. TRAVA NATIVA ABSOLUTA (FlutterFlow/Apple Native Feel) */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+html {
+  height: 100%;
+  height: -webkit-fill-available;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  height: -webkit-fill-available;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: pan-x pan-y;
+  font-family: 'Inter', sans-serif;
+  background: #0a0a0f;
+  color: #f0f0f5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  height: -webkit-fill-available;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* 2. DESIGN TOKENS — PALETA OBSIDIAN & GOLD */
+:root {
+  /* Backgrounds */
+  --obsidian-900: #0a0a0f;
+  --obsidian-800: #0f0f1a;
+  --obsidian-700: #13131f;
+  --obsidian-600: #1a1a2e;
+  --obsidian-500: #212138;
+  --obsidian-400: #2a2a4a;
+
+  /* Gold Premium */
+  --gold-300: #ffd700;
+  --gold-400: #f5c518;
+  --gold-500: #d4a017;
+  --gold-600: #b8860b;
+  --gold-glow: rgba(212, 160, 23, 0.4);
+
+  /* Accent Colors */
+  --ruby:     #e63946;
+  --ruby-dark:#c1121f;
+  --sapphire: #4361ee;
+  --emerald:  #2dc653;
+  --emerald-dark: #1e8a3a;
+  --purple:   #7b2d8b;
+  --lavender: #9b72cf;
+
+  /* Text */
+  --text-primary:   #f0f0f5;
+  --text-secondary: #a0a0b5;
+  --text-muted:     #606075;
+
+  /* Gradientes */
+  --bg-main: radial-gradient(ellipse at top center, #1a1040 0%, #0a0a0f 60%);
+  --bg-card: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  --gold-gradient: linear-gradient(135deg, #f5c518 0%, #d4a017 50%, #b8860b 100%);
+  --ruby-gradient: linear-gradient(135deg, #e63946 0%, #c1121f 100%);
+  --sapphire-gradient: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+
+  /* Borders */
+  --border-gold: rgba(212, 160, 23, 0.3);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-card: rgba(255, 255, 255, 0.05);
+
+  /* Shadows */
+  --shadow-gold: 0 0 20px rgba(212, 160, 23, 0.3), 0 0 60px rgba(212, 160, 23, 0.1);
+  --shadow-ruby: 0 0 20px rgba(230, 57, 70, 0.4);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.05);
+
+  /* Tipografia */
+  --font-display: 'Outfit', sans-serif;
+  --font-body:    'Inter', sans-serif;
+
+  /* Raios */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* Bottom Nav Height */
+  --nav-height: 76px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* 3. TIPOGRAFIA */
+h1, h2, h3, h4, h5, h6,
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* 4. SCROLLABLE PANELS (interno das telas — não o body) */
+.scrollable {
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollable::-webkit-scrollbar { display: none; }
+
+/* 5. LAYOUT BASE DO APP */
+.app-shell {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-main);
+  overflow: hidden;
+  max-width: 480px; /* Max width mobile-first */
+  margin: 0 auto;
+}
+
+/* 6. TELA SWIPE CONTAINER */
+.screens-container {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+.screens-track {
+  display: flex;
+  width: 500%; /* 5 telas */
+  height: 100%;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.screen-panel {
+  width: 20%; /* 1/5 das 500% = 100vw */
+  height: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 7. BOTTOM NAVIGATION */
+.bottom-nav {
+  height: calc(var(--nav-height) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: rgba(10, 10, 15, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  padding-top: 8px;
+  flex-shrink: 0;
+  z-index: 100;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  min-width: 60px;
+}
+
+.nav-item svg {
+  width: 24px;
+  height: 24px;
+  transition: all 0.2s ease;
+}
+
+.nav-item span {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+
+.nav-item.active svg {
+  filter: drop-shadow(0 0 8px var(--gold-400));
+}
+
+.nav-item.active span {
+  color: var(--gold-400);
+}
+
+.nav-item svg {
+  color: var(--text-muted);
+}
+
+.nav-item.active svg {
+  color: var(--gold-400);
+}
+
+/* 8. GLASS CARD */
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-card), var(--shadow-inset);
+}
+
+.glass-card-gold {
+  background: linear-gradient(135deg, rgba(212,160,23,0.1) 0%, rgba(212,160,23,0.03) 100%);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-gold);
+}
+
+/* 9. BOTÕES */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 32px;
+  background: var(--gold-gradient);
+  color: #0a0a0f;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  box-shadow: var(--shadow-gold), 0 4px 20px rgba(0,0,0,0.5);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background: rgba(255,255,255,0.07);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:active { transform: scale(0.97); }
+
+.btn-ruby {
+  background: var(--ruby-gradient);
+  color: white;
+  box-shadow: var(--shadow-ruby);
+}
+
+/* 10. AVATAR */
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-gold);
+  box-shadow: var(--shadow-gold);
+}
+
+/* 11. BADGE / XP BAR */
+.xp-bar-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.xp-bar-fill {
+  height: 100%;
+  background: var(--gold-gradient);
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 10px var(--gold-400);
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 12. ANIMAÇÕES GLOBAIS */
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: var(--shadow-gold); transform: scale(1); }
+  50% {
+    box-shadow: 0 0 40px rgba(212,160,23,0.6), 0 0 80px rgba(212,160,23,0.2);
+    transform: scale(1.03);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  10% { transform: translateX(-4px) rotate(-1deg); }
+  20% { transform: translateX(4px) rotate(1deg); }
+  30% { transform: translateX(-6px) rotate(-2deg); }
+  40% { transform: translateX(6px) rotate(2deg); }
+  50% { transform: translateX(-4px) rotate(-1deg); }
+  60% { transform: translateX(4px) rotate(1deg); }
+  70% { transform: translateX(-2px); }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes particle-float {
+  0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0.8; }
+  33%  { transform: translateY(-30px) translateX(10px) scale(0.8); opacity: 0.5; }
+  66%  { transform: translateY(-15px) translateX(-8px) scale(1.1); opacity: 0.6; }
+  100% { transform: translateY(-60px) translateX(5px) scale(0.6); opacity: 0; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* 13. CLASSE UTILITÁRIAS DE ANIMAÇÃO */
+.animate-pulse-gold   { animation: pulse-gold 2.5s ease-in-out infinite; }
+.animate-float        { animation: float 3s ease-in-out infinite; }
+.animate-glow         { animation: glow-pulse 2s ease-in-out infinite; }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  background-size: 200% auto;
+  animation: shimmer 2s linear infinite;
+}
+.animate-shake        { animation: shake 0.6s ease-in-out; }
+.animate-slide-up     { animation: slide-up 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.animate-fade-in      { animation: fade-in 0.35s ease forwards; }
+
+/* 14. OVERLAY / MODAL */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.modal-sheet {
+  position: relative;
+  width: 100%;
+  max-height: 90vh;
+  background: var(--obsidian-700);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* 15. TELA DE LOGIN */
+.login-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--obsidian-900);
+  z-index: 999;
+  padding: 24px;
+}
+
+/* 16. PARTÍCULAS DE FUNDO */
+.particles-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: particle-float linear infinite;
+}
+
+/* 17. INPUT */
+.input-field {
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  -webkit-appearance: none;
+}
+
+.input-field:focus {
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 3px rgba(212,160,23,0.15);
+}
+
+.input-field::placeholder { color: var(--text-muted); }
+
+/* 18. CHIPS / TAGS */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.chip-gold { background: rgba(212,160,23,0.15); color: var(--gold-400); border: 1px solid var(--border-gold); }
+.chip-ruby { background: rgba(230,57,70,0.15); color: var(--ruby); border: 1px solid rgba(230,57,70,0.3); }
+.chip-emerald { background: rgba(45,198,83,0.12); color: var(--emerald); border: 1px solid rgba(45,198,83,0.25); }
+
+/* 19. RANK / LEVEL BADGE */
+.level-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--gold-gradient);
+  color: #0a0a0f;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+/* 20. SEPARATOR */
+.separator {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+}
+
+/* 21. TRUCO ACTION BAR */
+.truco-action-bar {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+}
+
+.btn-truco {
+  flex: 1;
+  padding: 14px 8px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-truco-call {
+  background: var(--ruby-gradient);
+  color: white;
+  box-shadow: var(--shadow-ruby);
+  flex: 2;
+}
+
+.btn-truco-fold {
+  background: rgba(255,255,255,0.07);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+/* 22. MODAL TRUCO DRAMÁTICO */
+.truco-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.truco-text {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: min(28vw, 140px);
+  color: var(--ruby);
+  text-shadow:
+    0 0 30px rgba(230,57,70,0.8),
+    0 0 60px rgba(230,57,70,0.4),
+    0 0 100px rgba(230,57,70,0.2);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  animation: shake 0.5s ease-in-out, glow-pulse 1s ease-in-out infinite;
+}
+
+/* 23. ROOM LIST CARD */
+.room-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.room-card:active { transform: scale(0.98); }
+.room-card:hover { border-color: var(--border-gold); }
+
+/* 24. PLAYER AVATAR STACK */
+.avatar-stack {
+  display: flex;
+}
+.avatar-stack .avatar {
+  width: 28px;
+  height: 28px;
+  margin-left: -8px;
+  border: 2px solid var(--obsidian-800);
+}
+.avatar-stack .avatar:first-child { margin-left: 0; }
+
+/* 25. SCROLLBAR-FREE LISTS */
+.list-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.list-container::-webkit-scrollbar { display: none; }
+
+/* 26. ARENA SCREEN SPECIFICS */
+.arena-logo-glow {
+  filter: drop-shadow(0 0 30px var(--gold-400)) drop-shadow(0 0 60px rgba(212,160,23,0.4));
+}
+
+.resource-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* 27. PLAYING CARD STYLES */
+.playing-card {
+  width: 60px;
+  height: 90px;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.2);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  flex-shrink: 0;
+}
+
+.playing-card:hover {
+  transform: translateY(-12px) scale(1.05);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.7), 0 0 20px var(--gold-glow);
+  z-index: 10;
+}
+
+.playing-card.selected {
+  transform: translateY(-20px) scale(1.08);
+  border-color: var(--gold-400);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.8), var(--shadow-gold);
+}
+
+.card-back {
+  background: linear-gradient(135deg, #1a1040 0%, #0f0f1a 100%);
+  border: 2px solid var(--border-gold);
+  cursor: default;
+}
+
+.card-back::after {
+  content: '♠';
+  font-size: 28px;
+  color: var(--gold-400);
+  opacity: 0.6;
+}
+
+/* Naipes */
+.suit-spades   { color: #1a1a1a; }
+.suit-clubs    { color: #1a1a1a; }
+.suit-hearts   { color: var(--ruby); }
+.suit-diamonds { color: var(--ruby); }
+
+/* 28. SCORE BOARD */
+.scoreboard {
+  display: flex;
+  align-items: stretch;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.score-team {
+  flex: 1;
+  padding: 8px 12px;
+  text-align: center;
+}
+.score-team.us { background: rgba(230,57,70,0.1); }
+.score-team.them { background: rgba(67,97,238,0.1); }
+
+.score-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+}
+.score-value.us { color: var(--ruby); }
+.score-value.them { color: var(--sapphire); }
+
+/* 29. TABLE GREEN */
+.game-table {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  background: radial-gradient(ellipse at center, #1a5c2a 0%, #0d3318 60%, #0a2010 100%);
+  border-radius: var(--radius-xl);
+  border: 3px solid rgba(45,198,83,0.2);
+  box-shadow: inset 0 0 60px rgba(0,0,0,0.5), 0 0 30px rgba(0,0,0,0.8);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 30. CLAN CHAT BUBBLE */
+.chat-bubble {
+  max-width: 75%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.chat-bubble.mine {
+  background: var(--gold-gradient);
+  color: #0a0a0f;
+  border-radius: 18px 18px 4px 18px;
+  align-self: flex-end;
+}
+
+.chat-bubble.theirs {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px 18px 18px 4px;
+  align-self: flex-start;
+}

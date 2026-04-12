@@ -1,0 +1,18 @@
+{
+  "__metadata": {
+    "descricao": "Log imutável da Sentinela. Cada ciclo de auditoria gera uma entrada. Usado pelo skill-forge-visual para o Sentinela Report.",
+    "schema_version": "1.0"
+  },
+
+  "resumo": {
+    "total_auditorias": 0,
+    "aprovacoes": 0,
+    "rejeicoes": 0,
+    "alertas_critical": 0,
+    "alertas_warning": 0,
+    "divergencias_spec": 0,
+    "llms_mais_usada": null
+  },
+
+  "auditorias": []
+}

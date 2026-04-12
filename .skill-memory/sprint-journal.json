@@ -1,0 +1,34 @@
+{
+  "__metadata": {
+    "descricao": "Memória Episódica (L2). Sprints concluídas são comprimidas aqui pelo Construtor ao final de cada sprint. Max 8KB. Mantém o Core Memory limpo e leve.",
+    "schema_version": "1.0"
+  },
+
+  "sprints_comprimidas": [
+    {
+      "sprint_numero": 1,
+      "sprint_nome": "Bootcamp UI/UX e Estrutura SPA",
+      "status": "concluida",
+      "inicio": "2026-04-12T18:30:00Z",
+      "fim": "2026-04-12T20:05:00Z",
+      "tasks_total": 5,
+      "tasks_concluidas": 5,
+      "resumo": "Estrutura SPA completa implementada: Shell principal com navegação swipe (5 abas), LoginScreen simulado com animações Apple-like, ArenaScreen (hub central com perfil de jogador e CTA), LojaScreen, ModosScreen, RankingScreen, ClansScreen, SalasOverlay (lobby/salas), GameOverlay (mesa de truco com 4 pods). Design System Obsidian & Gold aplicado via index.css (17KB). Stores Zustand para auth e navigation.",
+      "arquivos_criados": [
+        "src/App.tsx", "src/main.tsx", "src/index.css", "src/types.ts", "src/mockData.ts",
+        "src/screens/LoginScreen.tsx", "src/screens/ArenaScreen.tsx", "src/screens/LojaScreen.tsx",
+        "src/screens/ModosScreen.tsx", "src/screens/RankingScreen.tsx", "src/screens/ClansScreen.tsx",
+        "src/overlays/SalasOverlay.tsx", "src/overlays/GameOverlay.tsx",
+        "src/stores/useAuthStore.ts", "src/stores/useNavigationStore.ts"
+      ],
+      "bugs_encontrados": [],
+      "decisoes_importantes": [
+        "Swipe com translateX em container de 500vw (5 painéis de 100vw cada)",
+        "Framer Motion AnimatePresence para overlays",
+        "Zustand puro sem middleware para stores simples",
+        "Design tokens via CSS custom properties no :root"
+      ],
+      "llm_usada": "Claude Opus 4.6"
+    }
+  ]
+}

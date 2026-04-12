@@ -1,0 +1,25 @@
+{
+  "__metadata": {
+    "descricao": "Canal de comunicação Construtor → Sentinela. A Sentinela lê este arquivo a cada 10s. O Construtor escreve nele após cada task.",
+    "schema_version": "1.0"
+  },
+
+  "status_construtor": "idle",
+
+  "ultima_task_concluida": {
+    "sprint": 1,
+    "task_numero": 5,
+    "task_nome": "Sprint 1 — Estrutura SPA completa (re-sync)",
+    "timestamp": "2026-04-12T20:31:00Z",
+    "llm_usada": "Claude Opus 4.6 (Thinking)",
+    "arquivos_modificados": [
+      "src/App.tsx", "src/index.css", "src/screens/*.tsx",
+      "src/overlays/*.tsx", "src/stores/*.ts"
+    ],
+    "solicita_auditoria": false
+  },
+
+  "alertas_sentinela": [],
+
+  "veredictos_sentinela": []
+}
