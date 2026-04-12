@@ -79,7 +79,7 @@ function ClanChatView({ clanId, onClose }: { clanId: string; onClose: () => void
               <div className={`chat-bubble ${isMine ? 'mine' : 'theirs'}`}>
                 {msg.texto}
               </div>
-              <span style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2, paddingHorizontal: 4 }}>
+              <span style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2, paddingLeft: 4, paddingRight: 4 }}>
                 {msg.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
@@ -127,7 +127,6 @@ function ClanChatView({ clanId, onClose }: { clanId: string; onClose: () => void
 
 // ── Tela Principal de Clãs ────────────────────────────────────
 export function ClansScreen() {
-  const { usuario } = useAuthStore();
   const { pushOverlay } = useNavigationStore();
   const [busca, setBusca] = useState('');
   const [clanAberto, setClanAberto] = useState<string | null>(null);

@@ -51,7 +51,7 @@ export function PlayerAvatar({ player, position, isCurrentTurn, falando }: Playe
         {/* Count das cartas para oponentes */}
         {position !== 'bottom' && (
           <span className="text-[10px] text-gray-400 mt-0.5 tracking-widest">
-            {Array.from({ length: cartasCount }).map((_, i) => '🎴').join('')}
+            {Array.from({ length: cartasCount }).map(() => '🎴').join('')}
           </span>
         )}
       </div>

@@ -28,7 +28,7 @@ const criarBotsDeZoeira = (): Jogador[] => [
   { id: 'bot_3', nome: 'Marcos_Pro', avatar: 'https://i.pravatar.cc/150?u=3', nivel: 99, pontos: 0, time: 'eles', pronto: true, isBot: true, cartas: [] }
 ];
 
-export const useGameStore = create<GameState>((set, get) => ({
+export const useGameStore = create<GameState>((set) => ({
   modo: 'paulista',
   status: 'waiting',
   pontoNos: 0,

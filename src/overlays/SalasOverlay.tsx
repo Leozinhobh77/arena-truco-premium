@@ -93,7 +93,6 @@ function SalaCard({ sala, onEntrar }: { sala: Sala; onEntrar: () => void }) {
 
 export function SalasOverlay() {
   const { popOverlay, pushOverlay } = useNavigationStore();
-  const { usuario } = useAuthStore();
   const [salas, setSalas] = useState<Sala[]>(SALAS_INICIAIS);
   const [filtro, setFiltro] = useState<'todas' | 'paulista' | 'mineiro'>('todas');
 

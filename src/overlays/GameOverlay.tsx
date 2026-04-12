@@ -16,7 +16,7 @@ export function GameOverlay() {
   const { usuario } = useAuthStore();
   const game = useGameStore();
 
-  const [falas, setFalas] = useState<Record<string, string>>({});
+  const [falas] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (usuario && game.status === 'waiting') {
