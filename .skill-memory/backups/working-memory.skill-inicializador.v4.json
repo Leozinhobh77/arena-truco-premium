@@ -1,0 +1,53 @@
+{
+  "__metadata": {
+    "schema_version": "4.0",
+    "forge_version": "4.0",
+    "app_name": "Arena Truco Premium",
+    "app_path": "c:\\Users\\Usuário\\Desktop\\Curso Claude Code-Jhonatan de Souza\\Projetos Agente Forge\\Meus Projetos\\arena-truco-premium",
+    "created_at": "2026-04-12T15:00:00Z",
+    "updated_at": "2026-04-12T15:00:00Z"
+  },
+  "__essenciais": {
+    "objetivo_do_app": "Um True-PWA de Truco Premium estilo Native App, inicialmente rodando 100% no cliente via Zustand e bots, preparado para expansão multiplayer futura.",
+    "stack_principal": "React 19 + TypeScript + Vite + Tailwind v4 + Framer Motion",
+    "fase_atual": "skill-consultor",
+    "sentinela_ativa": false,
+    "sentinela_janela": "Abrir /skill-sentinela em segundo terminal"
+  },
+  "__foco_atual": {
+    "sprint_numero": 0,
+    "sprint_nome": "Pré-desenvolvimento",
+    "task_total": 0,
+    "task_atual": 0,
+    "status": "aguardando_consultor",
+    "file_lock_ativo": false,
+    "aguardando_auditoria": false
+  },
+  "__ponteiros": {
+    "sprint_journal": ".skill-memory/sprint-journal.json",
+    "sentinela_channel": ".skill-memory/sentinela-channel.json",
+    "sentinela_log": ".skill-memory/sentinela-log.json",
+    "bug_dna": "../../.forge/forge-knowledge-base.json",
+    "backups_dir": ".skill-memory/backups/"
+  },
+  "__progresso": {
+    "sprints_total": 0,
+    "tasks_total": 0,
+    "tasks_concluidas": 0,
+    "percentual": 0,
+    "health_score": 20
+  },
+  "__ideias_futuras": [
+    "Integração Socket.io para modo 2x2 com jogadores reais.",
+    "Sistema de ligas/patentes para ranqueamento."
+  ],
+  "__historico_resumido": [
+    {
+      "evento": "Projeto inicializado e absorvido via skill-inicializador v4.0",
+      "skill": "skill-inicializador",
+      "llm": "Gemini 3.1 Pro (High)",
+      "timestamp": "2026-04-12T15:00:00Z",
+      "resultado": "sucesso"
+    }
+  ]
+}

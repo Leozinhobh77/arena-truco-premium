@@ -1,0 +1,79 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  --color-obsidian: #080808;
+  --color-obsidian-light: #121212;
+  --color-table: #0D1612; /* Darker green tint representing luxurious felt */
+  --color-gold-light: #FCE181;
+  --color-gold: #D4AF37;
+  --color-gold-dark: #A67B27;
+  --color-blood: #8B0000;
+  
+  --font-serif: 'Cinzel', serif;
+  --font-sans: 'Inter', sans-serif;
+  
+  --animate-deal: dealCard 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  --animate-truco-shake: trucoShake 0.5s ease-in-out;
+  --animate-glow-pulse: glowPulse 2s infinite;
+}
+
+@keyframes dealCard {
+  0% { transform: scale(0.5) translateY(100vh); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes trucoShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-10px) rotate(-2deg); }
+  40%, 80% { transform: translateX(10px) rotate(2deg); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.7); }
+}
+
+@layer base {
+  body {
+    @apply bg-obsidian text-white font-sans antialiased overflow-hidden select-none touch-none; 
+    /* touch-none is critical for PWA games to prevent native scroll/bounce */
+  }
+}
+
+@layer components {
+  .btn-truco {
+    @apply relative bg-gradient-to-br from-gold to-gold-dark text-obsidian px-8 py-4 rounded-xl font-serif font-bold text-2xl uppercase tracking-widest transition-all duration-300 cursor-pointer active:scale-95 z-50;
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.5);
+  }
+  .btn-truco:hover {
+    @apply from-gold-light to-gold;
+    box-shadow: 0 4px 30px rgba(212, 175, 55, 0.8);
+  }
+  
+  .glass-panel {
+    background: rgba(18, 18, 18, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 16px;
+  }
+  
+  .playing-card {
+    @apply relative bg-gradient-to-br from-[#EAEAEA] to-[#FFFFFF] rounded-lg shadow-xl overflow-hidden cursor-pointer transition-transform duration-200 border-2 border-transparent;
+    aspect-ratio: 2.5/3.5;
+  }
+  
+  .playing-card:hover {
+    @apply -translate-y-4 shadow-2xl;
+    border-color: var(--color-gold);
+  }
+
+  .playing-card.black-suit {
+    @apply text-obsidian;
+  }
+  
+  .playing-card.red-suit {
+    @apply text-blood;
+  }
+}
