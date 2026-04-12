@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Carta, Jogador, ModoJogo, StatusSala } from '../types';
+import type { Carta, Jogador, ModoJogo, StatusSala } from '../types';
 import { gerarBaralho, embaralhar, configurarManilhas } from '../lib/truco/rules';
 
 interface GameState {

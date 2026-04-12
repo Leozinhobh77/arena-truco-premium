@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Carta } from '../types';
+import type { Carta } from '../types';
 import clsx from 'clsx';
 
 interface PlayingCardProps {
