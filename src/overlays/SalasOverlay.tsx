@@ -6,7 +6,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
-import { useAuthStore } from '../stores/useAuthStore';
+
 import { SALAS_INICIAIS } from '../mockData';
 import type { Sala } from '../types';
 
