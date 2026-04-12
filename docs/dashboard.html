@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forge v4.0 Titan - Control Center</title>
+    <!-- Tailwind via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --obsidian: #0f0f13;
+            --obsidian-light: #1c1c24;
+            --gold: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.3);
+            --neon-blue: #00f0ff;
+        }
+        body {
+            background-color: var(--obsidian);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+        
+        .glass-panel {
+            background: rgba(28, 28, 36, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .gold-border {
+            position: relative;
+        }
+        .gold-border::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .metric-card {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 24px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--gold-glow);
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+
+        /* Animação do Radar */
+        @keyframes radar {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .radar-sweep {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 100px; height: 100px;
+            margin: -50px 0 0 -50px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, transparent 70%, rgba(0,240,255,0.5) 100%);
+            animation: radar 3s linear infinite;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div class="max-w-6xl mx-auto space-y-8">
+        <!-- Header -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center glass-panel p-6 gold-border">
+            <div>
+                <h1 class="text-3xl font-black tracking-tight"><span class="text-[var(--gold)]">TITAN</span> CONTROL CENTER</h1>
+                <p class="text-gray-400 mt-1">Status Report do Ecossistema: <strong class="text-white">Arena Truco Premium</strong></p>
+            </div>
+            <div class="mt-4 sm:mt-0 flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-xs text-gray-500 uppercase tracking-widest">Health Score Final</p>
+                    <p class="text-4xl font-bold text-green-400">100/100</p>
+                </div>
+                <div class="h-12 w-12 rounded-full border-2 border-green-500 flex items-center justify-center font-black text-green-400 uppercase">AAA</div>
+            </div>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Sentinela Audit Report -->
+            <section class="glass-panel p-6 lg:col-span-2 relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 opacity-20 pointer-events-none">
+                    <div class="w-48 h-48 border border-[#00f0ff] rounded-full flex items-center justify-center">
+                        <div class="radar-sweep"></div>
+                        <div class="w-1/2 h-1/2 border border-[#00f0ff] rounded-full"></div>
+                    </div>
+                </div>
+
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-3">
+                    <svg class="w-6 h-6 text-[#00f0ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    Sentinela Log Audit
+                </h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="metric-card glass-panel text-center">
+                        <span class="text-gray-400 text-xs uppercase tracking-wide">Auditorias</span>
+                        <span class="text-3xl font-black text-white">02</span>
+                    </div>
+                    <div class="metric-card glass-panel text-center">
+                        <span class="text-gray-400 text-xs uppercase tracking-wide">Aprovações</span>
+                        <span class="text-3xl font-black text-green-400">100%</span>
+                    </div>
+                    <div class="metric-card glass-panel text-center">
+                        <span class="text-gray-400 text-xs uppercase tracking-wide">Warnings</span>
+                        <span class="text-3xl font-black text-yellow-500">00</span>
+                    </div>
+                    <div class="metric-card glass-panel text-center">
+                        <span class="text-gray-400 text-xs uppercase tracking-wide">LLM Favorita</span>
+                        <span class="text-lg font-bold text-blue-400 mt-2">Gemini 3.1 Pro (High)</span>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-widest border-b border-gray-800 pb-2">Log Recente</h3>
+                    <div class="text-sm border-l-2 border-green-500 pl-4 py-1">
+                        <p class="text-gray-300"><strong>[APPROVE]</strong> Sprint 2 (Core Game Logic) validada com sucesso via Handshake.</p>
+                        <p class="text-xs text-gray-600">2026-04-12T20:53:00</p>
+                    </div>
+                    <div class="text-sm border-l-2 border-green-500 pl-4 py-1">
+                        <p class="text-gray-300"><strong>[APPROVE]</strong> SPEC Document homologada perante PRD e UI Native.</p>
+                        <p class="text-xs text-gray-600">2026-04-12T20:41:00</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bug DNA & Sprints -->
+            <div class="space-y-6">
+                <!-- Sprints Compress -->
+                <section class="glass-panel p-6">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-3">
+                        <svg class="w-6 h-6 text-[var(--gold)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        Sprints Comprimidas
+                    </h2>
+                    <ul class="space-y-4">
+                        <li class="bg-[var(--obsidian)] p-3 rounded-lg border border-gray-800 flex justify-between items-center">
+                            <div>
+                                <p class="text-sm font-bold text-gray-200">Sprint 1</p>
+                                <p class="text-xs text-gray-500">SPA Navigation & UI Shell</p>
+                            </div>
+                            <span class="px-2 py-1 bg-green-900/30 text-green-400 text-[10px] rounded uppercase font-bold tracking-wider border border-green-800">Cifrada</span>
+                        </li>
+                        <li class="bg-[var(--obsidian)] p-3 rounded-lg border border-gray-800 flex justify-between items-center">
+                            <div>
+                                <p class="text-sm font-bold text-gray-200">Sprint 2</p>
+                                <p class="text-xs text-gray-500">Zustand Core Engine e Framer Cards</p>
+                            </div>
+                            <span class="px-2 py-1 bg-green-900/30 text-green-400 text-[10px] rounded uppercase font-bold tracking-wider border border-green-800">Cifrada</span>
+                        </li>
+                        <li class="p-3 border border-dashed border-gray-700 rounded-lg text-center opacity-50">
+                            <p class="text-xs text-gray-400 uppercase">Aguardando Próximas</p>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Bug DNA Shield -->
+                <section class="glass-panel p-6 border-b-2 border-b-purple-500">
+                    <h2 class="text-xl font-bold mb-2 flex items-center gap-3">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                        Bug-DNA Imunidade
+                    </h2>
+                    <p class="text-xs text-gray-400 mb-4 leading-relaxed">A Memória Institucional L4 protegeu este app contornando bugs mapeados na Base Titã.</p>
+                    <div class="bg-[var(--obsidian)] px-4 py-3 rounded-lg border border-purple-900/40">
+                        <p class="text-sm font-semibold text-purple-300">0 Padrões Nocivos Herdados.</p>
+                        <p class="text-xs text-gray-500 mt-1">O código nasceu 100% esterilizado na Forja.</p>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <footer class="text-center text-xs text-gray-600 pt-8 pb-4">
+            Gerado automaticamente por <span class="text-gray-400 font-bold">/skill-forge-visual</span> • Forge Titan Arquitetura v4.0
+        </footer>
+    </div>
+</body>
+</html>
