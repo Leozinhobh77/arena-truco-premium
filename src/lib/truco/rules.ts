@@ -3,7 +3,7 @@
 // Engine agnóstica para Truco Paulista e Mineiro
 // ============================================================
 
-import { Naipe, Valor, Carta, ModoJogo } from '../../types';
+import type { Naipe, Valor, Carta, ModoJogo } from '../../types';
 
 // Array de naipes padrão
 export const NAIPES: Naipe[] = ['ouros', 'espadas', 'copas', 'paus'];
