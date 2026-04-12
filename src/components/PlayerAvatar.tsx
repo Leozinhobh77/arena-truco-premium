@@ -1,4 +1,4 @@
-import { Jogador } from '../types';
+import type { Jogador } from '../types';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot } from 'lucide-react';
