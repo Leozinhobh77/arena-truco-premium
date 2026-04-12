@@ -42,7 +42,7 @@ function ClanChatView({ clanId, onClose }: { clanId: string; onClose: () => void
       transition={{ type: 'spring', damping: 25, stiffness: 300 }}
       className="desktop-modal-center"
       style={{
-        position: 'fixed', inset: 0, zIndex: 800,
+        position: 'absolute', inset: 0, zIndex: 800,
         background: 'var(--obsidian-800)',
         display: 'flex', flexDirection: 'column',
       }}
