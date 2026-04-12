@@ -2,9 +2,9 @@
 **Forge v4.0 Titan** | Stack: React 19 + TS + Vite 8 + Tailwind v4 + Framer Motion + Zustand | Fase: Construção
 
 ## Estado Atual
-- Skill ativa: **skill-construtor** (Sprint 1 CONCLUÍDA, Sprint 2 próxima)
+- Skill ativa: **skill-construtor** (Aguardando construção Sprint 1 continuação ou Sprint 2)
 - Sentinela: **INATIVA** (ativar na Janela 2 ao retomar /skill-construtor)
-- Health Score: **100/100**
+- Health Score: **65/100** (Auditado)
 - Progresso: **25%** (5/20 tasks | Sprint 1 de 5)
 
 ## Arquitetura de Memória (4 Tiers)
@@ -41,8 +41,8 @@ src/
 1. /skill-inicializador ✅ CONCLUÍDO
 2. /skill-consultor ✅ CONCLUÍDO (PRD gerado)
 3. /skill-planner ✅ CONCLUÍDO (SDD + 5 sprints planejadas)
-4. /skill-documentador ⬜ PENDENTE
-5. /skill-construtor 🔄 **EM ANDAMENTO** (Sprint 1 ✅ → Sprint 2 próxima)
+4. /skill-documentador ✅ CONCLUÍDO (SPEC gerada, Tipos e Design Tokens validados)
+5. /skill-construtor 🔄 **PRÓXIMO** (Construção Ativa)
 6. /skill-forge-visual ⬜ PENDENTE
 
 ## Regras Críticas
