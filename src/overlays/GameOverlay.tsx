@@ -46,15 +46,15 @@ export function GameOverlay() {
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 26, stiffness: 280 }}
         style={{
-          position: 'relative', width: '100%', maxWidth: 480, height: '100dvh',
+          position: 'relative', width: '100%', maxWidth: 1000, height: '100dvh',
           background: 'var(--obsidian-900)', display: 'flex', flexDirection: 'column',
-          overflow: 'hidden', margin: '0 auto', zIndex: 1,
+          overflow: 'hidden', margin: '0 auto', zIndex: 1, boxShadow: '0 0 100px rgba(0,0,0,0.8)'
         }}
       >
         {/* Header (Placar e Saída) */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '14px 16px 10px', flexShrink: 0, background: 'rgba(10,10,15,0.9)',
+          padding: '14px 16px 10px', paddingTop: 'max(14px, env(safe-area-inset-top))', flexShrink: 0, background: 'rgba(10,10,15,0.9)',
           borderBottom: '1px solid var(--border-subtle)',
         }}>
           <button onClick={popOverlay} style={{ background: 'rgba(255,255,255,0.07)', border: 'none', width: 36, height: 36, borderRadius: '50%', cursor: 'pointer', fontSize: 18, color: 'var(--text-secondary)' }}>←</button>
@@ -133,7 +133,7 @@ export function GameOverlay() {
             </div>
 
             {/* BOTTOM POD & MINHAS CARTAS */}
-            <div className="absolute bottom-0 inset-x-0 pb-6 flex flex-col items-center z-20">
+            <div className="absolute bottom-0 inset-x-0 flex flex-col items-center z-20" style={{ paddingBottom: 'max(24px, env(safe-area-inset-bottom))' }}>
                <div className="mb-4">
                  <PlayerAvatar player={myPlayer} position="bottom" falando={falas[myPlayer.id]} isCurrentTurn />
                </div>

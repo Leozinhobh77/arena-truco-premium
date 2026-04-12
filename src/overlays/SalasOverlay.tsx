@@ -132,19 +132,15 @@ export function SalasOverlay() {
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 26, stiffness: 280 }}
+        className="modal-sheet"
         style={{
           position: 'relative',
           width: '100%',
           maxWidth: 480,
-          height: '90vh',
           background: 'var(--obsidian-700)',
-          borderRadius: '24px 24px 0 0',
-          border: '1px solid var(--border-subtle)',
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden',
-          margin: '0 auto',
-          zIndex: 1,
+          margin: 'auto auto 0',
         }}
       >
         {/* Handle */}
@@ -162,6 +158,7 @@ export function SalasOverlay() {
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '14px 16px 10px',
+          paddingTop: 'max(14px, env(safe-area-inset-top))',
           flexShrink: 0,
           borderBottom: '1px solid var(--border-subtle)',
         }}>

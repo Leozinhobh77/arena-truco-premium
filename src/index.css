@@ -139,8 +139,7 @@ h1, h2, h3, h4, h5, h6,
   flex-direction: column;
   background: var(--bg-main);
   overflow: hidden;
-  max-width: 480px; /* Max width mobile-first */
-  margin: 0 auto;
+  width: 100%;
 }
 
 /* 6. TELA SWIPE CONTAINER */
@@ -739,3 +738,64 @@ h1, h2, h3, h4, h5, h6,
   border-radius: 18px 18px 18px 4px;
   align-self: flex-start;
 }
+
+/* 31. RESPONSIVIDADE DESKTOP HYBRID v4.0 */
+@media (min-width: 800px) {
+  /* O shell adota direção de linha para Sidebar na esquerda */
+  .app-shell {
+    flex-direction: row;
+  }
+  
+  /* Bottom Nav vira Side Nav */
+  .bottom-nav {
+    order: -1;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    width: 260px;
+    height: 100%;
+    padding: 24px 16px;
+    border-top: none;
+    border-right: 1px solid var(--border-subtle);
+    gap: 16px;
+  }
+  
+  .nav-item {
+    flex-direction: row;
+    padding: 16px 20px;
+    border-radius: var(--radius-lg);
+    gap: 16px;
+  }
+  
+  .nav-item svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .nav-item span {
+    font-size: 15px;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+  
+  /* Overlays Modal Behavior em Desktop */
+  .modal-sheet {
+    max-width: 500px;
+    border-radius: var(--radius-xl);
+    max-height: 85vh;
+    margin: auto;
+  }
+  
+  /* Desktop Safe Area Utils */
+  .desktop-modal-center {
+    max-width: 600px;
+    margin: auto;
+    border-radius: var(--radius-xl);
+    height: 85vh;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+  }
+}
+
+/* Safe Area Inset Helpers */
+.safe-pt { padding-top: max(16px, env(safe-area-inset-top)); }
+.safe-pb { padding-bottom: max(16px, env(safe-area-inset-bottom)); }

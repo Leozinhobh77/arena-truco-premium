@@ -40,6 +40,7 @@ function ClanChatView({ clanId, onClose }: { clanId: string; onClose: () => void
       animate={{ x: 0 }}
       exit={{ x: '100%' }}
       transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+      className="desktop-modal-center"
       style={{
         position: 'fixed', inset: 0, zIndex: 800,
         background: 'var(--obsidian-800)',
@@ -52,6 +53,7 @@ function ClanChatView({ clanId, onClose }: { clanId: string; onClose: () => void
         alignItems: 'center',
         gap: 12,
         padding: '16px 16px 12px',
+        paddingTop: 'max(16px, env(safe-area-inset-top))',
         borderBottom: '1px solid var(--border-subtle)',
         flexShrink: 0,
         background: 'var(--obsidian-900)',
