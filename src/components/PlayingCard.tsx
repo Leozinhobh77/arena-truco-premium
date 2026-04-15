@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import type { Carta } from '../types';
 import clsx from 'clsx';
@@ -26,7 +27,9 @@ const NAIPE_CORES = {
 };
 
 export function PlayingCard({ card, hide = false, playable = false, onClick, className, style }: PlayingCardProps) {
-  
+  // Rotação fixa por instância — evita recalcular a cada render
+  const hoverRotation = useMemo(() => Math.random() * 4 - 2, []);
+
   // Verso da carta
   if (hide) {
     return (
@@ -61,7 +64,7 @@ export function PlayingCard({ card, hide = false, playable = false, onClick, cla
       )}
       style={style}
       // Animações Premium Apple-like
-      whileHover={playable ? { y: -15, scale: 1.05, rotate: Math.random() * 4 - 2 } : {}}
+      whileHover={playable ? { y: -15, scale: 1.05, rotate: hoverRotation } : {}}
       whileTap={playable ? { scale: 0.95 } : {}}
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}

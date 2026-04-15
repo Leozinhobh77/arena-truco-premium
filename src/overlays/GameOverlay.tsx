@@ -16,7 +16,7 @@ export function GameOverlay() {
   const { usuario } = useAuthStore();
   const game = useGameStore();
 
-  const [falas] = useState<Record<string, string>>({});
+  const [falas, setFalas] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (usuario && game.status === 'waiting') {
@@ -25,7 +25,26 @@ export function GameOverlay() {
       }, 2000);
       return () => clearTimeout(t);
     }
-  }, [usuario, game.status]);
+  }, [usuario, game.status, game.iniciarPartida]);
+
+  // Bot provocations — aparece a cada 5s, some após 3s
+  useEffect(() => {
+    if (game.status !== 'playing') return;
+    const frases = ['Vai com tudo!', 'Truco?', 'Tô na mão...', 'Boa jogada!', 'Hmm...'];
+    const interval = setInterval(() => {
+      const bots = game.jogadores.filter(j => j.isBot);
+      if (bots.length === 0) return;
+      const bot = bots[Math.floor(Math.random() * bots.length)];
+      const frase = frases[Math.floor(Math.random() * frases.length)];
+      setFalas(prev => ({ ...prev, [bot.id]: frase }));
+      setTimeout(() => setFalas(prev => {
+        const next = { ...prev };
+        delete next[bot.id];
+        return next;
+      }), 3000);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [game.status, game.jogadores]);
 
   if (!usuario) return null;
 

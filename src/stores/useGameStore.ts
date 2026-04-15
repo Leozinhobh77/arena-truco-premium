@@ -38,6 +38,13 @@ export const useGameStore = create<GameState>((set) => ({
   myUserId: '',
   jogadores: [],
 
+  /**
+   * Inicializa uma nova partida: gera e embaralha o baralho, configura
+   * as manilhas de acordo com o modo, distribui 3 cartas por jogador
+   * e popula a mesa com 3 bots hardcoded.
+   * @param modo - 'paulista' (manilha pelo vira) ou 'mineiro' (manilha fixa)
+   * @param userId - ID do jogador humano local
+   */
   iniciarPartida: (modo, userId) => {
     // 1. Setup do Baralho
     const baralho = embaralhar(gerarBaralho());
@@ -82,6 +89,13 @@ export const useGameStore = create<GameState>((set) => ({
     });
   },
 
+  /**
+   * Remove uma carta da mão do jogador e a coloca na mesa central.
+   * Operação idempotente: ignora se o jogador já jogou ou a sala não
+   * está em status 'playing'. A verificação de fim de rodada é TODO Sprint 3.
+   * @param jogadorId - ID do jogador que está jogando
+   * @param cartaId - ID da carta a ser jogada
+   */
   jogarCarta: (jogadorId, cartaId) => {
     set(state => {
       // Evita ações duplicadas se já jogou ou sala não em playing
