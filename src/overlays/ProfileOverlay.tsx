@@ -513,7 +513,9 @@ function StatsTab() {
     : PONTUACAO_SEMANAL_MOCK;
 
   // Abandono: busca do histórico real (mock como fallback)
-  const { partidas: historicoReal } = useMinhasPartidas();
+  const { partidas: historicoReal } = useMinhasPartidas(
+    ehProprio ? usuario?.id : undefined
+  );
   const historicoUsado = ehProprio && historicoReal.length > 0 ? historicoReal : GAME_HISTORY_MOCK;
 
   if (!usuario) return null;
@@ -787,7 +789,9 @@ function MeusJogosTab() {
   const ehProprio = usuario?.id === usuarioLogado?.id;
 
   // Dados reais para o próprio perfil, mock para outros
-  const { partidas: partidasReais, loading } = useMinhasPartidas();
+  const { partidas: partidasReais, loading } = useMinhasPartidas(
+    ehProprio ? usuario?.id : undefined
+  );
   const historicoUsado: GameHistory[] = ehProprio && !loading && partidasReais.length > 0
     ? partidasReais
     : GAME_HISTORY_MOCK;
