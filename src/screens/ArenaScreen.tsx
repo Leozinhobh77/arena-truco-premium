@@ -3,9 +3,11 @@
 // Perfil, Recursos, Botão Jogar
 // ============================================================
 
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useNavigationStore } from '../stores/useNavigationStore';
+import { AMIGOS_MOCK } from '../mockData';
 
 // Componente de barra XP circular em SVG
 function CircularXP({ xp, max, nivel }: { xp: number; max: number; nivel: number }) {
@@ -77,9 +79,42 @@ function CardBack({ delay = 0, rotate = 0 }: { delay?: number; rotate?: number }
   );
 }
 
+/** Stack de avatares de amigos online — exibe até 3 sobrepostos */
+function AvatarStack({ avatares }: { avatares: string[] }) {
+  const visíveis = avatares.slice(0, 3);
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      {visíveis.map((src, i) => (
+        <img
+          key={i}
+          src={src}
+          alt=""
+          style={{
+            width: 20, height: 20, borderRadius: '50%',
+            border: '1.5px solid rgba(10,8,30,0.9)',
+            marginLeft: i === 0 ? 0 : -6,
+            position: 'relative',
+            zIndex: visíveis.length - i,
+            display: 'block',
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export function ArenaScreen() {
   const { usuario } = useAuthStore();
   const { pushOverlay } = useNavigationStore();
+
+  // Amigos online (disponivel + jogando)
+  const amigosOnline = useMemo(
+    () => AMIGOS_MOCK.filter(a => a.statusAmigo !== 'offline'),
+    [],
+  );
+  const onlineCount = amigosOnline.length;
+  const displayCount = onlineCount > 99 ? '+99' : String(onlineCount);
+  const avatarStack = amigosOnline.slice(0, 3).map(a => a.avatar);
 
   if (!usuario) return null;
 
@@ -152,6 +187,7 @@ export function ArenaScreen() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1, duration: 0.5 }}
         className="glass-card-gold"
+        onClick={() => pushOverlay('perfil', { editMode: true })}
         style={{
           margin: '8px 16px',
           padding: '16px',
@@ -161,6 +197,7 @@ export function ArenaScreen() {
           flexShrink: 0,
           position: 'relative',
           zIndex: 2,
+          cursor: 'pointer',
         }}
       >
         {/* Avatar + XP Ring */}
@@ -314,7 +351,7 @@ export function ArenaScreen() {
           ⚔️ &nbsp; JOGAR
         </motion.button>
 
-        {/* Sub-ação */}
+        {/* Sub-ações */}
         <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
           <button
             className="btn-secondary"
@@ -323,13 +360,30 @@ export function ArenaScreen() {
           >
             🎯 Salas Online
           </button>
-          <button
+
+          {/* Botão Amigos Online com contador + avatar stack */}
+          <motion.button
             className="btn-secondary"
-            style={{ flex: 1, fontSize: 13 }}
-            onClick={() => pushOverlay('jogo')}
+            style={{
+              flex: 1, fontSize: 12,
+              display: 'flex', alignItems: 'center',
+              justifyContent: 'center', gap: 6,
+              opacity: onlineCount === 0 ? 0.45 : 1,
+              cursor: onlineCount === 0 ? 'not-allowed' : 'pointer',
+            }}
+            animate={onlineCount > 0 ? {
+              boxShadow: [
+                '0 0 0 0 rgba(45,198,83,0)',
+                '0 0 0 4px rgba(45,198,83,0.25)',
+                '0 0 0 0 rgba(45,198,83,0)',
+              ],
+            } : {}}
+            transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+            onClick={() => onlineCount > 0 && pushOverlay('amigos-online')}
           >
-            🤖 vs Bot
-          </button>
+            {onlineCount > 0 && <AvatarStack avatares={avatarStack} />}
+            <span>👥 {displayCount} Online</span>
+          </motion.button>
         </div>
       </motion.div>
     </div>
