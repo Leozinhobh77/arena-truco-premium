@@ -1,0 +1,79 @@
+{
+  "task": "2.2.5",
+  "sprint": 2,
+  "phase": "Add CLI flags for bundle and dead-code analysis",
+  "timestamp": "2026-04-15T21:45:00Z",
+  "tipo": "after",
+  "status": "✅ COMPLETE",
+  "arquivos_modificados": [
+    {
+      "caminho": "src/cli.ts",
+      "delta": "+120 linhas",
+      "descricao": "Added parseArgs support + handlers for --bundle and --dead-code flags"
+    },
+    {
+      "caminho": "tests/cli.test.ts",
+      "delta": "+16 linhas",
+      "descricao": "Added test cases for --bundle and --dead-code flag parsing"
+    }
+  ],
+  "new_cli_commands": {
+    "bundle_analysis": "skill-performance [project] --bundle [--verbose]",
+    "dead_code_analysis": "skill-performance [project] --dead-code [--verbose]"
+  },
+  "implemented_handlers": {
+    "handleBundleAnalysis": "📦 Bundle size and composition analysis",
+    "handleDeadCodeAnalysis": "💀 AST-based dead code detection"
+  },
+  "bundle_handler_features": {
+    "webpack_stats_parsing": "✅ Analyzes webpack stats.json for bundle composition",
+    "severity_grouping": "✅ Groups issues by HIGH/MEDIUM/LOW priority",
+    "code_splitting_suggestions": "✅ Recommends code splitting opportunities",
+    "dead_code_reporting": "✅ Reports unused exports and duplicate packages",
+    "verbose_mode": "✅ Shows detailed optimization recommendations"
+  },
+  "dead_code_handler_features": {
+    "file_scanning": "✅ Recursively scans all TS/JS/TSX/JSX files",
+    "type_classification": "✅ Groups by export/import/variable",
+    "line_tracking": "✅ Shows exact location of dead code",
+    "verbose_mode": "✅ Top 15 findings with recommendations",
+    "summary_stats": "✅ Counts by type (exports, imports, variables)"
+  },
+  "cli_integration": {
+    "flag_parsing": "✅ parseArgs updated for --bundle and --dead-code",
+    "main_routing": "✅ main() routes to correct handler",
+    "error_handling": "✅ SEC-07 generic error messages",
+    "help_text": "✅ Usage examples in comments"
+  },
+  "test_results": {
+    "total_tests": 12,
+    "passing_tests": 12,
+    "failing_tests": 0,
+    "new_tests": 2
+  },
+  "usage_examples": {
+    "bundle_basic": "skill-performance ./my-project --bundle",
+    "bundle_verbose": "skill-performance ./my-project --bundle --verbose",
+    "deadcode_basic": "skill-performance ./my-project --dead-code",
+    "deadcode_verbose": "skill-performance ./my-project --dead-code --verbose",
+    "combined": "skill-performance ./my-project --bundle --dead-code --lighthouse --verbose"
+  },
+  "build_status": {
+    "tsc": "✅ PASS",
+    "npm_build": "✅ PASS",
+    "typescript_errors": 0
+  },
+  "security_compliance": {
+    "SEC-02": "✅ Path validation on project paths",
+    "SEC-07": "✅ Generic error messages (no stack traces)"
+  },
+  "cli_commands_available": [
+    "skill-performance [project] --analyze-architecture (default)",
+    "skill-performance [project] --lighthouse",
+    "skill-performance [project] --database",
+    "skill-performance [project] --bundle",
+    "skill-performance [project] --dead-code",
+    "skill-performance [project] --monitor (coming in Sprint 4)"
+  ],
+  "notes": "CLI now fully integrated with all Sprint 2.1-2.3 analyzers. Users can invoke: --lighthouse (dynamic performance), --database (N+1 queries), --bundle (bundle size), and --dead-code (unused code) all from command line. Ready for Phase 3 correlation engine."
+}

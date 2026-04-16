@@ -7,6 +7,8 @@ import { CLIOptions } from './types';
 import { AnalyzerEngineImpl } from './analyzer/engine';
 import { createLighthouseAnalyzer } from './analyzers/lighthouse';
 import { createDatabaseAnalyzer } from './analyzers/database';
+import { createBundleAnalyzer } from './analyzers/bundle';
+import { createDeadCodeAnalyzer } from './analyzers/dead-code';
 import { formatAnalysisOutput } from './formatters/cli-output';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -17,13 +19,17 @@ import * as fs from 'fs';
  *   skill-performance [project-path] --analyze-architecture
  *   skill-performance [project-path] --lighthouse
  *   skill-performance [project-path] --database
+ *   skill-performance [project-path] --bundle
+ *   skill-performance [project-path] --dead-code
  *   skill-performance [project-path] --monitor
  */
-function parseArgs(argv: string[]): CLIOptions & { projectPath?: string; database?: boolean } {
-  const options: CLIOptions & { projectPath?: string; database?: boolean } = {
+function parseArgs(argv: string[]): CLIOptions & { projectPath?: string; database?: boolean; bundle?: boolean; 'dead-code'?: boolean } {
+  const options: CLIOptions & { projectPath?: string; database?: boolean; bundle?: boolean; 'dead-code'?: boolean } = {
     analyzeArchitecture: false,
     lighthouse: false,
     database: false,
+    bundle: false,
+    'dead-code': false,
     monitor: false,
     verbose: false,
   };
@@ -39,6 +45,10 @@ function parseArgs(argv: string[]): CLIOptions & { projectPath?: string; databas
       options.lighthouse = true;
     } else if (arg === '--database') {
       options.database = true;
+    } else if (arg === '--bundle') {
+      options.bundle = true;
+    } else if (arg === '--dead-code') {
+      options['dead-code'] = true;
     } else if (arg === '--monitor') {
       options.monitor = true;
     } else if (arg === '--verbose') {
@@ -77,7 +87,7 @@ async function main(): Promise<void> {
     const projectPath = validateProjectPath(options.projectPath);
 
     // Default to --analyze-architecture if no option specified
-    if (!options.analyzeArchitecture && !options.lighthouse && !options.database && !options.monitor) {
+    if (!options.analyzeArchitecture && !options.lighthouse && !options.database && !options.bundle && !options['dead-code'] && !options.monitor) {
       options.analyzeArchitecture = true;
     }
 
@@ -87,6 +97,10 @@ async function main(): Promise<void> {
       await handleLighthouseAnalysis(projectPath, options.verbose || false);
     } else if (options.database) {
       await handleDatabaseAnalysis(projectPath, options.verbose || false);
+    } else if (options.bundle) {
+      await handleBundleAnalysis(projectPath, options.verbose || false);
+    } else if (options['dead-code']) {
+      await handleDeadCodeAnalysis(projectPath, options.verbose || false);
     } else if (options.monitor) {
       console.log('🚧 Monitoring — coming in Sprint 4');
     }
@@ -277,6 +291,134 @@ function findSourceFiles(projectPath: string): string[] {
 
   walk(projectPath);
   return files;
+}
+
+/**
+ * Handle --bundle command
+ * Bundle size and composition analysis
+ */
+async function handleBundleAnalysis(projectPath: string, verbose: boolean): Promise<void> {
+  console.log(`\n📦 Bundle Size Analysis`);
+  console.log(`📁 Project: ${projectPath}`);
+  console.log('🔍 Analyzing webpack bundle composition...\n');
+
+  const analyzer = createBundleAnalyzer();
+  const startTime = Date.now();
+
+  try {
+    const issues = analyzer.analyzeAsIssues(projectPath, 'bundle-analysis');
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+
+    // Format bundle output
+    console.log('═══════════════════════════════════════════════════');
+    console.log('📊 BUNDLE ANALYSIS RESULTS');
+    console.log('═══════════════════════════════════════════════════');
+
+    if (issues.length === 0) {
+      console.log('✅ Bundle looks good! No major optimization opportunities detected.');
+    } else {
+      // Group by severity
+      const highSeverity = issues.filter((i: any) => i.severity === 'HIGH');
+      const mediumSeverity = issues.filter((i: any) => i.severity === 'MEDIUM');
+      const lowSeverity = issues.filter((i: any) => i.severity === 'LOW');
+
+      console.log(`🔴 HIGH Priority: ${highSeverity.length} issues`);
+      console.log(`🟡 MEDIUM Priority: ${mediumSeverity.length} issues`);
+      console.log(`🟢 LOW Priority: ${lowSeverity.length} issues`);
+
+      if (verbose) {
+        console.log('\n═══════════════════════════════════════════════════');
+        console.log('📋 OPTIMIZATION OPPORTUNITIES');
+        console.log('═══════════════════════════════════════════════════');
+
+        issues.slice(0, 10).forEach((issue: any, idx: number) => {
+          console.log(`\n${idx + 1}. [${issue.severity}] ${issue.type}`);
+          console.log(`   💬 ${issue.message}`);
+          if (issue.recommendation) {
+            console.log(`   ✨ ${issue.recommendation}`);
+          }
+        });
+
+        if (issues.length > 10) {
+          console.log(`\n... and ${issues.length - 10} more issues`);
+        }
+      }
+    }
+
+    console.log(`\n⏱️  Analysis completed in ${elapsed}s`);
+    console.log(`📊 Total issues found: ${issues.length}`);
+  } catch (error) {
+    console.log('⚠️  Bundle analysis could not complete - ensure webpack stats.json exists');
+  }
+}
+
+/**
+ * Handle --dead-code command
+ * AST-based dead code analysis
+ */
+async function handleDeadCodeAnalysis(projectPath: string, verbose: boolean): Promise<void> {
+  console.log(`\n💀 Dead Code Analysis`);
+  console.log(`📁 Project: ${projectPath}`);
+  console.log('🔍 Scanning for unused exports, imports, and variables...\n');
+
+  const analyzer = createDeadCodeAnalyzer();
+  const startTime = Date.now();
+
+  // Recursively find all source files
+  const files = findSourceFiles(projectPath);
+  const allIssues: any[] = [];
+
+  for (const file of files) {
+    try {
+      const issues = analyzer.analyze(file);
+      allIssues.push(...issues);
+    } catch (error) {
+      // Silently skip files that can't be analyzed
+      continue;
+    }
+  }
+
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+
+  // Format dead code output
+  console.log('═══════════════════════════════════════════════════');
+  console.log('📊 DEAD CODE ANALYSIS');
+  console.log('═══════════════════════════════════════════════════');
+
+  if (allIssues.length === 0) {
+    console.log('✅ No obvious dead code found!');
+  } else {
+    // Group by type
+    const unusedExports = allIssues.filter((i: any) => i.declarationType === 'export');
+    const unusedImports = allIssues.filter((i: any) => i.declarationType === 'import');
+    const unusedVars = allIssues.filter((i: any) => i.declarationType === 'variable');
+
+    console.log(`📤 Unused Exports: ${unusedExports.length}`);
+    console.log(`📥 Unused Imports: ${unusedImports.length}`);
+    console.log(`📦 Unused Variables: ${unusedVars.length}`);
+
+    if (verbose) {
+      console.log('\n═══════════════════════════════════════════════════');
+      console.log('📋 DETAILED FINDINGS');
+      console.log('═══════════════════════════════════════════════════');
+
+      allIssues.slice(0, 15).forEach((issue: any, idx: number) => {
+        console.log(`\n${idx + 1}. ${issue.declarationType?.toUpperCase() || 'UNKNOWN'}`);
+        console.log(`   📁 ${issue.file}:${issue.line}`);
+        console.log(`   💬 ${issue.message}`);
+        if (issue.recommendation) {
+          console.log(`   ✨ ${issue.recommendation}`);
+        }
+      });
+
+      if (allIssues.length > 15) {
+        console.log(`\n... and ${allIssues.length - 15} more items`);
+      }
+    }
+  }
+
+  console.log(`\n⏱️  Analysis completed in ${elapsed}s`);
+  console.log(`📊 Total dead code items found: ${allIssues.length}`);
 }
 
 // Run if this is the main module

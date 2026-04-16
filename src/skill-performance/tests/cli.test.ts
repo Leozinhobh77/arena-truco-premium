@@ -29,6 +29,22 @@ describe('CLI Parser', () => {
     expect(options.projectPath).toBe('/path/to/project');
   });
 
+  it('should parse --bundle flag', () => {
+    const argv = ['node', 'cli.ts', '/path/to/project', '--bundle'];
+    const options = parseArgs(argv);
+
+    expect(options.bundle).toBe(true);
+    expect(options.projectPath).toBe('/path/to/project');
+  });
+
+  it('should parse --dead-code flag', () => {
+    const argv = ['node', 'cli.ts', '/path/to/project', '--dead-code'];
+    const options = parseArgs(argv);
+
+    expect(options['dead-code']).toBe(true);
+    expect(options.projectPath).toBe('/path/to/project');
+  });
+
   it('should parse --monitor flag', () => {
     const argv = ['node', 'cli.ts', '/path/to/project', '--monitor'];
     const options = parseArgs(argv);
