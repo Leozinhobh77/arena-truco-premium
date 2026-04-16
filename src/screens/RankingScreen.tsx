@@ -135,7 +135,7 @@ export function RankingScreen() {
   );
 
   const abrirPerfilGlobal = useCallback((u: Usuario) => {
-    pushOverlay('perfil', { usuario: u });
+    pushOverlay('perfil', { usuarioId: u.id });
   }, [pushOverlay]);
 
   return (
