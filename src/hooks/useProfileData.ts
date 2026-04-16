@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import type { GameHistory, PontuacaoDia, Badge } from '../types';
+import type { GameHistory, PontuacaoDia, Badge, Usuario, JogadorRanking } from '../types';
 
 // ── Aba "Meus Jogos": últimas 20 partidas do usuário ──
 export function useMinhasPartidas(userId: string | undefined = undefined) {
@@ -125,4 +125,87 @@ export function useMinhasConquistas(userId: string | undefined) {
   }, [userId]);
 
   return { badges, loading };
+}
+
+// ── Global Ranking: todos os jogadores ordenados por posição ────
+export function useRankingGlobal() {
+  const [ranking, setRanking] = useState<JogadorRanking[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase
+      .from('ranking')
+      .select('id, nick, avatar_url, nivel, moedas, vitorias, derrotas, partidas_totais, posicao_ranking, pontuacao_total')
+      .order('posicao_ranking', { ascending: true })
+      .limit(100)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then(({ data, error }: any) => {
+        if (!error && data) {
+          setRanking(data.map((r: any) => ({
+            posicao: r.posicao_ranking ?? 0,
+            pontos: r.pontuacao_total ?? r.moedas ?? 0,
+            usuario: {
+              id: r.id,
+              nome: r.nick,
+              nick: r.nick,
+              avatar: r.avatar_url ?? `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${r.nick}&backgroundColor=1a1040`,
+              nivel: r.nivel ?? 1,
+              xp: 0,
+              xpProximoNivel: 1000,
+              moedas: r.moedas ?? 0,
+              gemas: 0,
+              ranking: r.posicao_ranking ?? 0,
+              vitorias: r.vitorias ?? 0,
+              derrotas: r.derrotas ?? 0,
+              partidas: r.partidas_totais ?? 0,
+            } as Usuario,
+          })));
+        }
+        setLoading(false);
+      });
+  }, []);
+
+  return { ranking, loading };
+}
+
+// ── Perfil Público: busca dados de qualquer usuário ──────────────
+export function usePerfilPublico(userId: string | undefined) {
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!userId) { setLoading(false); return; }
+
+    Promise.all([
+      supabase.from('profiles').select('*').eq('id', userId).single(),
+      supabase.from('ranking')
+        .select('vitorias, derrotas, partidas_totais, posicao_ranking')
+        .eq('id', userId).single(),
+    ])
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then(([profileRes, rankingRes]: any) => {
+        if (!profileRes.error && profileRes.data) {
+          const p = profileRes.data;
+          const r = rankingRes.data;
+          setUsuario({
+            id: p.id,
+            nome: p.nick,
+            nick: p.nick,
+            avatar: p.avatar_url ?? `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${p.nick}&backgroundColor=1a1040`,
+            nivel: p.nivel,
+            xp: p.xp,
+            xpProximoNivel: p.xp_proximo,
+            moedas: p.moedas,
+            gemas: p.gemas,
+            ranking: r?.posicao_ranking ?? 0,
+            vitorias: r?.vitorias ?? 0,
+            derrotas: r?.derrotas ?? 0,
+            partidas: r?.partidas_totais ?? 0,
+          });
+        }
+        setLoading(false);
+      });
+  }, [userId]);
+
+  return { usuario, loading };
 }

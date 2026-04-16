@@ -9,17 +9,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useNavigationStore } from '../stores/useNavigationStore';
 import {
-  BADGES_MOCK,
-  GAME_HISTORY_MOCK,
-  PONTUACAO_SEMANAL_MOCK,
-  AMIGOS_MOCK,
-} from '../mockData';
-import {
   useMinhasPartidas,
   usePontuacaoSemanal,
   useMinhasConquistas,
+  usePerfilPublico,
 } from '../hooks/useProfileData';
-import type { Badge, GameHistory, Usuario, Amigo } from '../types';
+import type { Badge, GameHistory, Usuario } from '../types';
 
 // ── Helpers ──────────────────────────────────────────────────
 function dataFormatada(date: Date): string {
@@ -32,18 +27,17 @@ function horaFormatada(date: Date): string {
 
 // ── Gráfico de Linha SVG ─────────────────────────────────────
 function LineChart({ data }: { data: { data: string; pontos: number }[] }) {
-  // Memoizar cálculos custosos do SVG
-  const { linePath, areaPath, pts } = useMemo(() => {
-    const W = 300, H = 110;
-    const PAD = { t: 12, r: 12, b: 26, l: 12 };
-    const cW = W - PAD.l - PAD.r;
-    const cH = H - PAD.t - PAD.b;
+  const W = 300, H = 110;
+  const PAD = { t: 12, r: 12, b: 26, l: 12 };
+  const cW = W - PAD.l - PAD.r;
+  const cH = H - PAD.t - PAD.b;
 
+  const { linePath, areaPath, pts } = useMemo(() => {
     const maxVal = Math.max(...data.map(d => d.pontos));
     const minVal = Math.min(...data.map(d => d.pontos));
     const range = maxVal - minVal || 1;
 
-    const xPos = (i: number) => PAD.l + (i / (data.length - 1)) * cW;
+    const xPos = (i: number) => PAD.l + (i / Math.max(data.length - 1, 1)) * cW;
     const yPos = (v: number) => PAD.t + (1 - (v - minVal) / range) * cH;
 
     const calculatedPts = data.map((d, i) => ({
@@ -62,9 +56,7 @@ function LineChart({ data }: { data: { data: string; pontos: number }[] }) {
     ].join(' ');
 
     return { linePath: calculatedLinePath, areaPath: calculatedAreaPath, pts: calculatedPts };
-  }, [data]);
-
-  const W = 300, H = 110;
+  }, [data, PAD.l, PAD.t, PAD.b, cW, cH]);
 
   return (
     <svg
@@ -167,54 +159,6 @@ const TabBar = memo(function TabBar({ active, onChange }: { active: number; onCh
 // ── Context pra perfil do jogador exibido ───────────────────
 const ProfileContext = createContext<Usuario | null>(null);
 
-/** Converte Amigo → Usuario com dados mock para exibição */
-function amigoParaUsuario(amigo: Amigo): Usuario {
-  return {
-    id: amigo.id,
-    nome: amigo.nome,
-    nick: amigo.nick,
-    avatar: amigo.avatar,
-    nivel: amigo.nivel,
-    xp: 650, // Mock
-    xpProximoNivel: 1000, // Mock
-    moedas: 3500, // Mock
-    gemas: 25, // Mock
-    ranking: amigo.ranking,
-    vitorias: amigo.vitorias,
-    derrotas: amigo.derrotas,
-    partidas: amigo.partidas,
-    clan: amigo.clan,
-  };
-}
-
-/** Busca usuário por ID (AMIGOS_MOCK ou mock genérico) */
-function buscarUsuarioPorId(usuarioId: string): Usuario | null {
-  const amigo = AMIGOS_MOCK.find(a => a.id === usuarioId);
-  if (amigo) return amigoParaUsuario(amigo);
-
-  // Se for oponenteId não-amigo, cria mock genérico
-  if (usuarioId.startsWith('oponente-')) {
-    const nick = usuarioId.replace('oponente-', '');
-    return {
-      id: usuarioId,
-      nome: nick,
-      nick: nick,
-      avatar: `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${nick}&backgroundColor=1a1040`,
-      nivel: Math.floor(Math.random() * 50) + 20,
-      xp: Math.floor(Math.random() * 900) + 100,
-      xpProximoNivel: 1000,
-      moedas: Math.floor(Math.random() * 5000) + 1000,
-      gemas: Math.floor(Math.random() * 50) + 5,
-      ranking: Math.floor(Math.random() * 500) + 50,
-      vitorias: Math.floor(Math.random() * 300) + 50,
-      derrotas: Math.floor(Math.random() * 200) + 20,
-      partidas: Math.floor(Math.random() * 400) + 100,
-    };
-  }
-
-  return null;
-}
-
 const useProfileUser = () => {
   const ctx = useContext(ProfileContext);
   const { usuario } = useAuthStore();
@@ -271,10 +215,8 @@ function PerfilTab({ editModeOriginal = false }: { editModeOriginal?: boolean })
   };
 
   // Memoizar cálculos para evitar recalcular em cada render
-  const { winRate, amigosTotal, abandonos } = useMemo(() => ({
+  const { winRate } = useMemo(() => ({
     winRate: Math.round((usuario.vitorias / Math.max(usuario.partidas, 1)) * 100),
-    amigosTotal: AMIGOS_MOCK.length,
-    abandonos: GAME_HISTORY_MOCK.filter(g => g.resultado === 'abandono').length,
   }), [usuario]);
 
   return (
@@ -510,13 +452,13 @@ function StatsTab() {
   );
   const pontuacaoData = ehProprio && !loading && pontuacaoReal.length > 0
     ? pontuacaoReal
-    : PONTUACAO_SEMANAL_MOCK;
+    : [];
 
   // Abandono: busca do histórico real (mock como fallback)
   const { partidas: historicoReal } = useMinhasPartidas(
     ehProprio ? usuario?.id : undefined
   );
-  const historicoUsado = ehProprio && historicoReal.length > 0 ? historicoReal : GAME_HISTORY_MOCK;
+  const historicoUsado = ehProprio && historicoReal.length > 0 ? historicoReal : [];
 
   if (!usuario) return null;
 
@@ -589,10 +531,10 @@ function StatsTab() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {[
             { icon: '🔥', label: 'Record em um dia', value: `${recordDia} pts` },
-            { icon: '🏆', label: 'Maior sequência de vitórias', value: '12 vitórias' },
-            { icon: '👑', label: 'Melhor posição no ranking', value: '#45' },
+            { icon: '🏆', label: 'Maior sequência de vitórias', value: '—' }, // TODO: campo max_win_streak no BD
+            { icon: '👑', label: 'Melhor posição no ranking', value: usuario.ranking > 0 ? `#${usuario.ranking}` : '—' },
             { icon: '🎮', label: 'Total de partidas', value: usuario.partidas },
-            { icon: '📅', label: 'Membro desde', value: '12/04/2026' },
+            { icon: '📅', label: 'Membro desde', value: '—' }, // TODO: campo created_at no BD
           ].map(d => (
             <div key={d.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
@@ -672,7 +614,7 @@ function ConquistasTab() {
 
   const badgesUsados: Badge[] = ehProprio && !loading && badgesReais.length > 0
     ? badgesReais
-    : BADGES_MOCK;
+    : [];
 
   const conquistadas = badgesUsados.filter(b => b.conquistado);
 
@@ -794,7 +736,7 @@ function MeusJogosTab() {
   );
   const historicoUsado: GameHistory[] = ehProprio && !loading && partidasReais.length > 0
     ? partidasReais
-    : GAME_HISTORY_MOCK;
+    : [];
 
   const totalVitorias = historicoUsado.filter(g => g.resultado === 'vitoria').length;
   const totalDerrotas = historicoUsado.filter(g => g.resultado === 'derrota').length;
@@ -865,9 +807,12 @@ export function ProfileOverlay() {
   const usuarioDireto = props.usuario as Usuario | undefined;
   const editMode = !!props.editMode;
 
-  // Prioridade: objeto direto > busca por ID > usuario logado
+  // Hook para buscar perfil público (se for terceiro)
+  const { usuario: usuarioPublico } = usePerfilPublico(usuarioId && !usuarioDireto ? usuarioId : undefined);
+
+  // Prioridade: objeto direto > busca por ID/hook > usuario logado
   const usuarioExibido: Usuario | null =
-    usuarioDireto ?? (usuarioId ? buscarUsuarioPorId(usuarioId) : usuario);
+    usuarioDireto ?? usuarioPublico ?? usuario;
 
   if (!usuarioExibido) return null;
 
