@@ -807,14 +807,23 @@ export function ProfileOverlay() {
   const usuarioDireto = props.usuario as Usuario | undefined;
   const editMode = !!props.editMode;
 
+  // DEBUG: log para verificar o que está chegando
+  console.log('ProfileOverlay props:', { usuarioId, usuarioDireto, props });
+
   // Hook para buscar perfil público (se for terceiro)
-  const { usuario: usuarioPublico } = usePerfilPublico(usuarioId && !usuarioDireto ? usuarioId : undefined);
+  const { usuario: usuarioPublico, loading } = usePerfilPublico(usuarioId && !usuarioDireto ? usuarioId : undefined);
+
+  // DEBUG: log para verificar se hook está funcionando
+  console.log('ProfileOverlay state:', { usuarioPublico, loading, usuarioDireto, usuarioLogado: usuario?.nick });
 
   // Prioridade: objeto direto > busca por ID/hook > usuario logado
   const usuarioExibido: Usuario | null =
     usuarioDireto ?? usuarioPublico ?? usuario;
 
-  if (!usuarioExibido) return null;
+  if (!usuarioExibido) {
+    console.warn('ProfileOverlay: usuarioExibido é null!', { usuarioDireto, usuarioPublico, usuario });
+    return null;
+  }
 
   const ehPerfildoAmigo = !!(usuarioId || usuarioDireto);
   const ActiveContent = TAB_COMPONENTS[activeTab];
