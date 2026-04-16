@@ -1,0 +1,24 @@
+{
+  "task": "2.1.1",
+  "sprint": 2,
+  "phase": "Setup @lhci/cli dependency",
+  "timestamp": "2026-04-15T21:30:00Z",
+  "tipo": "before",
+  "arquivos_que_serao_alterados": [
+    {
+      "caminho": "package.json",
+      "hash_antes": "8114321eae5f6c520dcc52e20a503c9b",
+      "linhas_antes": 42,
+      "tipo": "edit"
+    }
+  ],
+  "working_memory_snapshot": {
+    "health_score": 94,
+    "task_atual": "2.1.1",
+    "sprint_numero": 2,
+    "fase": "Setup @lhci/cli dependency",
+    "checkpoint_criado": true
+  },
+  "security_laws_ativas": ["SEC-02", "SEC-05", "SEC-07", "SEC-08", "SEC-10"],
+  "status": "before_snapshot_created"
+}

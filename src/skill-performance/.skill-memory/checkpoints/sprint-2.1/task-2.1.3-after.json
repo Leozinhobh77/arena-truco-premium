@@ -1,0 +1,50 @@
+{
+  "task": "2.1.3",
+  "sprint": 2,
+  "phase": "Add Lighthouse to CLI interface",
+  "timestamp": "2026-04-16T03:30:00Z",
+  "tipo": "after",
+  "status": "APPROVED_AWAITING_SENTINELA",
+  "arquivos_alterados": [
+    {
+      "caminho": "src/cli.ts",
+      "hash_depois": "37c2fcbeab0c6c821790003b62599727",
+      "linhas_depois": 160,
+      "delta": "+41 linhas, handleLighthouseAnalysis() function + import"
+    }
+  ],
+  "testes_status": {
+    "manual_test": "✅ PASS",
+    "command": "npm run lighthouse -- [project-path]",
+    "output": "Lighthouse scores displayed correctly (mock data: 0/100 expected)",
+    "cli_parsing": "✅ PASS",
+    "error_handling": "✅ PASS (SEC-02 path validation working)"
+  },
+  "security_audit": {
+    "SEC-02": "PASS - path validation still active",
+    "SEC-07": "PASS - generic error messages"
+  },
+  "build_status": {
+    "tsc": "✅ PASS",
+    "typescript_errors": 0
+  },
+  "implementation_details": {
+    "changes": [
+      "Imported createLighthouseAnalyzer from ./analyzers/lighthouse",
+      "Created handleLighthouseAnalysis() function similar to handleAnalyzeArchitecture()",
+      "Replaced console.log placeholder with actual handler",
+      "Added formatted output: Lighthouse scores with color codes (🟢/🟡/🔴)",
+      "Added verbose mode support for Core Web Vitals (FCP, LCP, CLS, FID)",
+      "Added timestamp logging for analysis"
+    ]
+  },
+  "functionality": {
+    "before": "❌ 'coming in Sprint 2' placeholder",
+    "after": "✅ Functional Lighthouse CLI with score formatting and verbose output"
+  },
+  "next_steps": [
+    "TASK 2.1.4: Capture Arena Truco baseline scores (run analyzer, record results)",
+    "TASK 2.1.5: Create correlation engine (map Lighthouse metrics to Sprint 1 issues)",
+    "Parallel: Start Sprint 2.2 + 2.3 after Task 2.1.3 checkpoint approval"
+  ]
+}
