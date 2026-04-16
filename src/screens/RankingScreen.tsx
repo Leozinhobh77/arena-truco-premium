@@ -7,7 +7,7 @@ import { useState, useMemo, memo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useNavigationStore } from '../stores/useNavigationStore';
-import { useRankingGlobal } from '../hooks/useProfileData';
+import { useRankingGlobal, useAmigosRanking } from '../hooks/useProfileData';
 import type { Usuario } from '../types';
 
 const RANK_ICONS: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
@@ -101,25 +101,57 @@ const GlobalCard = memo(function GlobalCard({ item, isMe, onPress }: {
   );
 });
 
-// Placeholder para aba amigos (tabela de amizades não existe ainda)
-const AmigosBreve = memo(function AmigosBreve() {
+// Aba Amigos — mostra lista de amigos ordenados por ranking
+const AmigosTab = memo(function AmigosTab({ usuarioId, onAbrirPerfil }: {
+  usuarioId: string | undefined;
+  onAbrirPerfil: (u: Usuario) => void;
+}) {
+  const { amigos, loading } = useAmigosRanking(usuarioId);
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: '40px 16px', color: 'var(--text-muted)' }}>
+        ⏳ Carregando amigos...
+      </div>
+    );
+  }
+
+  if (amigos.length === 0) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 300,
+        color: 'var(--text-muted)',
+      }}>
+        <span style={{ fontSize: 48, marginBottom: 12 }}>👥</span>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 18, marginBottom: 8, color: 'var(--text-primary)' }}>
+          Sem amigos ainda
+        </h2>
+        <p style={{ fontSize: 13, textAlign: 'center', maxWidth: 200 }}>
+          Você ainda não tem amigos adicionados
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: 300,
-      color: 'var(--text-muted)',
-    }}>
-      <span style={{ fontSize: 48, marginBottom: 12 }}>👥</span>
-      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 18, marginBottom: 8, color: 'var(--text-primary)' }}>
-        Em breve
-      </h2>
-      <p style={{ fontSize: 13, textAlign: 'center', maxWidth: 200 }}>
-        O ranking de amigos estará disponível em breve
-      </p>
-    </div>
+    <>
+      {amigos.map((amigo) => (
+        <GlobalCard
+          key={amigo.id}
+          item={{
+            posicao: amigo.ranking,
+            usuario: amigo,
+            pontos: 0, // TODO: adicionar pontos de hoje ou semanal
+          }}
+          isMe={false}
+          onPress={onAbrirPerfil}
+        />
+      ))}
+    </>
   );
 });
 
@@ -276,7 +308,7 @@ export function RankingScreen() {
         )}
 
         {/* ── ABA AMIGOS ── */}
-        {aba === 'amigos' && <AmigosBreve />}
+        {aba === 'amigos' && <AmigosTab usuarioId={usuario?.id} onAbrirPerfil={abrirPerfilGlobal} />}
       </div>
 
     </div>

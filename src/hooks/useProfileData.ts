@@ -209,3 +209,72 @@ export function usePerfilPublico(userId: string | undefined) {
 
   return { usuario, loading };
 }
+
+// ── Ranking de Amigos: lista de amigos ordenados por ranking ────
+export function useAmigosRanking(userId: string | undefined) {
+  const [amigos, setAmigos] = useState<Usuario[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+
+    // Busca na tabela amizades todos os amigos do usuário
+    supabase
+      .from('amizades')
+      .select('perfil_id_1, perfil_id_2')
+      .or(`perfil_id_1.eq.${userId},perfil_id_2.eq.${userId}`)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then(({ data: amigosData, error: amigosError }: any) => {
+        if (amigosError || !amigosData) {
+          console.warn('Erro ao buscar amizades:', amigosError);
+          setLoading(false);
+          return;
+        }
+
+        // Extrai os IDs dos amigos (o outro lado da amizade)
+        const amigoIds = amigosData.map((a: any) =>
+          a.perfil_id_1 === userId ? a.perfil_id_2 : a.perfil_id_1
+        );
+
+        if (amigoIds.length === 0) {
+          setAmigos([]);
+          setLoading(false);
+          return;
+        }
+
+        // Busca dados dos amigos na tabela ranking
+        const placeholders = amigoIds.map(() => '?').join(',');
+        supabase
+          .from('ranking')
+          .select('id, nick, avatar_url, nivel, moedas, vitorias, derrotas, partidas_totais, posicao_ranking, pontuacao_total')
+          .in('id', amigoIds)
+          .order('pontuacao_total', { ascending: false })
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .then(({ data: rankingData, error: rankingError }: any) => {
+            if (!rankingError && rankingData) {
+              setAmigos(rankingData.map((r: any) => ({
+                id: r.id,
+                nome: r.nick,
+                nick: r.nick,
+                avatar: r.avatar_url ?? `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${r.nick}&backgroundColor=1a1040`,
+                nivel: r.nivel ?? 1,
+                xp: 0,
+                xpProximoNivel: 1000,
+                moedas: r.moedas ?? 0,
+                gemas: 0,
+                ranking: r.posicao_ranking ?? 0,
+                vitorias: r.vitorias ?? 0,
+                derrotas: r.derrotas ?? 0,
+                partidas: r.partidas_totais ?? 0,
+              })));
+            }
+            setLoading(false);
+          });
+      });
+  }, [userId]);
+
+  return { amigos, loading };
+}
