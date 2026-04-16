@@ -1,0 +1,24 @@
+{
+  "bug_id": "ARENA-PROFILE-STATS-CLOSES",
+  "timestamp": "2026-04-16T23:35:00Z",
+  "tipo": "after",
+  "status": "✅ FIXED",
+  "bug_description": "Profile overlay janela fecha quando clica na aba Stats",
+  "root_cause": "Backdrop onClick={popOverlay} capturava events do modal-sheet",
+  "solution_applied": [
+    "Adicionar handler inteligente no backdrop: handleBackdropClick",
+    "Handler verifica se click foi NO backdrop, não em children",
+    "Modal tem onClick={(e) => e.stopPropagation()} para isolar eventos",
+    "pointerEvents: 'auto' em backdrop e modal para garantir captura correta"
+  ],
+  "files_modified": [
+    "src/overlays/ProfileOverlay.tsx"
+  ],
+  "changes": {
+    "line_852_862": "Adicionado handleBackdropClick com currentTarget check",
+    "line_876_881": "Backdrop: onChange={handleBackdropClick}, pointerEvents: 'auto'",
+    "line_883_898": "Modal: onClick={stopPropagation}, pointerEvents: 'auto'"
+  },
+  "testing_notes": "Teste no navegador: clique em Estatísticas, a janela deve ficar aberta",
+  "typescript_check": "✅ PASS — sem erros"
+}

@@ -1,0 +1,17 @@
+{
+  "bug_id": "ARENA-PROFILE-STATS-CLOSES",
+  "timestamp": "2026-04-16T23:30:00Z",
+  "tipo": "before",
+  "bug_description": "Profile overlay janela fecha quando clica na aba Stats",
+  "symptom": "Clica em 'Estatísticas' → janela flutuante desaparece completamente",
+  "affected_file": "src/overlays/ProfileOverlay.tsx",
+  "affected_lines": "875-947",
+  "root_cause": "Backdrop (fundo escuro) tem onClick={popOverlay} e está capturando clicks da aba Stats",
+  "css_issue": "index.css linha 419-425 — overlay-backdrop é position: absolute; inset: 0 (ocupa toda a tela)",
+  "html_structure": {
+    "overlay": "position: fixed; inset: 0; z-index: 900",
+    "backdrop": "position: absolute; inset: 0; onClick={popOverlay}",
+    "modal_sheet": "z-index: 1 (dentro do overlay)"
+  },
+  "fix_strategy": "Garantir que backdrop SÓ feche quando clicar FORA do modal-sheet, não dentro dele"
+}
