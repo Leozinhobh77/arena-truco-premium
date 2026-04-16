@@ -21,6 +21,14 @@ describe('CLI Parser', () => {
     expect(options.projectPath).toBe('/path/to/project');
   });
 
+  it('should parse --database flag', () => {
+    const argv = ['node', 'cli.ts', '/path/to/project', '--database'];
+    const options = parseArgs(argv);
+
+    expect(options.database).toBe(true);
+    expect(options.projectPath).toBe('/path/to/project');
+  });
+
   it('should parse --monitor flag', () => {
     const argv = ['node', 'cli.ts', '/path/to/project', '--monitor'];
     const options = parseArgs(argv);

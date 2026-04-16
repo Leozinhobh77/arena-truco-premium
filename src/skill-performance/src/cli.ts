@@ -6,20 +6,24 @@
 import { CLIOptions } from './types';
 import { AnalyzerEngineImpl } from './analyzer/engine';
 import { createLighthouseAnalyzer } from './analyzers/lighthouse';
+import { createDatabaseAnalyzer } from './analyzers/database';
 import { formatAnalysisOutput } from './formatters/cli-output';
 import * as path from 'path';
+import * as fs from 'fs';
 
 /**
  * Parse command-line arguments
  * Usage:
  *   skill-performance [project-path] --analyze-architecture
  *   skill-performance [project-path] --lighthouse
+ *   skill-performance [project-path] --database
  *   skill-performance [project-path] --monitor
  */
-function parseArgs(argv: string[]): CLIOptions & { projectPath?: string } {
-  const options: CLIOptions & { projectPath?: string } = {
+function parseArgs(argv: string[]): CLIOptions & { projectPath?: string; database?: boolean } {
+  const options: CLIOptions & { projectPath?: string; database?: boolean } = {
     analyzeArchitecture: false,
     lighthouse: false,
+    database: false,
     monitor: false,
     verbose: false,
   };
@@ -33,6 +37,8 @@ function parseArgs(argv: string[]): CLIOptions & { projectPath?: string } {
       options.analyzeArchitecture = true;
     } else if (arg === '--lighthouse') {
       options.lighthouse = true;
+    } else if (arg === '--database') {
+      options.database = true;
     } else if (arg === '--monitor') {
       options.monitor = true;
     } else if (arg === '--verbose') {
@@ -71,7 +77,7 @@ async function main(): Promise<void> {
     const projectPath = validateProjectPath(options.projectPath);
 
     // Default to --analyze-architecture if no option specified
-    if (!options.analyzeArchitecture && !options.lighthouse && !options.monitor) {
+    if (!options.analyzeArchitecture && !options.lighthouse && !options.database && !options.monitor) {
       options.analyzeArchitecture = true;
     }
 
@@ -79,6 +85,8 @@ async function main(): Promise<void> {
       await handleAnalyzeArchitecture(projectPath, options.verbose || false);
     } else if (options.lighthouse) {
       await handleLighthouseAnalysis(projectPath, options.verbose || false);
+    } else if (options.database) {
+      await handleDatabaseAnalysis(projectPath, options.verbose || false);
     } else if (options.monitor) {
       console.log('🚧 Monitoring — coming in Sprint 4');
     }
@@ -162,6 +170,113 @@ async function handleLighthouseAnalysis(projectPath: string, verbose: boolean): 
 
   console.log(`\n⏱️  Analysis completed in ${elapsed}s`);
   console.log(`📁 Report timestamp: ${result.timestamp}`);
+}
+
+/**
+ * Handle --database command
+ * Static database N+1 and optimization analysis
+ */
+async function handleDatabaseAnalysis(projectPath: string, verbose: boolean): Promise<void> {
+  console.log(`\n💾 Database Query Analysis`);
+  console.log(`📁 Project: ${projectPath}`);
+  console.log('🔍 Scanning for N+1 queries and optimization opportunities...\n');
+
+  const analyzer = createDatabaseAnalyzer();
+  const startTime = Date.now();
+
+  // Recursively find all TypeScript/JavaScript files
+  const files = findSourceFiles(projectPath);
+  const allIssues: any[] = [];
+
+  for (const file of files) {
+    try {
+      const content = fs.readFileSync(file, 'utf-8');
+      const issues = analyzer.analyze(content, file);
+      allIssues.push(...issues);
+    } catch (error) {
+      // Silently skip files that can't be read
+      continue;
+    }
+  }
+
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+
+  // Format database output
+  console.log('═══════════════════════════════════════════════════');
+  console.log('📊 DATABASE QUERY ANALYSIS');
+  console.log('═══════════════════════════════════════════════════');
+
+  if (allIssues.length === 0) {
+    console.log('✅ No N+1 queries or optimization opportunities detected');
+  } else {
+    // Group by severity
+    const highSeverity = allIssues.filter((i: any) => i.severity === 'HIGH');
+    const mediumSeverity = allIssues.filter((i: any) => i.severity === 'MEDIUM');
+    const lowSeverity = allIssues.filter((i: any) => i.severity === 'LOW');
+
+    console.log(`🔴 HIGH Priority: ${highSeverity.length} issues`);
+    console.log(`🟡 MEDIUM Priority: ${mediumSeverity.length} issues`);
+    console.log(`🟢 LOW Priority: ${lowSeverity.length} issues`);
+
+    if (verbose) {
+      console.log('\n═══════════════════════════════════════════════════');
+      console.log('📋 ISSUE DETAILS');
+      console.log('═══════════════════════════════════════════════════');
+
+      allIssues.slice(0, 10).forEach((issue: any, idx: number) => {
+        console.log(`\n${idx + 1}. [${issue.severity}] ${issue.type}`);
+        console.log(`   📁 ${issue.file}:${issue.line}`);
+        console.log(`   💬 ${issue.message}`);
+        if (issue.recommendation) {
+          console.log(`   ✨ Fix: ${issue.recommendation}`);
+        }
+        if (issue.ormType) {
+          console.log(`   🗄️  ORM: ${issue.ormType}`);
+        }
+      });
+
+      if (allIssues.length > 10) {
+        console.log(`\n... and ${allIssues.length - 10} more issues`);
+      }
+    }
+  }
+
+  console.log(`\n⏱️  Analysis completed in ${elapsed}s`);
+  console.log(`📊 Total issues found: ${allIssues.length}`);
+}
+
+/**
+ * Find all source files in project
+ * @private
+ */
+function findSourceFiles(projectPath: string): string[] {
+  const files: string[] = [];
+
+  function walk(dir: string) {
+    try {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        // Skip node_modules and hidden directories
+        if (entry.name === 'node_modules' || entry.name.startsWith('.')) {
+          continue;
+        }
+
+        const fullPath = path.join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+          walk(fullPath);
+        } else if (entry.isFile() && /\.(ts|js|tsx|jsx)$/.test(entry.name)) {
+          files.push(fullPath);
+        }
+      }
+    } catch (error) {
+      // Silently skip directories that can't be read
+    }
+  }
+
+  walk(projectPath);
+  return files;
 }
 
 // Run if this is the main module

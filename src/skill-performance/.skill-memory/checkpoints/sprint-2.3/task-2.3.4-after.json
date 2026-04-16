@@ -1,0 +1,61 @@
+{
+  "task": "2.3.4",
+  "sprint": 2,
+  "phase": "Add --database flag to CLI",
+  "timestamp": "2026-04-15T19:45:00Z",
+  "tipo": "after",
+  "status": "✅ COMPLETE",
+  "arquivos_modificados": [
+    {
+      "caminho": "src/cli.ts",
+      "delta": "+120 linhas",
+      "descricao": "Added --database flag parsing, handleDatabaseAnalysis(), findSourceFiles() utility"
+    },
+    {
+      "caminho": "tests/cli.test.ts",
+      "delta": "+8 linhas",
+      "descricao": "Added test case for --database flag parsing"
+    }
+  ],
+  "cli_enhancements": {
+    "new_flag": "--database",
+    "usage": "skill-performance [project-path] --database [--verbose]",
+    "functionality": "Scans project for N+1 queries, batch loading opportunities, ORM hints"
+  },
+  "implementation_details": {
+    "parseArgs": "✅ Updated to parse --database flag",
+    "main": "✅ Added database analysis in CLI flow",
+    "handleDatabaseAnalysis": "✅ New function that recursively scans source files and reports issues",
+    "findSourceFiles": "✅ Utility to find all .ts/.js/.tsx/.jsx files (excluding node_modules)",
+    "output_formatting": "✅ Groups issues by severity (HIGH/MEDIUM/LOW)",
+    "verbose_mode": "✅ Shows top 10 issues with detailed recommendations"
+  },
+  "features": {
+    "recursive_scanning": "✅ Finds all source files recursively",
+    "severity_grouping": "✅ Reports by HIGH/MEDIUM/LOW priority",
+    "orm_detection": "✅ Shows which ORM issues apply to (Prisma/TypeORM/Sequelize)",
+    "recommendations": "✅ Each issue includes specific fix recommendations",
+    "file_tracking": "✅ Shows file path and line number for each issue",
+    "query_estimation": "✅ Estimates impact (number of N+1 queries)"
+  },
+  "test_results": {
+    "total_tests": 10,
+    "passing_tests": 10,
+    "failing_tests": 0
+  },
+  "build_status": {
+    "tsc": "✅ PASS",
+    "npm_build": "✅ PASS",
+    "typescript_errors": 0
+  },
+  "security_compliance": {
+    "SEC-02": "✅ Path validation on all inputs",
+    "SEC-07": "✅ Generic error messages"
+  },
+  "usage_examples": {
+    "basic": "skill-performance ./my-project --database",
+    "verbose": "skill-performance ./my-project --database --verbose",
+    "combined": "skill-performance ./my-project --database --lighthouse --verbose"
+  },
+  "notes": "Database analysis now fully integrated into CLI. Users can analyze N+1 queries, batch loading opportunities, and ORM-specific hints from command line. Ready for Sprint 3 integration with correlation engine."
+}
