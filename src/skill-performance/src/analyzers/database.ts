@@ -251,7 +251,7 @@ export class DatabaseAnalyzerImpl {
   }
 
   /**
-   * detectBatchLoadingOpportunities — Suggest Promise.all() usage
+   * detectBatchLoadingOpportunities — Suggest advanced batch loading strategies
    * @private
    */
   private detectBatchLoadingOpportunities(
@@ -260,7 +260,7 @@ export class DatabaseAnalyzerImpl {
   ): DatabaseQueryIssue[] {
     const issues: DatabaseQueryIssue[] = [];
 
-    // Detect awaits without Promise.all
+    // Strategy 1: Sequential awaits in loops (most common)
     const asyncLoops = content.matchAll(
       /(?:for|forEach|map)\s*\([^)]*\)\s*{\s*(?:const|let)\s+\w+\s*=\s*await\s+/gm
     );
@@ -274,13 +274,70 @@ export class DatabaseAnalyzerImpl {
         column: 1,
         severity: 'MEDIUM',
         type: 'n1_query',
-        message: 'Sequential async operations — consider Promise.all()',
+        message: 'Sequential async operations — use Promise.all() for parallel execution',
         recommendation:
-          'Collect all promises and await with Promise.all() for batch execution',
+          'Replace with: const results = await Promise.all(items.map(item => db.query(item)))',
+        estimatedQueries: this.estimateQueryCount(content, match.index!),
+      });
+    }
+
+    // Strategy 2: Multiple sequential awaits outside loops
+    const multipleAwaits = content.match(
+      /await\s+[\w.]+\.(?:find|query|get)[\s\S]*?\n[\s]*const\s+\w+\s*=\s*await\s+[\w.]+\.(?:find|query|get)/gm
+    );
+
+    if (multipleAwaits && multipleAwaits.length > 0) {
+      const firstIndex = content.indexOf(multipleAwaits[0]!);
+      const lineNumber = content.substring(0, firstIndex).split('\n').length;
+
+      issues.push({
+        file: filePath,
+        line: lineNumber,
+        column: 1,
+        severity: 'MEDIUM',
+        type: 'n1_query',
+        message: 'Multiple sequential database queries — can be parallelized',
+        recommendation:
+          'Use Promise.all([query1, query2, query3]) to execute in parallel and reduce latency',
+      });
+    }
+
+    // Strategy 3: Detect potential DataLoader pattern opportunity
+    const dataLoaderOpportunity = this.detectDataLoaderPattern(content);
+    if (dataLoaderOpportunity) {
+      issues.push({
+        file: filePath,
+        line: dataLoaderOpportunity.line,
+        column: 1,
+        severity: 'LOW',
+        type: 'n1_query',
+        message: 'Consider using DataLoader for recursive/nested queries',
+        recommendation:
+          'DataLoader pattern caches and batches requests automatically. Ideal for GraphQL APIs.',
       });
     }
 
     return issues;
+  }
+
+  /**
+   * detectDataLoaderPattern — Detect scenarios where DataLoader would help
+   * @private
+   */
+  private detectDataLoaderPattern(content: string): { line: number } | null {
+    // Look for nested query patterns: querying for each relation result
+    const nestedQueries = content.match(
+      /\.map\s*\([^)]*\)\s*{\s*return\s+[\w.]+\.(?:find|query)[\s\S]{1,200}\.map\s*\(/gm
+    );
+
+    if (nestedQueries && nestedQueries.length > 0) {
+      const firstIndex = content.indexOf(nestedQueries[0]!);
+      return {
+        line: content.substring(0, firstIndex).split('\n').length,
+      };
+    }
+
+    return null;
   }
 }
 
