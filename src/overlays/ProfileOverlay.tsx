@@ -800,20 +800,20 @@ export function ProfileOverlay() {
   const { usuario } = useAuthStore();
   const [activeTab, setActiveTab] = useState(0);
 
-  if (!usuario) return null;
-
+  // TODOS os hooks ANTES de qualquer return condicional
   const props = getActiveOverlayProps();
   const usuarioId = props.usuarioId as string | undefined;
   const usuarioDireto = props.usuario as Usuario | undefined;
   const editMode = !!props.editMode;
 
-  // DEBUG: log para verificar o que está chegando
-  console.log('ProfileOverlay props:', { usuarioId, usuarioDireto, props });
-
-  // Hook para buscar perfil público (se for terceiro)
+  // Hook para buscar perfil público (se for terceiro) - SEMPRE chamado
   const { usuario: usuarioPublico, loading } = usePerfilPublico(usuarioId && !usuarioDireto ? usuarioId : undefined);
 
-  // DEBUG: log para verificar se hook está funcionando
+  // AGORA faz os returns condicionais DEPOIS dos hooks
+  if (!usuario) return null;
+
+  // DEBUG: log para verificar o que está chegando
+  console.log('ProfileOverlay props:', { usuarioId, usuarioDireto, props });
   console.log('ProfileOverlay state:', { usuarioPublico, loading, usuarioDireto, usuarioLogado: usuario?.nick });
 
   // Prioridade: objeto direto > busca por ID/hook > usuario logado
