@@ -155,6 +155,12 @@ export const useAuthStore = create<AuthState>()(
           }
 
           set({ usuario, logado: true, carregando: false });
+
+          // 🟢 Atualizar status para 'disponivel' quando faz login
+          await (supabase as any).from('profiles').update({
+            status_atual: 'disponivel',
+            atualizado_status_em: new Date().toISOString(),
+          }).eq('id', data.user.id).catch(() => {});
         } catch (err: unknown) {
           const msg = err instanceof Error ? err.message : 'Erro desconhecido';
           set({ carregando: false, erro: traduzirErro(msg) });
@@ -291,6 +297,16 @@ export const useAuthStore = create<AuthState>()(
           }
 
           set({ usuario, logado: true, carregando: false });
+
+          // 🟢 Atualizar status para 'disponivel' ao retomar sessão
+          try {
+            await (supabase as any).from('profiles').update({
+              status_atual: 'disponivel',
+              atualizado_status_em: new Date().toISOString(),
+            }).eq('id', session.user.id);
+          } catch {
+            // silenciar erro — não bloquear inicialização
+          }
         } catch {
           set({ carregando: false, logado: false });
         }
