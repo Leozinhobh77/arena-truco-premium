@@ -69,10 +69,22 @@ export function usePontuacaoSemanal(userId: string | undefined) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then(({ data, error }: any) => {
         if (!error && data) {
-          setPontuacao(data.map((p: any) => {
-            const [, mes, dia] = (p.data as string).split('-');
-            return { data: `${dia}/${mes}`, pontos: p.pontos as number };
-          }));
+          // Criar array de 7 dias completos (mesmo que não tenha dados)
+          const diasCompletos: PontuacaoDia[] = [];
+          for (let i = 0; i < 7; i++) {
+            const data_atual = new Date();
+            data_atual.setDate(data_atual.getDate() - (6 - i));
+            const dataFormatada = data_atual.toISOString().split('T')[0];
+            const [, mes, dia] = dataFormatada.split('-');
+
+            // Procura dados para este dia
+            const dadosDia = data.find((p: any) => p.data === dataFormatada);
+            diasCompletos.push({
+              data: `${dia}/${mes}`,
+              pontos: dadosDia ? (dadosDia.pontos as number) : 0
+            });
+          }
+          setPontuacao(diasCompletos);
         }
         setLoading(false);
       });
@@ -140,7 +152,12 @@ export function useRankingGlobal() {
       .limit(100)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then(({ data, error }: any) => {
-        if (!error && data) {
+        if (error) {
+          console.warn('Erro ao buscar ranking global:', error.message ?? error);
+          setLoading(false);
+          return;
+        }
+        if (data) {
           setRanking(data.map((r: any) => ({
             posicao: r.posicao_ranking ?? 0,
             pontos: r.pontuacao_total ?? r.moedas ?? 0,
@@ -179,7 +196,7 @@ export function usePerfilPublico(userId: string | undefined) {
     Promise.all([
       supabase.from('profiles').select('*').eq('id', userId).single(),
       supabase.from('ranking')
-        .select('vitorias, derrotas, partidas_totais, posicao_ranking')
+        .select('vitorias, derrotas, partidas_totais, posicao_ranking, pontuacao_total')
         .eq('id', userId).single(),
     ])
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -195,12 +212,14 @@ export function usePerfilPublico(userId: string | undefined) {
             nivel: p.nivel,
             xp: p.xp,
             xpProximoNivel: p.xp_proximo,
-            moedas: p.moedas,
+            moedas: r?.pontuacao_total ?? 0,  // ← Usar PONTUAÇÃO de ranking, não moedas
             gemas: p.gemas,
             ranking: r?.posicao_ranking ?? 0,
             vitorias: r?.vitorias ?? 0,
             derrotas: r?.derrotas ?? 0,
             partidas: r?.partidas_totais ?? 0,
+            statusMsg: p.status_msg ?? undefined,
+            createdAt: p.criado_em,
           });
         }
         setLoading(false);
@@ -221,22 +240,27 @@ export function useAmigosRanking(userId: string | undefined) {
       return;
     }
 
-    // Busca na tabela amizades todos os amigos do usuário
+    // Busca na tabela amizades todos os amigos ACEITOS do usuário
     supabase
       .from('amizades')
-      .select('perfil_id_1, perfil_id_2')
-      .or(`perfil_id_1.eq.${userId},perfil_id_2.eq.${userId}`)
+      .select('remetente_id, destinatario_id')
+      .eq('status', 'aceita')
+      .or(`remetente_id.eq.${userId},destinatario_id.eq.${userId}`)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then(({ data: amigosData, error: amigosError }: any) => {
         if (amigosError || !amigosData) {
-          console.warn('Erro ao buscar amizades:', amigosError);
+          // Tabela amizades pode não existir ainda — não é erro crítico
+          if (amigosError?.code !== '42P01') {
+            console.warn('Erro ao buscar amizades:', amigosError?.message ?? amigosError);
+          }
+          setAmigos([]);
           setLoading(false);
           return;
         }
 
         // Extrai os IDs dos amigos (o outro lado da amizade)
         const amigoIds = amigosData.map((a: any) =>
-          a.perfil_id_1 === userId ? a.perfil_id_2 : a.perfil_id_1
+          a.remetente_id === userId ? a.destinatario_id : a.remetente_id
         );
 
         if (amigoIds.length === 0) {
@@ -246,7 +270,6 @@ export function useAmigosRanking(userId: string | undefined) {
         }
 
         // Busca dados dos amigos na tabela ranking
-        const placeholders = amigoIds.map(() => '?').join(',');
         supabase
           .from('ranking')
           .select('id, nick, avatar_url, nivel, moedas, vitorias, derrotas, partidas_totais, posicao_ranking, pontuacao_total')
@@ -254,7 +277,9 @@ export function useAmigosRanking(userId: string | undefined) {
           .order('pontuacao_total', { ascending: false })
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .then(({ data: rankingData, error: rankingError }: any) => {
-            if (!rankingError && rankingData) {
+            if (rankingError) {
+              console.warn('Erro ao buscar ranking de amigos:', rankingError?.message ?? rankingError);
+            } else if (rankingData) {
               setAmigos(rankingData.map((r: any) => ({
                 id: r.id,
                 nome: r.nick,
