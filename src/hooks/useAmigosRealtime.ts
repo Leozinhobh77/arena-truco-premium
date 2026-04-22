@@ -120,17 +120,26 @@ export function useAmigosRealtime(meuId: string | undefined) {
 
   // Iniciar subscription Realtime (monitora mudanças em tempo real)
   const iniciarSubscription = useCallback((amigoIds: string[]) => {
-    if (!idAtual || amigoIds.length === 0) return;
+    if (!idAtual || amigoIds.length === 0) {
+      console.log('🔍 [Realtime] Abortando: idAtual=', idAtual, 'amigoIds.length=', amigoIds.length);
+      return;
+    }
+
+    console.log('🔍 [Realtime] Iniciando subscription para amigos:', amigoIds);
 
     // Remover subscription anterior se existir
     if (subscriptionRef.current) {
+      console.log('🔍 [Realtime] Removendo subscription anterior');
       (supabase as any).removeChannel(subscriptionRef.current);
       subscriptionRef.current = null;
     }
 
     // Subscribe em mudanças na tabela profiles (qualquer mudança)
+    const channelName = `amigos-realtime-${idAtual}`;
+    console.log('🔍 [Realtime] Criando channel:', channelName);
+
     subscriptionRef.current = (supabase as any)
-      .channel(`amigos-realtime-${idAtual}`)
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -140,13 +149,16 @@ export function useAmigosRealtime(meuId: string | undefined) {
           filter: `id=in.(${amigoIds.join(',')})`,
         },
         (payload: any) => {
+          console.log('🔍 [Realtime] UPDATE recebido:', payload);
           // Quando status_atual muda, atualiza INSTANTANEAMENTE (<100ms)
           if (payload.new?.status_atual) {
+            console.log('🔍 [Realtime] Chamando atualizarAmigoRealtime para:', payload.new.id, 'status:', payload.new.status_atual);
             atualizarAmigoRealtime(payload.new.id, payload.new.status_atual);
           }
         }
       )
       .subscribe((status: string) => {
+        console.log('🔍 [Realtime] Subscription status:', status);
         if (status === 'SUBSCRIBED') {
           console.log('✅ Realtime subscription ativa — Status vai atualizar em tempo real!');
         } else if (status === 'CLOSED') {
@@ -157,10 +169,12 @@ export function useAmigosRealtime(meuId: string | undefined) {
 
   // Atualizar status de um amigo em tempo real (instantâneo)
   const atualizarAmigoRealtime = useCallback((amigoId: string, novoStatus: string) => {
-    setAmigos((prev) =>
-      prev.map((a) => {
+    console.log('🔍 [atualizarAmigoRealtime] Atualizando amigo:', amigoId, 'novo status:', novoStatus);
+    setAmigos((prev) => {
+      const resultado = prev.map((a) => {
         if (a.id === amigoId) {
           const statusValido = (novoStatus as 'disponivel' | 'jogando' | 'offline') || 'offline';
+          console.log('🔍 [atualizarAmigoRealtime] Encontrado amigo, atualizando:', a.nick, '->', statusValido);
           return {
             ...a,
             statusAmigo: statusValido,
@@ -169,8 +183,10 @@ export function useAmigosRealtime(meuId: string | undefined) {
           };
         }
         return a;
-      })
-    );
+      });
+      console.log('🔍 [atualizarAmigoRealtime] Estado atualizado. Amigos agora:', resultado);
+      return resultado;
+    });
   }, []);
 
   // Limpar subscription ao desmontar
