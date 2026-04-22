@@ -111,6 +111,9 @@ export function useStatusAmizade(outroId: string | undefined) {
         if (data?.[0]) {
           setEuEnviei(data[0].remetente_id === meuId);
         }
+      })
+      .catch((err) => {
+        console.warn('Erro ao verificar quem enviou a solicitação:', err);
       });
   }, [meuId, outroId, status]);
 
