@@ -1,0 +1,10 @@
+{
+  "task": "A.1",
+  "sprint": "A",
+  "timestamp": "2026-04-15T00:00:00Z",
+  "tipo": "before",
+  "arquivos_que_serao_alterados": [
+    { "caminho": "src/types.ts", "linhas_antes": 121 }
+  ],
+  "working_memory_snapshot": { "health_score": 97, "sprint_numero": "A" }
+}

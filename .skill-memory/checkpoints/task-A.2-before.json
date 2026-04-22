@@ -1,0 +1,9 @@
+{
+  "task": "A.2",
+  "sprint": "A",
+  "timestamp": "2026-04-15T00:00:00Z",
+  "tipo": "before",
+  "arquivos_que_serao_alterados": [
+    { "caminho": "src/mockData.ts", "linhas_antes": 196 }
+  ]
+}

@@ -1,29 +1,31 @@
 {
   "__metadata": {
     "schema_version": "4.0",
-    "forge_version": "4.0",
+    "forge_version": "5.2",
     "app_name": "Arena Truco Premium",
     "app_path": "c:\\Users\\Usuário\\Desktop\\Curso Claude Code-Jhonatan de Souza\\Projetos Agente Forge\\Meus Projetos\\arena-truco-premium",
     "created_at": "2026-04-12T15:00:00Z",
-    "updated_at": "2026-04-12T20:31:00Z"
+    "updated_at": "2026-04-22T03:05:00Z"
   },
   "__essenciais": {
     "objetivo_do_app": "Um True-PWA de Truco Premium estilo Native App (Clash Royale UI), com robôs Gemini e gráficos Obsidian & Gold nível Apple.",
-    "stack_principal": "React 19 + TypeScript + Vite 8 + Tailwind v4 + Framer Motion + Zustand",
-    "fase_atual": "skill-construtor",
+    "stack_principal": "React 19 + TypeScript + Vite 8 + Framer Motion + Zustand + Supabase",
+    "fase_atual": "skill-construtor/sprint-3",
     "sentinela_ativa": false,
     "sentinela_janela": "Abrir /skill-sentinela em segundo terminal"
   },
   "__foco_atual": {
-    "sprint_numero": 2,
-    "sprint_nome": "Sprint 2: Core Engine & Mesa de Jogo",
-    "task_total": 6,
-    "task_atual": 6,
+    "sprint_numero": 4,
+    "sprint_nome": "Sprint 4.2: Ranking Refatorizado (4 abas)",
+    "task_total": 4,
+    "task_atual": 3,
     "arquivo_em_edicao": null,
-    "status": "production_ready",
+    "status": "sprint_4.2_concluida_aguardando_auditoria",
     "file_lock_ativo": false,
     "lock_inicio": null,
-    "aguardando_auditoria": false
+    "aguardando_auditoria": true,
+    "checkpoint_before": ".skill-memory/checkpoints/sprint-4.2-before.json",
+    "checkpoint_after": ".skill-memory/checkpoints/sprint-4.2-after.json"
   },
   "__ponteiros": {
     "sprint_journal": ".skill-memory/sprint-journal.json",
@@ -35,22 +37,105 @@
   "__progresso": {
     "sprints_total": 5,
     "tasks_total": 20,
-    "tasks_concluidas": 11,
-    "percentual": 55,
-    "health_score": 100
+    "tasks_concluidas": 16,
+    "percentual": 80,
+    "health_score": 100,
+    "build_status": "PASSING (Exit 0)",
+    "ts_errors": 0,
+    "last_build": "2026-04-15T17:53:00Z"
+  },
+  "__supabase": {
+    "projeto_url": "https://pblwmavgqdsiwphtetei.supabase.co",
+    "auth": "Email + Senha (Supabase Auth real)",
+    "tabelas": ["profiles", "partidas", "pontuacao_diaria", "badges_catalogo", "conquistas", "amizades"],
+    "views": ["ranking"],
+    "funcoes": ["handle_new_user", "inicializar_conquistas", "registrar_pontos_dia", "handle_updated_at"],
+    "rls": "ATIVO em todas as tabelas",
+    "seed": {
+      "bots_criados": 30,
+      "partidas_criadas": 594,
+      "pontuacoes_diarias": 420,
+      "conquistas_atualizadas": 240,
+      "comando": "npm run seed"
+    }
   },
   "__arquivos_implementados": {
-    "core": ["src/App.tsx", "src/main.tsx", "src/index.css", "src/types.ts", "src/mockData.ts"],
-    "screens": ["src/screens/LoginScreen.tsx", "src/screens/ArenaScreen.tsx", "src/screens/LojaScreen.tsx", "src/screens/ModosScreen.tsx", "src/screens/RankingScreen.tsx", "src/screens/ClansScreen.tsx"],
-    "overlays": ["src/overlays/SalasOverlay.tsx", "src/overlays/GameOverlay.tsx"],
-    "stores": ["src/stores/useAuthStore.ts", "src/stores/useNavigationStore.ts"],
-    "total_arquivos": 15,
-    "total_bytes": "~130KB"
+    "core": [
+      "src/App.tsx",
+      "src/main.tsx",
+      "src/index.css",
+      "src/types.ts",
+      "src/mockData.ts"
+    ],
+    "screens": [
+      "src/screens/LoginScreen.tsx",
+      "src/screens/ArenaScreen.tsx",
+      "src/screens/LojaScreen.tsx",
+      "src/screens/ModosScreen.tsx",
+      "src/screens/RankingScreen.tsx",
+      "src/screens/ClansScreen.tsx"
+    ],
+    "overlays": [
+      "src/overlays/SalasOverlay.tsx",
+      "src/overlays/GameOverlay.tsx",
+      "src/overlays/AmigosOnlineOverlay.tsx",
+      "src/overlays/ProfileOverlay.tsx"
+    ],
+    "stores": [
+      "src/stores/useAuthStore.ts",
+      "src/stores/useNavigationStore.ts",
+      "src/stores/useGameStore.ts"
+    ],
+    "lib": [
+      "src/lib/supabase.ts",
+      "src/lib/supabase.types.ts"
+    ],
+    "hooks": [
+      "src/hooks/useProfileData.ts",
+      "src/hooks/useAmizade.ts"
+    ],
+    "scripts": [
+      "scripts/seed.mjs"
+    ],
+    "config": [
+      ".env.local",
+      "package.json",
+      "vite.config.ts"
+    ],
+    "total_arquivos": 28,
+    "total_bytes": "~230KB"
+  },
+  "__sprint_3_concluida": {
+    "data": "2026-04-15",
+    "itens_entregues": [
+      "✅ Banco de dados criado (5 tabelas + 1 view + 4 funções + triggers)",
+      "✅ Autenticação real Supabase (signUp/signIn/logout/sessão persistente)",
+      "✅ LoginScreen com email+senha e toggle Entrar/Cadastrar",
+      "✅ useAuthStore completamente migrado de mock para Supabase",
+      "✅ App.tsx com inicializarSessao() e splash de loading",
+      "✅ Tipos TypeScript atualizados (supabase.types.ts)",
+      "✅ Hook useProfileData (3 hooks: partidas, pontuação, conquistas)",
+      "✅ ProfileOverlay: 3 abas conectadas ao banco (Stats, Conquistas, Meus Jogos)",
+      "✅ 30 bots criados (npm run seed) com 594 partidas e dados realistas"
+    ]
+  },
+  "__proxima_sprint": {
+    "sprint_numero": 4,
+    "sprint_nome": "Sprint 4: Jogo Online Real (Multiplayer)",
+    "tarefas_sugeridas": [
+      "Persistir resultado real de partidas no banco ao terminar jogo",
+      "Gravar pontuação diária automaticamente ao fim de partida",
+      "Lógica de conquistas automática (verificar e unlock badges)",
+      "RankingScreen conectado à VIEW ranking do Supabase",
+      "Sistema de salas online com Supabase Realtime"
+    ]
   },
   "__ideias_futuras": [
-    "Integração Socket.io para modo 2x2 com jogadores reais.",
-    "Sistema de ligas/patentes para ranqueamento.",
-    "Push-to-Talk com Gemini para transcrição de voz na mesa."
+    "IA nos bots (Gemini 2.0 Flash) para jogadas estratégicas de Truco",
+    "Socket.io/Supabase Realtime para modo 2x2 com jogadores reais",
+    "Sistema de ligas/patentes para ranqueamento sazonal",
+    "Push-to-Talk com Gemini para transcrição de voz na mesa",
+    "Torneios automáticos com bracket e premiações em moedas"
   ],
   "__historico_resumido": [
     {
@@ -68,17 +153,24 @@
       "resultado": "sucesso"
     },
     {
-      "evento": "Sprint 1 implementada: Shell SPA, 6 telas, 2 overlays, 2 stores, Design System Obsidian & Gold",
+      "evento": "Sprint 1: Shell SPA, 6 telas, 2 overlays, 2 stores, Design System Obsidian & Gold",
       "skill": "skill-construtor",
       "llm": "Claude Opus 4.6",
       "timestamp": "2026-04-12T20:05:00Z",
       "resultado": "sucesso"
     },
     {
-      "evento": "Re-sincronização da fundação via skill-inicializador (retomada)",
-      "skill": "skill-inicializador",
-      "llm": "Claude Opus 4.6 (Thinking)",
-      "timestamp": "2026-04-12T20:31:00Z",
+      "evento": "Sprint 2: Core Engine Truco, Mesa de Jogo, Mesa Overlay, Responsividade Híbrida",
+      "skill": "skill-forge-visual",
+      "llm": "Gemini 3 Flash",
+      "timestamp": "2026-04-12T23:25:00Z",
+      "resultado": "sucesso"
+    },
+    {
+      "evento": "Sprint 3: Integração Supabase completa — Auth real, 5 tabelas, 30 bots seed, 4 abas do perfil conectadas",
+      "skill": "skill-construtor/supabase",
+      "llm": "Claude Sonnet 4.6",
+      "timestamp": "2026-04-15T17:53:00Z",
       "resultado": "sucesso"
     }
   ]

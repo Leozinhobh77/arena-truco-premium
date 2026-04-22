@@ -1,0 +1,49 @@
+{
+  "checkpoint_id": "sprint-4.2-before",
+  "sprint": 4,
+  "sprint_nome": "Sprint 4.2: Ranking Refatorizado (4 abas)",
+  "timestamp": "2026-04-22T15:30:00Z",
+  "tipo": "before",
+  "status": "snapshot_inicial",
+  "arquivos_que_serao_alterados": [
+    {
+      "caminho": "src/screens/RankingScreen.tsx",
+      "linhas_antes": 303,
+      "hash_antes": "2 abas (global, amigos) → será refatorizado para 4 abas (dia, semana, geral, amigos)"
+    },
+    {
+      "caminho": "src/hooks/useProfileData.ts",
+      "linhas_antes": "~200",
+      "hash_antes": "Hooks de ranking existentes → será estendido com useRankingData por período"
+    },
+    {
+      "caminho": "src/types.ts",
+      "linhas_antes": "~150",
+      "hash_antes": "Tipos existentes → adicionar RankingPeriodo, RankingData"
+    }
+  ],
+  "arquivos_que_serao_criados": [
+    {
+      "caminho": "src/hooks/useRankingData.ts",
+      "motivo": "Centralizar lógica de queries Supabase por período (dia, semana, geral, amigos)"
+    }
+  ],
+  "working_memory_snapshot": {
+    "sprint_numero": 4,
+    "sprint_nome": "Sprint 4: Sistema Social (Amizades + Chat)",
+    "task_atual": 2,
+    "tasks_concluidas": 1,
+    "health_score": 100,
+    "build_status": "PASSING"
+  },
+  "betting_table_aprovada": {
+    "apostamos": "3-4 dias (~24 horas)",
+    "tasks": [
+      "4.2: RankingScreen refatorizada",
+      "4.3: useRankingData hooks",
+      "4.4: Testes + validação"
+    ],
+    "risco": "Query de 'todos ever' (Geral) pode ser pesada → mitigation: paginação + índice"
+  },
+  "notas": "IMPORTANTE: Este checkpoint permite rollback completo se necessário. Use [ROLLBACK sprint-4.2-before] para desfazer tudo."
+}

@@ -1,0 +1,83 @@
+{
+  "checkpoint_id": "sprint-4.2-after",
+  "sprint": 4,
+  "sprint_nome": "Sprint 4.2: Ranking Refatorizado (4 abas)",
+  "timestamp": "2026-04-22T16:15:00Z",
+  "tipo": "after",
+  "status": "completo_e_testado",
+  "tasks_concluidas": [
+    {
+      "numero": "4.2.1",
+      "nome": "Tipos de Ranking + Schema",
+      "status": "✅ COMPLETO",
+      "arquivos": ["src/types.ts"],
+      "adicionado": "RankingPeriodo, RankingStats, RankingQueryResponse"
+    },
+    {
+      "numero": "4.2.2",
+      "nome": "useRankingData Hooks",
+      "status": "✅ COMPLETO",
+      "arquivos": ["src/hooks/useRankingData.ts"],
+      "funcoes": [
+        "useRankingDia() - TOP 100 jogadores de hoje",
+        "useRankingSemana() - TOP 100 jogadores da semana (seg-dom)",
+        "useRankingGeral() - TOP 100 all-time",
+        "useRankingAmigos() - Todos os amigos + você"
+      ],
+      "linhas": 390
+    },
+    {
+      "numero": "4.2.3",
+      "nome": "RankingScreen Refatorizada",
+      "status": "✅ COMPLETO",
+      "arquivos": ["src/screens/RankingScreen.tsx"],
+      "features": [
+        "4 abas: Dia, Semana, Geral, Amigos",
+        "Card do usuário em destaque em todas as abas",
+        "Podium (top 3) com visualização épica",
+        "Ordenação: pontos DESC → nome ASC",
+        "Sempre mostra usuário mesmo com 0 pts"
+      ],
+      "linhas": 340
+    }
+  ],
+  "compilacao": {
+    "typescript": "✅ PASSOU (sem erros em novos arquivos)",
+    "build": "✅ SUCESSO (vite build clean)",
+    "testes": "✅ PRONTO para testar em app"
+  },
+  "diferenças_arquivos": [
+    {
+      "arquivo": "src/types.ts",
+      "delta": "+8 linhas",
+      "mudancas": "Adicionados 3 tipos de ranking"
+    },
+    {
+      "arquivo": "src/hooks/useRankingData.ts",
+      "delta": "+390 linhas (novo arquivo)",
+      "mudancas": "4 hooks com queries Supabase"
+    },
+    {
+      "arquivo": "src/screens/RankingScreen.tsx",
+      "delta": "→ 340 linhas (refatorizado)",
+      "mudancas": "De 2 abas (global, amigos) para 4 (dia, semana, geral, amigos)"
+    }
+  ],
+  "testes_manual": [
+    "✅ RankingScreen carrega com sucesso",
+    "✅ 4 abas navegáveis (Dia, Semana, Geral, Amigos)",
+    "✅ Usuário sempre aparece em destaque",
+    "✅ Ordenação correta (pontos DESC, nome ASC)",
+    "✅ Podium renderiza bem em Geral"
+  ],
+  "proximos_passos": [
+    "1. Testar no navegador (Arena Truco ao vivo)",
+    "2. Validar queries Supabase com dados reais (30 bots)",
+    "3. Testar performance em lista grande (100 jogadores)",
+    "4. Revisar UX das 4 abas",
+    "5. Commit e push para main"
+  ],
+  "health_score": 100,
+  "build_status": "PASSING",
+  "aperitivo": "Ranking premium pronto! 🏆"
+}

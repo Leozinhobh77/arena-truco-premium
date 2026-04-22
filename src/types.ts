@@ -61,6 +61,8 @@ export interface Usuario {
   derrotas: number;
   partidas: number;
   clan?: string;
+  statusMsg?: string;
+  createdAt?: string;
 }
 
 export interface MensagemChat {
@@ -96,11 +98,32 @@ export type TelaId =
 export type OverlayId =
   | 'salas'
   | 'jogo'
+  | 'amigos-online'
   | 'clan-chat'
   | 'configuracoes'
   | 'clan-config'
   | 'criar-clan'
-  | 'perfil';
+  | 'perfil'
+  | 'friend-action'
+  | 'deixar-recado'
+  | 'recados'
+  | 'arena-menu'
+  | 'solicitacoes-amizade';
+
+export type StatusAmizade = 'pendente' | 'aceita' | 'rejeitada' | 'nenhuma';
+
+export interface SolicitacaoAmizade {
+  id: string;
+  remetenteId: string;
+  remetenteNick: string;
+  remetenteAvatar: string;
+  remetenteNivel: number;
+  remetenteVitorias: number;
+  remetentePartidas: number;
+  status: 'pendente' | 'aceita' | 'rejeitada';
+  criadoEm: string;
+  atualizadoEm: string;
+}
 
 export interface ItemLoja {
   id: string;
@@ -117,4 +140,74 @@ export interface JogadorRanking {
   posicao: number;
   usuario: Usuario;
   pontos: number;
+}
+
+export interface Badge {
+  id: string;
+  nome: string;
+  descricao: string;
+  icone: string;
+  tier: 1 | 2 | 3 | 4;
+  conquistado: boolean;
+  dataConquista?: Date;
+  progressoAtual?: number;
+  progressoMax?: number;
+}
+
+export interface GameHistory {
+  id: string;
+  data: Date;
+  oponenteId: string;
+  oponenteNick: string;
+  oponenteAvatar: string;
+  resultado: 'vitoria' | 'derrota' | 'abandono';
+  pontosGanhos: number;
+  modo: ModoJogo;
+  duracaoMin: number;
+}
+
+export interface PontuacaoDia {
+  data: string;   // 'DD/MM'
+  pontos: number;
+}
+
+export type StatusAmigoOnline = 'disponivel' | 'jogando' | 'offline';
+
+export interface Amigo {
+  id: string;
+  nick: string;
+  nome: string;
+  avatar: string;
+  nivel: number;
+  vitorias: number;
+  derrotas: number;
+  partidas: number;
+  ranking: number;
+  clan?: string;
+  /** Mensagem de status personalizada pelo usuário */
+  statusMsg: string;
+  /** Quando o status foi atualizado pela última vez */
+  statusMsgAtualizada: Date;
+  statusAmigo: StatusAmigoOnline;
+  /** Modo em que está jogando — preenchido apenas quando statusAmigo === 'jogando' */
+  modoJogo?: ModoJogo;
+  /** Há quantos minutos está na partida atual */
+  tempoJogandoMin?: number;
+}
+
+// ── RANKING SYSTEM (Sprint 4.2) ──
+export type RankingPeriodo = 'dia' | 'semana' | 'geral' | 'amigos';
+
+export interface RankingStats {
+  periodo: RankingPeriodo;
+  totalJogadores: number;
+  suaPosicao: number;
+  seusPontos: number;
+  atualizadoEm: string;
+}
+
+export interface RankingQueryResponse {
+  jogadores: JogadorRanking[];
+  stats: RankingStats;
+  seu_id: string;
 }
