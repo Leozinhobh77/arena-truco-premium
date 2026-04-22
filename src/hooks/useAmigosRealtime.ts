@@ -135,7 +135,13 @@ export function useAmigosRealtime(meuId: string | undefined) {
 
   // Iniciar subscription Realtime (monitora mudanças em tempo real)
   const iniciarSubscription = useCallback((amigoIds: string[]) => {
-    if (!idAtual || subscriptionRef.current) return;
+    if (!idAtual || amigoIds.length === 0) return;
+
+    // Remover subscription anterior se existir
+    if (subscriptionRef.current) {
+      (supabase as any).removeChannel(subscriptionRef.current);
+      subscriptionRef.current = null;
+    }
 
     // Subscribe em mudanças na tabela profiles (qualquer mudança)
     subscriptionRef.current = (supabase as any)
@@ -162,7 +168,7 @@ export function useAmigosRealtime(meuId: string | undefined) {
           console.warn('⚠️ Realtime subscription desconectada');
         }
       });
-  }, [idAtual]);
+  }, [idAtual, atualizarAmigoRealtime]);
 
   // Atualizar status de um amigo em tempo real (instantâneo)
   const atualizarAmigoRealtime = useCallback((amigoId: string, novoStatus: string) => {
