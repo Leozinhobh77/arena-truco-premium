@@ -4,11 +4,10 @@
 // ============================================================
 
 import { useState, useMemo, memo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useNavigationStore } from '../stores/useNavigationStore';
 import { useRankingDia, useRankingSemana, useRankingGeral, useRankingAmigos } from '../hooks/useRankingData';
-import { FriendActionSheet } from '../components/FriendActionSheet';
 import type { Usuario, JogadorRanking, Amigo } from '../types';
 
 const RANK_ICONS: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
@@ -293,7 +292,6 @@ const Podium = memo(function Podium({
 // ════════════════════════════════════════════════════════════════
 export function RankingScreen() {
   const [aba, setAba] = useState<'dia' | 'semana' | 'geral' | 'amigos'>('dia');
-  const [amigoSelecionado, setAmigoSelecionado] = useState<Usuario | null>(null);
   const { usuario } = useAuthStore();
   const { pushOverlay } = useNavigationStore();
 
@@ -321,8 +319,8 @@ export function RankingScreen() {
   }, [pushOverlay]);
 
   const abrirAmigoActions = useCallback((u: Usuario) => {
-    setAmigoSelecionado(u);
-  }, []);
+    pushOverlay('friend-action', { amigo: usuarioToAmigo(u) });
+  }, [pushOverlay]);
 
   const abas = [
     { id: 'dia' as const, label: '📅 Dia', icone: '📅' },
@@ -421,16 +419,6 @@ export function RankingScreen() {
         onAbrirPerfil={abrirPerfilMeu}
         onAbrirAmigo={abrirAmigoActions}
       />
-
-      {/* Friend Action Sheet */}
-      <AnimatePresence>
-        {amigoSelecionado && (
-          <FriendActionSheet
-            amigo={usuarioToAmigo(amigoSelecionado)}
-            onClose={() => setAmigoSelecionado(null)}
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 }

@@ -1,6 +1,10 @@
+redirectsOrigin = "config"
 plugins = []
 headers = []
-redirects = []
+
+[env]
+VITE_SUPABASE_URL = "https://pblwmavgqdsiwphtetei.supabase.co"
+VITE_SUPABASE_ANON_KEY = "sb_publishable_0PAaXNgcj-gt6ZEya-YWKg_CsR1eN0M"
 
 [functions]
 
@@ -8,8 +12,8 @@ redirects = []
 
 [build]
 publish = "C:\\Users\\Usuário\\Desktop\\Curso Claude Code-Jhonatan de Souza\\Projetos Agente Forge\\Meus Projetos\\arena-truco-premium\\dist"
-publishOrigin = "ui"
-commandOrigin = "ui"
+publishOrigin = "config"
+commandOrigin = "config"
 command = "npm run build"
 
 [build.environment]
@@ -25,3 +29,15 @@ command = "npm run build"
 [build.processing.js]
 
 [build.services]
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]

@@ -112,7 +112,7 @@ export function useStatusAmizade(outroId: string | undefined) {
           setEuEnviei(data[0].remetente_id === meuId);
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.warn('Erro ao verificar quem enviou a solicitação:', err);
       });
   }, [meuId, outroId, status]);
