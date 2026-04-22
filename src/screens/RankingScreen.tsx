@@ -4,13 +4,84 @@
 // ============================================================
 
 import { useState, useMemo, memo, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useNavigationStore } from '../stores/useNavigationStore';
 import { useRankingDia, useRankingSemana, useRankingGeral, useRankingAmigos } from '../hooks/useRankingData';
-import type { Usuario, JogadorRanking } from '../types';
+import { FriendActionSheet } from '../components/FriendActionSheet';
+import type { Usuario, JogadorRanking, Amigo } from '../types';
 
 const RANK_ICONS: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
+
+// Estilos constantes para evitar recriação em cada render
+const STYLES = {
+  rankingCardBase: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    padding: '10px 12px',
+    borderRadius: 12,
+    marginBottom: 6,
+    cursor: 'pointer',
+  } as const,
+  rankingCardMe: (isMe: boolean) => ({
+    background: isMe ? 'rgba(212,160,23,0.08)' : 'rgba(255,255,255,0.03)',
+    border: `1px solid ${isMe ? 'var(--border-gold)' : 'var(--border-card)'}`,
+    cursor: isMe ? 'default' : 'pointer',
+  } as const),
+  posicaoSpan: {
+    fontFamily: 'var(--font-display)',
+    fontSize: 14,
+    fontWeight: 900,
+    minWidth: 28,
+    textAlign: 'center' as const,
+  },
+  avatar: (tier: any) => ({
+    width: 36,
+    height: 36,
+    borderRadius: '50%',
+    border: `1.5px solid ${tier.cor}`,
+  } as const),
+  nomeDiv: (isMe: boolean) => ({
+    fontFamily: 'var(--font-display)',
+    fontSize: 14,
+    fontWeight: 700,
+    color: isMe ? 'var(--gold-400)' : 'var(--text-primary)',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap' as const,
+  }),
+  tierDiv: (tierColor: string) => ({
+    fontSize: 10,
+    color: tierColor,
+  } as const),
+  pontosDiv: (tierColor: string) => ({
+    fontFamily: 'var(--font-display)',
+    fontSize: 14,
+    fontWeight: 800,
+    color: tierColor,
+  } as const),
+};
+
+function usuarioToAmigo(usuario: Usuario): Amigo {
+  return {
+    id: usuario.id,
+    nick: usuario.nick,
+    nome: usuario.nome,
+    avatar: usuario.avatar,
+    nivel: usuario.nivel,
+    vitorias: usuario.vitorias,
+    derrotas: usuario.derrotas,
+    partidas: usuario.partidas,
+    ranking: usuario.ranking,
+    clan: usuario.clan,
+    statusMsg: usuario.statusMsg ?? 'Jogador do ranking',
+    statusMsgAtualizada: new Date(),
+    statusAmigo: 'offline',
+    modoJogo: undefined,
+    tempoJogandoMin: undefined,
+  };
+}
 
 const TIER_CONFIG = [
   { nome: 'Lenda',    min: 15000, cor: '#f5c518', icone: '👑' },
@@ -26,35 +97,21 @@ function getTier(pontos: number) {
 }
 
 // Card de jogador no ranking
-const RankingCard = memo(function RankingCard({ item, isMe, onPress }: {
+const RankingCard = memo(function RankingCard({ item, isMe, onPressMe, onPressOther }: {
   item: JogadorRanking;
   isMe: boolean;
-  onPress: (usuario: Usuario) => void;
+  onPressMe: (usuario: Usuario) => void;
+  onPressOther: (usuario: Usuario) => void;
 }) {
   const tier = getTier(item.pontos);
 
   return (
     <motion.div
-      onClick={() => !isMe && onPress(item.usuario)}
+      onClick={() => isMe ? onPressMe(item.usuario) : onPressOther(item.usuario)}
       whileTap={!isMe ? { scale: 0.98 } : undefined}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-        padding: '10px 12px',
-        borderRadius: 12,
-        marginBottom: 6,
-        background: isMe ? 'rgba(212,160,23,0.08)' : 'rgba(255,255,255,0.03)',
-        border: `1px solid ${isMe ? 'var(--border-gold)' : 'var(--border-card)'}`,
-        cursor: isMe ? 'default' : 'pointer',
-      }}
+      style={{ ...STYLES.rankingCardBase, ...STYLES.rankingCardMe(isMe) }}
     >
-      <span style={{
-        fontFamily: 'var(--font-display)',
-        fontSize: 14, fontWeight: 900,
-        color: item.posicao <= 3 ? 'var(--gold-400)' : 'var(--text-muted)',
-        minWidth: 28, textAlign: 'center',
-      }}>
+      <span style={{ ...STYLES.posicaoSpan, color: item.posicao <= 3 ? 'var(--gold-400)' : 'var(--text-muted)' }}>
         {RANK_ICONS[item.posicao] || `#${item.posicao}`}
       </span>
 
@@ -62,24 +119,20 @@ const RankingCard = memo(function RankingCard({ item, isMe, onPress }: {
         src={item.usuario.avatar}
         alt=""
         loading="lazy"
-        style={{ width: 36, height: 36, borderRadius: '50%', border: `1.5px solid ${tier.cor}` }}
+        style={STYLES.avatar(tier)}
       />
 
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{
-          fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 700,
-          color: isMe ? 'var(--gold-400)' : 'var(--text-primary)',
-          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-        }}>
+        <div style={STYLES.nomeDiv(isMe)}>
           {item.usuario.nick} {isMe && '(Você)'}
         </div>
-        <div style={{ fontSize: 10, color: tier.cor }}>
+        <div style={STYLES.tierDiv(tier.cor)}>
           {tier.icone} {tier.nome} · Lv {item.usuario.nivel}
         </div>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 800, color: tier.cor }}>
+        <div style={STYLES.pontosDiv(tier.cor)}>
           {item.pontos.toLocaleString()}
         </div>
         {!isMe && (
@@ -95,10 +148,12 @@ const RankingTabContent = memo(function RankingTabContent({
   jogadores,
   loading,
   onAbrirPerfil,
+  onAbrirAmigo,
 }: {
   jogadores: JogadorRanking[];
   loading: boolean;
   onAbrirPerfil: (u: Usuario) => void;
+  onAbrirAmigo: (u: Usuario) => void;
 }) {
   const usuario_id = useAuthStore(state => state.usuario?.id);
 
@@ -126,7 +181,8 @@ const RankingTabContent = memo(function RankingTabContent({
             key={item.usuario.id}
             item={item}
             isMe={item.usuario.id === usuario_id}
-            onPress={onAbrirPerfil}
+            onPressMe={onAbrirPerfil}
+            onPressOther={onAbrirAmigo}
           />
         ))
       )}
@@ -138,10 +194,13 @@ const RankingTabContent = memo(function RankingTabContent({
 const Podium = memo(function Podium({
   top3,
   onAbrirPerfil,
+  onAbrirAmigo,
 }: {
   top3: JogadorRanking[];
   onAbrirPerfil: (u: Usuario) => void;
+  onAbrirAmigo: (u: Usuario) => void;
 }) {
+  const usuario_id = useAuthStore(state => state.usuario?.id);
   if (top3.length === 0) return null;
 
   const ordem = [1, 0, 2]; // 2°, 1°, 3° (da esquerda para direita)
@@ -168,11 +227,14 @@ const Podium = memo(function Podium({
         const pos = posicoes[i];
         const sizeMultiplier = i === 1 ? 16 : (i === 0 ? 8 : 0);
 
+        const isMe = item.usuario.id === usuario_id;
+        const handleClick = isMe ? onAbrirPerfil : onAbrirAmigo;
+
         return (
           <motion.div
             key={item.usuario.id}
             whileTap={{ scale: 0.95 }}
-            onClick={() => onAbrirPerfil(item.usuario)}
+            onClick={() => handleClick(item.usuario)}
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, cursor: 'pointer',
             }}
@@ -231,6 +293,7 @@ const Podium = memo(function Podium({
 // ════════════════════════════════════════════════════════════════
 export function RankingScreen() {
   const [aba, setAba] = useState<'dia' | 'semana' | 'geral' | 'amigos'>('dia');
+  const [amigoSelecionado, setAmigoSelecionado] = useState<Usuario | null>(null);
   const { usuario } = useAuthStore();
   const { pushOverlay } = useNavigationStore();
 
@@ -253,9 +316,13 @@ export function RankingScreen() {
   // Top 3 para podium (mostrar em todas as abas)
   const top3 = useMemo(() => abaData.jogadores.slice(0, 3), [abaData.jogadores]);
 
-  const abrirPerfilGlobal = useCallback((u: Usuario) => {
+  const abrirPerfilMeu = useCallback((u: Usuario) => {
     pushOverlay('perfil', { usuarioId: u.id });
   }, [pushOverlay]);
+
+  const abrirAmigoActions = useCallback((u: Usuario) => {
+    setAmigoSelecionado(u);
+  }, []);
 
   const abas = [
     { id: 'dia' as const, label: '📅 Dia', icone: '📅' },
@@ -345,14 +412,25 @@ export function RankingScreen() {
       )}
 
       {/* Podium (Top 3) */}
-      <Podium top3={top3} onAbrirPerfil={abrirPerfilGlobal} />
+      <Podium top3={top3} onAbrirPerfil={abrirPerfilMeu} onAbrirAmigo={abrirAmigoActions} />
 
       {/* Lista de ranking */}
       <RankingTabContent
         jogadores={abaData.jogadores}
         loading={abaData.loading}
-        onAbrirPerfil={abrirPerfilGlobal}
+        onAbrirPerfil={abrirPerfilMeu}
+        onAbrirAmigo={abrirAmigoActions}
       />
+
+      {/* Friend Action Sheet */}
+      <AnimatePresence>
+        {amigoSelecionado && (
+          <FriendActionSheet
+            amigo={usuarioToAmigo(amigoSelecionado)}
+            onClose={() => setAmigoSelecionado(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

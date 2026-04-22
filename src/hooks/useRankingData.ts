@@ -43,8 +43,8 @@ function ordenarERetornarRanking(
   seu_id: string,
   limite: number = 100
 ): { jogadores: JogadorRanking[]; seu_ranking: JogadorRanking | null; total: number } {
-  // Ordenar por pontos DESC, depois nome ASC
-  const ordenado = items.sort((a, b) => {
+  // Ordenar por pontos DESC, depois nome ASC (cópia para não mutar original)
+  const ordenado = [...items].sort((a, b) => {
     if (b.pontos !== a.pontos) return b.pontos - a.pontos;
     return a.nick.localeCompare(b.nick);
   });
@@ -114,10 +114,12 @@ export function useRankingDia(seu_id: string | undefined) {
           return;
         }
 
-        const { data: perfis, error: erro2 } = await supabase
-          .from('profiles')
-          .select('id, nick, avatar_url, nivel')
-          .in('id', perfil_ids) as any;
+        const [{ data: perfis, error: erro2 }] = await Promise.all([
+          supabase
+            .from('profiles')
+            .select('id, nick, avatar_url, nivel')
+            .in('id', perfil_ids) as any,
+        ]);
 
         if (erro2) throw erro2;
 
@@ -201,10 +203,12 @@ export function useRankingSemana(seu_id: string | undefined) {
           return;
         }
 
-        const { data: perfis, error: erro2 } = await supabase
-          .from('profiles')
-          .select('id, nick, avatar_url, nivel')
-          .in('id', perfil_ids) as any;
+        const [{ data: perfis, error: erro2 }] = await Promise.all([
+          supabase
+            .from('profiles')
+            .select('id, nick, avatar_url, nivel')
+            .in('id', perfil_ids) as any,
+        ]);
 
         if (erro2) throw erro2;
 
