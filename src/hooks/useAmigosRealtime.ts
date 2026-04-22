@@ -26,9 +26,7 @@ export function useAmigosRealtime(meuId: string | undefined) {
 
   // Buscar amigos inicialmente
   const carregarAmigos = useCallback(async () => {
-    console.log('🔍 [useAmigosRealtime] idAtual:', idAtual);
     if (!idAtual) {
-      console.warn('⚠️ [useAmigosRealtime] Sem idAtual — abortando');
       setLoading(false);
       return;
     }
@@ -48,18 +46,13 @@ export function useAmigosRealtime(meuId: string | undefined) {
           .eq('destinatario_id', idAtual),
       ]);
 
-      console.log('🔍 [useAmigosRealtime] query1 (remetente):', query1);
-      console.log('🔍 [useAmigosRealtime] query2 (destinatario):', query2);
-
       const amizades = [
         ...(query1.data || []),
         ...(query2.data || []),
       ];
 
-      console.log('🔍 [useAmigosRealtime] Total amizades aceitas encontradas:', amizades.length, amizades);
-
       if ((query1.error || query2.error) && amizades.length === 0) {
-        console.warn('❌ [useAmigosRealtime] Erro ao buscar amizades:', query1.error?.message || query2.error?.message);
+        console.warn('❌ Erro ao buscar amizades:', query1.error?.message || query2.error?.message);
         setLoading(false);
         return;
       }
@@ -69,12 +62,9 @@ export function useAmigosRealtime(meuId: string | undefined) {
         a.remetente_id === idAtual ? a.destinatario_id : a.remetente_id
       );
 
-      console.log('🔍 [useAmigosRealtime] IDs dos amigos extraídos:', amigoIds);
-
       amigoIdsRef.current = amigoIds;
 
       if (amigoIds.length === 0) {
-        console.warn('⚠️ [useAmigosRealtime] Nenhum amigo aceito encontrado');
         setAmigos([]);
         setLoading(false);
         return;
@@ -86,10 +76,8 @@ export function useAmigosRealtime(meuId: string | undefined) {
         .select('id, nick, avatar_url, status_msg, status_atual, atualizado_status_em, nivel, xp, xp_proximo')
         .in('id', amigoIds);
 
-      console.log('🔍 [useAmigosRealtime] Profiles carregados:', profiles);
-
       if (erroProfiles) {
-        console.warn('❌ [useAmigosRealtime] Erro ao buscar profiles:', erroProfiles.message);
+        console.warn('❌ Erro ao buscar profiles:', erroProfiles.message);
         setLoading(false);
         return;
       }
@@ -119,16 +107,13 @@ export function useAmigosRealtime(meuId: string | undefined) {
         clan: undefined,
       }));
 
-      console.log('✅ [useAmigosRealtime] Amigos carregados:', resultado);
-      console.log('✅ [useAmigosRealtime] Total online:', resultado.filter(a => a.statusAmigo !== 'offline').length);
-
       setAmigos(resultado);
       setLoading(false);
 
       // Inicia subscription Realtime para monitorar mudanças
       iniciarSubscription(amigoIds);
     } catch (err) {
-      console.warn('❌ [useAmigosRealtime] Erro ao carregar amigos:', err);
+      console.warn('❌ Erro ao carregar amigos:', err);
       setLoading(false);
     }
   }, [idAtual]);
@@ -168,7 +153,7 @@ export function useAmigosRealtime(meuId: string | undefined) {
           console.warn('⚠️ Realtime subscription desconectada');
         }
       });
-  }, [idAtual, atualizarAmigoRealtime]);
+  }, [idAtual]);
 
   // Atualizar status de um amigo em tempo real (instantâneo)
   const atualizarAmigoRealtime = useCallback((amigoId: string, novoStatus: string) => {
