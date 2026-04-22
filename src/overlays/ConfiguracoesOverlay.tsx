@@ -6,12 +6,21 @@
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useNavigationStore } from '../stores/useNavigationStore';
+import { supabase } from '../lib/supabase';
 
 export function ConfiguracoesOverlay() {
-  const { logout } = useAuthStore();
+  const { logout, usuario } = useAuthStore();
   const { popOverlay, pushOverlay } = useNavigationStore();
 
   const handleSair = async () => {
+    // 🟢 Atualizar status para 'offline' antes de desconectar
+    if (usuario?.id) {
+      await (supabase as any).from('profiles').update({
+        status_atual: 'offline',
+        atualizado_status_em: new Date().toISOString(),
+      }).eq('id', usuario.id).catch(() => {});
+    }
+
     await logout();
     popOverlay();
   };

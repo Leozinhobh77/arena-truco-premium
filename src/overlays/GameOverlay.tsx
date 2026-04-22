@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useGameStore } from '../stores/useGameStore';
+import { supabase } from '../lib/supabase';
 import { PlayingCard } from '../components/PlayingCard';
 import { PlayerAvatar } from '../components/PlayerAvatar';
 
@@ -21,7 +22,13 @@ export function GameOverlay() {
   useEffect(() => {
     if (usuario && game.status === 'waiting') {
       const t = setTimeout(() => {
-         game.iniciarPartida('paulista', usuario.id);
+        // 🟢 Atualizar status para 'jogando' quando inicia a partida
+        (supabase as any).from('profiles').update({
+          status_atual: 'jogando',
+          atualizado_status_em: new Date().toISOString(),
+        }).eq('id', usuario.id).catch(() => {});
+
+        game.iniciarPartida('paulista', usuario.id);
       }, 2000);
       return () => clearTimeout(t);
     }
