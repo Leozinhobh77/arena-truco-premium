@@ -32,15 +32,27 @@ export function useAmigosRealtime(meuId: string | undefined) {
     }
 
     try {
-      // Buscar amizades aceitas (eu enviei ou recebi)
-      const { data: amizades, error: erroAmizades } = await (supabase as any)
-        .from('amizades')
-        .select('id, remetente_id, destinatario_id, status')
-        .eq('status', 'aceita')
-        .or(`remetente_id.eq.${idAtual},destinatario_id.eq.${idAtual}`);
+      // Buscar amizades aceitas (eu enviei ou recebi) — em paralelo
+      const [query1, query2] = await Promise.all([
+        (supabase as any)
+          .from('amizades')
+          .select('id, remetente_id, destinatario_id, status')
+          .eq('status', 'aceita')
+          .eq('remetente_id', idAtual),
+        (supabase as any)
+          .from('amizades')
+          .select('id, remetente_id, destinatario_id, status')
+          .eq('status', 'aceita')
+          .eq('destinatario_id', idAtual),
+      ]);
 
-      if (erroAmizades || !amizades) {
-        console.warn('❌ Erro ao buscar amizades:', erroAmizades?.message);
+      const amizades = [
+        ...(query1.data || []),
+        ...(query2.data || []),
+      ];
+
+      if ((query1.error || query2.error) && amizades.length === 0) {
+        console.warn('❌ Erro ao buscar amizades:', query1.error?.message || query2.error?.message);
         setLoading(false);
         return;
       }
