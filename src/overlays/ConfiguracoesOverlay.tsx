@@ -15,10 +15,17 @@ export function ConfiguracoesOverlay() {
   const handleSair = async () => {
     // 🟢 Atualizar status para 'offline' antes de desconectar
     if (usuario?.id) {
-      await (supabase as any).from('profiles').update({
-        status_atual: 'offline',
-        atualizado_status_em: new Date().toISOString(),
-      }).eq('id', usuario.id).catch(() => {});
+      try {
+        await (supabase as any)
+          .from('profiles')
+          .update({
+            status_atual: 'offline',
+            atualizado_status_em: new Date().toISOString(),
+          })
+          .eq('id', usuario.id);
+      } catch (err) {
+        // silenciar erro para não bloquear logout
+      }
     }
 
     await logout();
