@@ -1,28 +1,75 @@
 {
   "__metadata": {
-    "descricao": "Canal de comunicação Construtor → Sentinela. A Sentinela lê este arquivo a cada 10s. O Construtor escreve nele após cada task.",
+    "descricao": "Canal de comunicação Construtor → Sentinela.",
     "schema_version": "1.0"
   },
 
-  "status_construtor": "idle",
+  "status_construtor": "liberado",
 
   "ultima_task_concluida": {
-    "sprint": 2,
-    "task_numero": 6,
-    "task_nome": "Sprint 2 build - Core e Mesa de Jogo finalizados",
-    "timestamp": "2026-04-12T20:53:00Z",
-    "llm_usada": "Gemini 3.1 Pro (High)",
+    "sprint": 4,
+    "task_numero": "4.1",
+    "task_nome": "Sprint 4 — Amigos Online + Perfil: overlays completos + correção TS",
+    "timestamp": "2026-04-15T08:30:00Z",
+    "llm_usada": "Claude Sonnet 4.6",
     "arquivos_modificados": [
-      "src/lib/truco/rules.ts",
-      "src/stores/useGameStore.ts",
-      "src/components/PlayingCard.tsx",
-      "src/components/PlayerAvatar.tsx",
-      "src/overlays/GameOverlay.tsx"
+      "src/types.ts",
+      "src/mockData.ts",
+      "src/App.tsx",
+      "src/screens/ArenaScreen.tsx",
+      "src/components/PerfilCard.tsx",
+      "src/overlays/ProfileOverlay.tsx",
+      "src/overlays/AmigosOnlineOverlay.tsx"
     ],
-    "solicita_auditoria": true
+    "solicita_auditoria": false
   },
 
   "alertas_sentinela": [],
 
-  "veredictos_sentinela": []
+  "veredictos_sentinela": [
+    {
+      "task": "2.6",
+      "sprint": 2,
+      "status": "APPROVED",
+      "score": 78,
+      "security_audit": "COMPLIANT",
+      "warnings": [
+        { "id": "WARN-01", "status": "✅ CORRIGIDO na Sprint 3 — setFalas + bot provocations" },
+        { "id": "WARN-02", "status": "✅ CORRIGIDO na Sprint 3 — game.iniciarPartida no array de deps" },
+        { "id": "WARN-03", "status": "✅ CORRIGIDO na Sprint 3 — Math.random() → useMemo" }
+      ],
+      "info": [
+        { "id": "INFO-01", "status": "⏳ PENDENTE Sprint 4 — round-end logic (comportamento esperado)" }
+      ],
+      "timestamp": "2026-04-12T20:53:00Z"
+    },
+    {
+      "task": "3.7",
+      "sprint": 3,
+      "status": "APPROVED",
+      "score": 97,
+      "security_audit": "COMPLIANT (SEC-02, SEC-05 PASS / demais N/A)",
+      "warnings": [],
+      "mensagem": "Sprint 3 aprovada. Todos os warnings da Sprint 2 corrigidos. 25/25 testes passando. Build strict limpo. Projeto pronto para Sprint 4.",
+      "auditado_por": "skill-sentinela v5.1",
+      "timestamp": "2026-04-15T00:00:00Z"
+    },
+    {
+      "task": "4.1",
+      "sprint": 4,
+      "status": "APPROVED",
+      "score": 95,
+      "security_audit": "COMPLIANT (SEC-02, SEC-05 PASS / demais N/A — UI puro sem API)",
+      "warnings": [],
+      "info": [
+        {
+          "id": "INFO-01",
+          "descricao": "2 erros TS6133 (useMemo + bloqueadas) detectados no build emergencial e corrigidos pelo Construtor antes da aprovação final"
+        }
+      ],
+      "mensagem": "Sprint 4 task 4.1 aprovada. AmigosOnlineOverlay + ProfileOverlay + PerfilCard entregues. Build limpo (420KB). 25/25 testes passando. Canal atualizado com delay — Construtor deve sinalizar solicita_auditoria=true em tasks futuras.",
+      "auditado_por": "skill-sentinela v5.1",
+      "timestamp": "2026-04-15T08:30:00Z"
+    }
+  ]
 }

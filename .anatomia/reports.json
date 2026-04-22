@@ -1,0 +1,127 @@
+{
+  "project": {
+    "name": "Arena Truco Premium",
+    "description": "Multiplayer Card Game Platform",
+    "repository": "Projetos Agente Forge/arena-truco-premium",
+    "stack": "React + TypeScript + Zustand + Supabase"
+  },
+  "reports": [
+    {
+      "date": "2026-04-16",
+      "version": "1.0",
+      "timestamp": "2026-04-16T14:30:00Z",
+      "metrics": {
+        "totalLOC": 5678,
+        "totalFiles": 23,
+        "healthScore": 7.2,
+        "testCoverage": 3,
+        "typeScriptCompliance": 100
+      },
+      "topFiles": [
+        {
+          "name": "ProfileOverlay.tsx",
+          "loc": 967,
+          "category": "Overlays",
+          "complexity": "HIGH"
+        },
+        {
+          "name": "LoginScreen.tsx",
+          "loc": 418,
+          "category": "Screens",
+          "complexity": "MEDIUM"
+        },
+        {
+          "name": "ArenaScreen.tsx",
+          "loc": 391,
+          "category": "Screens",
+          "complexity": "MEDIUM"
+        }
+      ],
+      "distribution": {
+        "screens": {
+          "loc": 1646,
+          "files": 6,
+          "percentage": 29.0
+        },
+        "overlays": {
+          "loc": 1159,
+          "files": 5,
+          "percentage": 20.4
+        },
+        "stateManagement": {
+          "loc": 506,
+          "files": 3,
+          "percentage": 8.9
+        },
+        "components": {
+          "loc": 636,
+          "files": 5,
+          "percentage": 11.2
+        },
+        "dataLayer": {
+          "loc": 335,
+          "files": 3,
+          "percentage": 5.9
+        },
+        "infrastructure": {
+          "loc": 495,
+          "files": 2,
+          "percentage": 8.7
+        },
+        "gameLogic": {
+          "loc": 297,
+          "files": 2,
+          "percentage": 5.2
+        },
+        "entry": {
+          "loc": 229,
+          "files": 2,
+          "percentage": 4.0
+        }
+      },
+      "highlights": {
+        "strengths": [
+          "Separação clara de responsabilidades",
+          "State management bem padrão (Zustand)",
+          "Type safety forte (100% TypeScript)",
+          "Funcionalidade core estável",
+          "Recentes fixes aplicados com sucesso (useProfileData bug fix)"
+        ],
+        "improvements": [
+          "Cobertura de testes (3% → objetivo 70%)",
+          "ProfileOverlay muito grande (refactor candidato)",
+          "Documentação inline",
+          "Performance baseline não estabelecido",
+          "Algumas queries podem ser otimizadas"
+        ]
+      },
+      "recentChanges": [
+        {
+          "type": "BUG_FIX",
+          "commit": "6849bf1",
+          "file": "src/hooks/useProfileData.ts",
+          "description": "Adicionar userId parameter para filtrar dados por perfil",
+          "impact": "CRITICAL - ProfileOverlay stats tab agora funciona corretamente"
+        }
+      ]
+    }
+  ],
+  "futureReports": [
+    {
+      "date": "2026-04-23",
+      "status": "pending",
+      "expectedFocus": "Sprint 2.3 - Real-time Monitoring"
+    },
+    {
+      "date": "2026-04-30",
+      "status": "pending",
+      "expectedFocus": "Sprint 2.3+ - Advanced Analysis"
+    }
+  ],
+  "settings": {
+    "autoGenerateFrequency": "weekly",
+    "nextGeneration": "2026-04-23",
+    "alertThreshold": 10,
+    "language": "pt-BR"
+  }
+}

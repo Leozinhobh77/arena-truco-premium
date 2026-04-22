@@ -13,6 +13,7 @@ import {
   usePontuacaoSemanal,
   useMinhasConquistas,
   usePerfilPublico,
+  useAmigosRanking,
 } from '../hooks/useProfileData';
 import type { Badge, GameHistory, Usuario } from '../types';
 
@@ -28,11 +29,21 @@ function horaFormatada(date: Date): string {
 // ── Gráfico de Linha SVG ─────────────────────────────────────
 function LineChart({ data }: { data: { data: string; pontos: number }[] }) {
   const W = 300, H = 110;
-  const PAD = { t: 12, r: 12, b: 26, l: 12 };
-  const cW = W - PAD.l - PAD.r;
-  const cH = H - PAD.t - PAD.b;
 
   const { linePath, areaPath, pts } = useMemo(() => {
+    // Se não há dados, retorna gráfico vazio
+    if (!data || data.length === 0) {
+      return {
+        linePath: '',
+        areaPath: '',
+        pts: [],
+      };
+    }
+
+    const PAD = { t: 12, r: 12, b: 26, l: 12 };
+    const cW = W - PAD.l - PAD.r;
+    const cH = H - PAD.t - PAD.b;
+
     const maxVal = Math.max(...data.map(d => d.pontos));
     const minVal = Math.min(...data.map(d => d.pontos));
     const range = maxVal - minVal || 1;
@@ -56,7 +67,11 @@ function LineChart({ data }: { data: { data: string; pontos: number }[] }) {
     ].join(' ');
 
     return { linePath: calculatedLinePath, areaPath: calculatedAreaPath, pts: calculatedPts };
-  }, [data, PAD.l, PAD.t, PAD.b, cW, cH]);
+  }, [data]);
+
+  // Padding para o grid (usado apenas para renderizar)
+  const PAD = { t: 12, r: 12, b: 26, l: 12 };
+  const cH = H - PAD.t - PAD.b;
 
   return (
     <svg
@@ -72,7 +87,7 @@ function LineChart({ data }: { data: { data: string; pontos: number }[] }) {
       </defs>
 
       {/* Grid linhas horizontais */}
-      {[0.25, 0.5, 0.75].map(r => (
+      {pts.length > 0 && [0.25, 0.5, 0.75].map(r => (
         <line
           key={r}
           x1={PAD.l} y1={PAD.t + r * cH}
@@ -91,10 +106,25 @@ function LineChart({ data }: { data: { data: string; pontos: number }[] }) {
         strokeLinejoin="round" strokeLinecap="round"
       />
 
-      {/* Pontos + labels */}
+      {/* Pontos */}
       {pts.map((p, i) => (
         <g key={i}>
+          {/* Círculo */}
           <circle cx={p.x} cy={p.y} r="3.5" fill="#0a081e" stroke="#d4a017" strokeWidth="1.8" />
+
+          {/* Valor de pontos acima do ponto */}
+          <text
+            x={p.x} y={p.y - 8}
+            textAnchor="middle"
+            fill="var(--gold-400)"
+            fontSize="9"
+            fontFamily="var(--font-display)"
+            fontWeight="700"
+          >
+            {p.val.toLocaleString('pt-BR')}
+          </text>
+
+          {/* Label da data embaixo */}
           <text
             x={p.x} y={H - 6}
             textAnchor="middle"
@@ -169,12 +199,13 @@ const useProfileUser = () => {
 function PerfilTab({ editModeOriginal = false }: { editModeOriginal?: boolean }) {
   const usuario = useProfileUser();
   const { usuario: usuarioLogado, atualizarPerfil, uploadAvatar, carregando: authCarregando } = useAuthStore();
-  
+  const { amigos } = useAmigosRanking(usuario?.id);
+
   const ehProprio = usuario?.id === usuarioLogado?.id;
-  
+
   const [editando, setEditando] = useState(editModeOriginal);
   const [novoNick, setNovoNick] = useState(usuario?.nick || '');
-  const [statusMsg, setStatusMsg] = useState('Aqui pra ganhar de todos! 🃏');
+  const [statusMsg, setStatusMsg] = useState(usuario?.statusMsg || '');
   const [statusTemp, setStatusTemp] = useState(statusMsg);
   const [uploading, setUploading] = useState(false);
 
@@ -215,9 +246,11 @@ function PerfilTab({ editModeOriginal = false }: { editModeOriginal?: boolean })
   };
 
   // Memoizar cálculos para evitar recalcular em cada render
-  const { winRate } = useMemo(() => ({
+  const { winRate, amigosTotal, abandonos } = useMemo(() => ({
     winRate: Math.round((usuario.vitorias / Math.max(usuario.partidas, 1)) * 100),
-  }), [usuario]);
+    amigosTotal: amigos.length,
+    abandonos: usuario.partidas - usuario.vitorias - usuario.derrotas, // partidas que não foram V ou D
+  }), [usuario, amigos]);
 
   return (
     <div style={{ padding: '16px 16px 24px' }}>
@@ -372,7 +405,11 @@ function PerfilTab({ editModeOriginal = false }: { editModeOriginal?: boolean })
               <button
                 className="btn-primary"
                 style={{ padding: '4px 12px', fontSize: 11 }}
-                onClick={() => { setStatusMsg(statusTemp); setEditando(false); }}
+                onClick={() => {
+                  setStatusMsg(statusTemp);
+                  setEditando(false);
+                  if (ehProprio) atualizarPerfil({ status_msg: statusTemp });
+                }}
               >
                 Salvar
               </button>
@@ -420,7 +457,7 @@ function PerfilTab({ editModeOriginal = false }: { editModeOriginal?: boolean })
       <div className="glass-card-gold" style={{ padding: '14px 16px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 8 }}>
           {[
-            { label: 'Win Rate', value: `${winRate}%`, color: '#2dc653' },
+            { label: 'Taxa de Vitória', value: `${winRate}%`, color: '#2dc653' },
             { label: 'Vitórias', value: usuario.vitorias, color: 'var(--text-primary)' },
             { label: 'Derrotas', value: usuario.derrotas, color: 'var(--ruby, #e63946)' },
             { label: 'Abandonos', value: abandonos, color: 'var(--text-muted)' },
@@ -466,16 +503,16 @@ function StatsTab() {
   const stats = useMemo(() => {
     const winRate = Math.round((usuario.vitorias / Math.max(usuario.partidas, 1)) * 100);
     const abandonos = historicoUsado.filter(g => g.resultado === 'abandono').length;
-    const taxaAbandono = ((abandonos / Math.max(usuario.partidas, 1)) * 100).toFixed(1);
+    const taxaAbandono = Math.round((abandonos / Math.max(usuario.partidas, 1)) * 100);
     const totalSemana = pontuacaoData.reduce((s, d) => s + d.pontos, 0);
     const mediaDia = Math.round(totalSemana / Math.max(pontuacaoData.length, 1));
     const recordDia = Math.max(...pontuacaoData.map(d => d.pontos), 0);
-    const kd = (usuario.vitorias / Math.max(usuario.derrotas, 1)).toFixed(2);
+    const kd = Math.round(usuario.vitorias / Math.max(usuario.derrotas, 1));
 
     return { winRate, abandonos, taxaAbandono, totalSemana, mediaDia, recordDia, kd };
   }, [usuario, historicoUsado, pontuacaoData]);
 
-  const { winRate, abandonos, taxaAbandono, totalSemana, mediaDia, recordDia, kd } = stats;
+  const { winRate, abandonos, taxaAbandono: _taxaAbandono, totalSemana, mediaDia, recordDia, kd: _kd } = stats;
 
   return (
     <div style={{ padding: '16px 16px 24px' }}>
@@ -483,9 +520,9 @@ function StatsTab() {
       {/* Pills de stats principais */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 16 }}>
         {[
-          { label: 'Win Rate', value: `${winRate}%`, color: '#2dc653', icon: '📈' },
-          { label: 'K/D Ratio', value: kd, color: 'var(--gold-400)', icon: '⚔️' },
-          { label: 'Abandono', value: `${taxaAbandono}%`, color: 'var(--text-muted)', icon: '🏃' },
+          { label: 'Taxa de Vitória', value: `${winRate}%`, color: '#2dc653', icon: '📈' },
+          { label: 'Melhor Posição do Mês', value: usuario.ranking > 0 ? `#${usuario.ranking}` : '—', color: 'var(--gold-400)', icon: '👑' },
+          { label: 'Nível', value: usuario.nivel, color: 'var(--text-primary)', icon: '⭐' },
         ].map(s => (
           <div key={s.label} className="glass-card-gold" style={{ padding: '12px 8px', textAlign: 'center' }}>
             <div style={{ fontSize: 16, marginBottom: 4 }}>{s.icon}</div>
@@ -533,8 +570,12 @@ function StatsTab() {
             { icon: '🔥', label: 'Record em um dia', value: `${recordDia} pts` },
             { icon: '🏆', label: 'Maior sequência de vitórias', value: '—' }, // TODO: campo max_win_streak no BD
             { icon: '👑', label: 'Melhor posição no ranking', value: usuario.ranking > 0 ? `#${usuario.ranking}` : '—' },
-            { icon: '🎮', label: 'Total de partidas', value: usuario.partidas },
-            { icon: '📅', label: 'Membro desde', value: '—' }, // TODO: campo created_at no BD
+            { icon: '🎮', label: 'Total de partidas', value: (usuario.vitorias + usuario.derrotas).toLocaleString('pt-BR') },
+            { icon: '✅', label: 'Vitórias', value: usuario.vitorias.toLocaleString('pt-BR') },
+            { icon: '❌', label: 'Derrotas', value: usuario.derrotas.toLocaleString('pt-BR') },
+            { icon: '🚫', label: 'Abandonos', value: abandonos.toLocaleString('pt-BR') },
+            { icon: '📅', label: 'Membro desde', value: usuario.createdAt ? new Date(usuario.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : '—' },
+            { icon: '⏰', label: 'Última partida', value: historicoUsado.length > 0 ? new Date(historicoUsado[0].data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : '—' },
           ].map(d => (
             <div key={d.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
@@ -803,18 +844,14 @@ export function ProfileOverlay() {
   // TODOS os hooks ANTES de qualquer return condicional
   const props = getActiveOverlayProps();
   const usuarioId = props.usuarioId as string | undefined;
-  const usuarioDireto = props.usuario as Usuario | undefined;
+  const usuarioDireto = props.usuarioDireto as Usuario | undefined;
   const editMode = !!props.editMode;
 
   // Hook para buscar perfil público (se for terceiro) - SEMPRE chamado
-  const { usuario: usuarioPublico, loading } = usePerfilPublico(usuarioId && !usuarioDireto ? usuarioId : undefined);
+  const { usuario: usuarioPublico } = usePerfilPublico(usuarioId && !usuarioDireto ? usuarioId : undefined);
 
   // AGORA faz os returns condicionais DEPOIS dos hooks
   if (!usuario) return null;
-
-  // DEBUG: log para verificar o que está chegando
-  console.log('ProfileOverlay props:', { usuarioId, usuarioDireto, props });
-  console.log('ProfileOverlay state:', { usuarioPublico, loading, usuarioDireto, usuarioLogado: usuario?.nick });
 
   // Prioridade: objeto direto > busca por ID/hook > usuario logado
   const usuarioExibido: Usuario | null =

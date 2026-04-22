@@ -1,9 +1,0 @@
-{
-  "task": "2.1.5",
-  "sprint": 2,
-  "phase": "Correlation: map Lighthouse metrics to Sprint 1 issues",
-  "timestamp": "2026-04-16T03:45:00Z",
-  "tipo": "before",
-  "status": "starting",
-  "objetivo": "Map dynamic Lighthouse metrics to static analysis issues for actionable insights"
-}

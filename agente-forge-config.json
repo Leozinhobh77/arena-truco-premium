@@ -1,0 +1,34 @@
+{
+  "__metadata": {
+    "agente_forge_version": "5.2 Consultivo",
+    "app_nome": "Arena Truco Premium",
+    "contexto_global": "AI_CONTEXT.md",
+    "criado_em": "2026-04-12T18:30:00Z",
+    "saude_metodologica": 100,
+    "status": "Golden Compliance"
+  },
+  "configuracoes_app": {
+    "stack": "React 19 + Vite + Zustand + Framer Motion + Tailwind v4",
+    "tema": "Obsidian & Gold",
+    "modos": ["Mineiro", "Paulista"],
+    "ia_engine": "Gemini Flash 2.5",
+    "manual_path": "./docs/manual-tecnico/index.html"
+  },
+  "diretiva_documentacao": {
+    "prd": "./docs/PRD.md",
+    "spec": "./docs/SPEC.md",
+    "sdd": "./docs/SDD.md",
+    "constitution": "./docs/CONSTITUTION.md",
+    "plan": "./docs/PLAN.md",
+    "context": "./AI_CONTEXT.md"
+  },
+  "historico_auditoria": {
+    "ultima_auditoria": "2026-04-13T00:30:00Z",
+    "resultado": "Sincronização Titan Concluída",
+    "divergencias_resolvidas": [
+      "Migração CLAUDE.md -> AI_CONTEXT.md",
+      "Criação de Constitution (28 leis)",
+      "Criação de PLAN Master (9 Sprints)"
+    ]
+  }
+}

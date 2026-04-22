@@ -3,7 +3,7 @@
 // Root do App: Navegação nativa, Swipe, Overlays
 // ============================================================
 
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { useAuthStore } from './stores/useAuthStore';
@@ -17,6 +17,15 @@ import { RankingScreen } from './screens/RankingScreen';
 import { ClansScreen } from './screens/ClansScreen';
 import { SalasOverlay } from './overlays/SalasOverlay';
 import { GameOverlay } from './overlays/GameOverlay';
+import { AmigosOnlineOverlay } from './overlays/AmigosOnlineOverlay';
+import { ProfileOverlay } from './overlays/ProfileOverlay';
+import { ConfiguracoesOverlay } from './overlays/ConfiguracoesOverlay';
+import { DeixarRecadoOverlay } from './overlays/DeixarRecadoOverlay';
+import { RecadosOverlay } from './overlays/RecadosOverlay';
+import { ArenaMenuOverlay } from './overlays/ArenaMenuOverlay';
+import { SolicitacoesOverlay } from './overlays/SolicitacoesOverlay';
+import { FriendActionSheet } from './components/FriendActionSheet';
+import type { Amigo } from './types';
 
 // ── Ícones SVG Inline da Nav Bar ────────────────────────────
 const NavIcons = {
@@ -126,8 +135,13 @@ function useSwipe(onLeft: () => void, onRight: () => void) {
 
 // ── Main Shell ──────────────────────────────────────────────
 export function App() {
-  const { logado } = useAuthStore();
-  const { activeTab, setTab, getActiveOverlay } = useNavigationStore();
+  const { logado, carregando, inicializarSessao } = useAuthStore();
+  const { activeTab, setTab, getActiveOverlay, getActiveOverlayProps, popOverlay } = useNavigationStore();
+
+  // Recupera sessão salva do Supabase ao iniciar o app
+  useEffect(() => {
+    inicializarSessao();
+  }, []);
 
   const activeOverlay = getActiveOverlay();
 
@@ -136,10 +150,39 @@ export function App() {
     () => setTab(Math.max(activeTab - 1, 0)),
   );
 
-  // Se não logado, mostra apenas o login
+  // Splash de carregamento enquanto verifica sessão
+  if (carregando && !logado) {
+    return (
+      <div style={{
+        width: '100%', height: '100dvh', background: 'var(--obsidian-900)',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', gap: 20,
+      }}>
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+          style={{
+            width: 60, height: 60, borderRadius: '50%',
+            border: '3px solid rgba(212,160,23,0.2)',
+            borderTop: '3px solid var(--gold-400)',
+            boxShadow: '0 0 20px rgba(212,160,23,0.3)',
+          }}
+        />
+        <p style={{
+          fontFamily: 'var(--font-display)', fontSize: 14,
+          color: 'var(--gold-400)', letterSpacing: '0.12em',
+        }}>
+          Conectando à Arena...
+        </p>
+      </div>
+    );
+  }
+
+  // Se não logado, mostra tela de login
   if (!logado) {
     return <LoginScreen />;
   }
+
 
   return (
     <div className="app-shell">
@@ -162,8 +205,22 @@ export function App() {
 
       {/* Overlays (bottom sheets & telas cheias) */}
       <AnimatePresence>
-        {activeOverlay === 'salas' && <SalasOverlay key="salas" />}
-        {activeOverlay === 'jogo'  && <GameOverlay  key="jogo"  />}
+        {activeOverlay === 'salas'         && <SalasOverlay         key="salas"         />}
+        {activeOverlay === 'jogo'          && <GameOverlay          key="jogo"          />}
+        {activeOverlay === 'amigos-online' && <AmigosOnlineOverlay  key="amigos-online" />}
+        {activeOverlay === 'perfil'        && <ProfileOverlay       key="perfil"        />}
+        {activeOverlay === 'configuracoes' && <ConfiguracoesOverlay key="configuracoes" />}
+        {activeOverlay === 'deixar-recado' && <DeixarRecadoOverlay key="deixar-recado" />}
+        {activeOverlay === 'recados' && <RecadosOverlay key="recados" />}
+        {activeOverlay === 'arena-menu' && <ArenaMenuOverlay key="arena-menu" />}
+        {activeOverlay === 'solicitacoes-amizade' && <SolicitacoesOverlay key="solicitacoes-amizade" />}
+        {activeOverlay === 'friend-action' && (
+          <FriendActionSheet
+            key="friend-action"
+            amigo={getActiveOverlayProps().amigo as Amigo}
+            onClose={popOverlay}
+          />
+        )}
       </AnimatePresence>
     </div>
   );

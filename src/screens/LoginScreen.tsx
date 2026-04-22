@@ -1,22 +1,22 @@
 // ============================================================
 // TELA DE LOGIN — LoginScreen.tsx
-// Experiência de Login Premium Nível Apple
+// Login REAL via Supabase Auth (Email + Senha)
 // ============================================================
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../stores/useAuthStore';
 
-// Partículas flutuantes de fundo
+// ── Partículas de fundo ──────────────────────────────────────
 function Particles() {
-  const particles = Array.from({ length: 18 }, (_, i) => ({
+  const [particles] = useState(() => Array.from({ length: 18 }, (_, i) => ({
     id: i,
     size: Math.random() * 5 + 2,
     left: Math.random() * 100,
     delay: Math.random() * 4,
     duration: Math.random() * 4 + 5,
     color: i % 3 === 0 ? 'var(--gold-400)' : i % 3 === 1 ? 'var(--ruby)' : 'var(--lavender)',
-  }));
+  })));
 
   return (
     <div className="particles-bg">
@@ -25,10 +25,8 @@ function Particles() {
           key={p.id}
           className="particle"
           style={{
-            width: p.size,
-            height: p.size,
-            left: `${p.left}%`,
-            bottom: '-10px',
+            width: p.size, height: p.size,
+            left: `${p.left}%`, bottom: '-10px',
             background: p.color,
             boxShadow: `0 0 ${p.size * 2}px ${p.color}`,
             animationDuration: `${p.duration}s`,
@@ -40,20 +38,17 @@ function Particles() {
   );
 }
 
-// Anel giratório
+// ── Anel orbital ─────────────────────────────────────────────
 function OrbitRing({ radius, duration, children }: { radius: number; duration: number; children: React.ReactNode }) {
   return (
     <motion.div
       style={{
         position: 'absolute',
-        width: radius * 2,
-        height: radius * 2,
+        width: radius * 2, height: radius * 2,
         borderRadius: '50%',
         border: '1px solid rgba(212,160,23,0.15)',
-        top: '50%',
-        left: '50%',
-        marginTop: -radius,
-        marginLeft: -radius,
+        top: '50%', left: '50%',
+        marginTop: -radius, marginLeft: -radius,
       }}
       animate={{ rotate: 360 }}
       transition={{ duration, repeat: Infinity, ease: 'linear' }}
@@ -63,26 +58,123 @@ function OrbitRing({ radius, duration, children }: { radius: number; duration: n
   );
 }
 
+// ── Campo de Input ───────────────────────────────────────────
+function Campo({
+  icone, placeholder, value, onChange, type = 'text', autoFocus = false, error = false
+}: {
+  icone: string; placeholder: string; value: string;
+  onChange: (v: string) => void; type?: string; autoFocus?: boolean; error?: boolean;
+}) {
+  const [showPassword, setShowPassword] = useState(false);
+  const isPassword = type === 'password';
+  const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
+
+  return (
+    <div style={{ position: 'relative', width: '100%' }}>
+      <span style={{
+        position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)',
+        fontSize: 18, pointerEvents: 'none', zIndex: 2
+      }}>
+        {icone}
+      </span>
+      <input
+        className={`input-field ${error ? 'input-error' : ''}`}
+        style={{ paddingLeft: 48, paddingRight: isPassword ? 48 : 16 }}
+        type={inputType}
+        placeholder={placeholder}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        autoFocus={autoFocus}
+        autoComplete={isPassword ? 'current-password' : 'off'}
+      />
+      {isPassword && (
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          style={{
+            position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+            background: 'none', border: 'none', color: 'var(--text-muted)',
+            cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center',
+            justifyContent: 'center', zIndex: 2
+          }}
+        >
+          {showPassword ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 19c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+              <line x1="1" y1="1" x2="23" y2="23"></line>
+            </svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          )}
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ── Botão Social ─────────────────────────────────────────────
+function SocialButton({ onClick, icon, label, disabled }: { onClick: () => void, icon: React.ReactNode, label: string, disabled?: boolean }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="btn-social"
+      style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+        width: '100%', padding: '12px', borderRadius: 'var(--radius-md)',
+        background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-subtle)',
+        color: 'var(--text-primary)', cursor: 'pointer', transition: 'all 0.2s ease',
+        fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 600
+      }}
+    >
+      {icon}
+      {label}
+    </button>
+  );
+}
+
+// ── LoginScreen principal ────────────────────────────────────
+type Modo = 'intro' | 'login' | 'cadastro' | 'loading';
+
 export function LoginScreen() {
+  const [modo, setModo] = useState<Modo>('intro');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
   const [nick, setNick] = useState('');
-  const [fase, setFase] = useState<'intro' | 'form' | 'loading'>('intro');
-  const { loginSimulado, carregando } = useAuthStore();
 
-  const handleEntrar = async () => {
-    if (!nick.trim()) return;
-    setFase('loading');
-    await loginSimulado(nick.trim());
+  const { signIn, signInWithGoogle, signUp, carregando, erro, limparErro } = useAuthStore();
+
+  const resetForm = () => {
+    setEmail(''); setSenha(''); setNick(''); limparErro();
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') handleEntrar();
+  const irPara = (m: Modo) => { resetForm(); setModo(m); };
+
+  const handleLogin = async () => {
+    if (!email.trim() || !senha.trim()) return;
+    await signIn(email.trim(), senha.trim());
+    // Se não logou (erro), o modo continua login para mostrar a msg
   };
+
+  const handleGoogleLogin = async () => {
+    await signInWithGoogle();
+  };
+
+  const handleCadastro = async () => {
+    if (!email.trim() || !senha.trim() || !nick.trim()) return;
+    await signUp(email.trim(), senha.trim(), nick.trim());
+  };
+
+  const formAnimation = erro ? { x: [-10, 10, -10, 10, 0] } : {};
 
   return (
     <div className="login-screen" style={{ background: 'var(--obsidian-900)' }}>
       <Particles />
 
-      {/* Aneis orbitais */}
+      {/* Anéis orbitais */}
       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}>
         <OrbitRing radius={160} duration={20}>
           <div style={{ position: 'absolute', top: -4, left: '50%', marginLeft: -4, width: 8, height: 8, borderRadius: '50%', background: 'var(--gold-400)', boxShadow: '0 0 10px var(--gold-400)' }} />
@@ -95,9 +187,12 @@ export function LoginScreen() {
         </OrbitRing>
       </div>
 
-      {/* Conteúdo Central */}
-      <div style={{ position: 'relative', zIndex: 10, width: '100%', maxWidth: 360, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32, padding: '0 24px' }}>
-
+      {/* Conteúdo */}
+      <div style={{
+        position: 'relative', zIndex: 10, width: '100%', maxWidth: 360,
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        gap: 32, padding: '0 24px',
+      }}>
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -30, scale: 0.8 }}
@@ -105,7 +200,6 @@ export function LoginScreen() {
           transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
           style={{ textAlign: 'center' }}
         >
-          {/* Ícone gigante */}
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
@@ -114,120 +208,195 @@ export function LoginScreen() {
           >
             🃏
           </motion.div>
-
           <h1 style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 38,
-            fontWeight: 900,
-            color: 'var(--gold-400)',
-            margin: 0,
-            letterSpacing: '-0.03em',
+            fontFamily: 'var(--font-display)', fontSize: 38, fontWeight: 900,
+            color: 'var(--gold-400)', margin: 0, letterSpacing: '-0.03em',
             textShadow: '0 0 30px rgba(212,160,23,0.5)',
           }}>
             ARENA TRUCO
           </h1>
           <p style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 13,
-            fontWeight: 600,
-            color: 'var(--text-muted)',
-            letterSpacing: '0.25em',
-            textTransform: 'uppercase',
-            margin: '6px 0 0',
+            fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 600,
+            color: 'var(--text-muted)', letterSpacing: '0.25em',
+            textTransform: 'uppercase', margin: '6px 0 0',
           }}>
             Premium · Obsidian & Gold
           </p>
         </motion.div>
 
-        {/* Formulário */}
+        {/* Formulários */}
         <AnimatePresence mode="wait">
-          {fase === 'intro' && (
+
+          {/* ── INTRO ── */}
+          {modo === 'intro' && (
             <motion.div
               key="intro"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ delay: 0.4, duration: 0.5 }}
               style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 12 }}
             >
-              <button className="btn-primary animate-pulse-gold" onClick={() => setFase('form')}>
+              <button id="btn-entrar-arena" className="btn-primary animate-pulse-gold" onClick={() => irPara('login')}>
                 ENTRAR NA ARENA
               </button>
-              <button className="btn-secondary">
+              <button id="btn-criar-conta" className="btn-secondary" onClick={() => irPara('cadastro')}>
                 Criar Conta
               </button>
             </motion.div>
           )}
 
-          {(fase === 'form') && (
+          {/* ── LOGIN ── */}
+          {modo === 'login' && (
             <motion.div
-              key="form"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              key="login"
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0, ...formAnimation }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
               style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 14 }}
             >
-              <div style={{ position: 'relative' }}>
-                <span style={{
-                  position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)',
-                  fontSize: 20, pointerEvents: 'none'
-                }}>🎮</span>
-                <input
-                  className="input-field"
-                  style={{ paddingLeft: 48 }}
-                  placeholder="Seu nick de truqueiro..."
-                  value={nick}
-                  onChange={e => setNick(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  maxLength={20}
-                  autoFocus
-                />
+              <div style={{
+                fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 800,
+                color: 'var(--text-primary)', textAlign: 'center', marginBottom: 4,
+              }}>
+                Entrar na Conta
               </div>
 
-              <button
-                className="btn-primary"
-                onClick={handleEntrar}
-                disabled={!nick.trim() || carregando}
-                style={{ opacity: nick.trim() ? 1 : 0.4 }}
-              >
-                ENTRAR 🃏
-              </button>
+              <Campo icone="✉️" placeholder="Seu email" value={email} onChange={setEmail} type="email" autoFocus error={!!erro && !email.trim()} />
+              <Campo icone="🔒" placeholder="Sua senha" value={senha} onChange={setSenha} type="password" error={!!erro && !senha.trim()} />
+
+              {erro && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  style={{
+                    background: 'rgba(230,57,70,0.15)', border: '1px solid rgba(230,57,70,0.3)',
+                    borderRadius: 10, padding: '10px 14px',
+                    fontSize: 12, color: '#e63946', textAlign: 'center',
+                  }}
+                >
+                  {erro}
+                </motion.div>
+              )}
 
               <button
-                className="btn-secondary"
-                onClick={() => setFase('intro')}
+                id="btn-login-submit"
+                className="btn-primary"
+                onClick={handleLogin}
+                disabled={carregando}
+                style={{ opacity: email.trim() && senha.trim() ? 1 : 0.6 }}
               >
-                ← Voltar
+                {carregando ? 'CARREGANDO...' : 'ENTRAR 🃏'}
               </button>
+
+              <div className="separator" style={{ margin: '8px 0' }} />
+
+              <SocialButton
+                onClick={handleGoogleLogin}
+                disabled={carregando}
+                label="Entrar com Google"
+                icon={(
+                  <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.273 0 3.19 2.7 1.24 6.636l4.026 3.129Z"/>
+                    <path fill="#FBBC05" d="M1.24 6.636a7.077 7.077 0 0 0 0 10.728l4.027-3.136a4.173 4.173 0 0 1 0-4.463L1.24 6.636Z"/>
+                    <path fill="#4285F4" d="M12 19.091a7.023 7.023 0 0 1-4.932-2.036L3.045 20.19a11.97 11.97 0 0 0 18.91-5.636h-9.954v4.537Z"/>
+                    <path fill="#34A853" d="M21.955 14.554c.036-.345.045-.71.045-1.091 0-.61-.045-1.2-.145-1.782h-9.855v3.91h5.81c-.5 1.5-1.645 2.6-3.01 3.49l3.864 3.01c2.254-2.082 3.827-5.145 4.318-8.537Z"/>
+                  </svg>
+                )}
+              />
+
+              <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>
+                Não tem conta?{' '}
+                <span
+                  onClick={() => irPara('cadastro')}
+                  style={{ color: 'var(--gold-400)', cursor: 'pointer', fontWeight: 700 }}
+                >
+                  Criar agora
+                </span>
+              </div>
+
+              <button className="btn-secondary" onClick={() => irPara('intro')}>← Voltar</button>
             </motion.div>
           )}
 
-          {fase === 'loading' && (
+          {/* ── CADASTRO ── */}
+          {modo === 'cadastro' && (
+            <motion.div
+              key="cadastro"
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0, ...formAnimation }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 14 }}
+            >
+              <div style={{
+                fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 800,
+                color: 'var(--text-primary)', textAlign: 'center', marginBottom: 4,
+              }}>
+                Criar Conta
+              </div>
+
+              <Campo icone="🎮" placeholder="Nick de truqueiro" value={nick} onChange={setNick} autoFocus error={!!erro && !nick.trim()} />
+              <Campo icone="✉️" placeholder="Seu email" value={email} onChange={setEmail} type="email" error={!!erro && !email.trim()} />
+              <Campo icone="🔒" placeholder="Senha (mín. 6 caracteres)" value={senha} onChange={setSenha} type="password" error={!!erro && !senha.trim()} />
+
+              {erro && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  style={{
+                    background: 'rgba(230,57,70,0.15)', border: '1px solid rgba(230,57,70,0.3)',
+                    borderRadius: 10, padding: '10px 14px',
+                    fontSize: 12, color: '#e63946', textAlign: 'center',
+                  }}
+                >
+                  {erro}
+                </motion.div>
+              )}
+
+              <button
+                id="btn-cadastro-submit"
+                className="btn-primary"
+                onClick={handleCadastro}
+                disabled={carregando}
+                style={{ opacity: email.trim() && senha.trim() && nick.trim() ? 1 : 0.6 }}
+              >
+                {carregando ? 'CRIANDO...' : 'CRIAR CONTA 🚀'}
+              </button>
+
+              <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-muted)' }}>
+                Já tem conta?{' '}
+                <span
+                  onClick={() => irPara('login')}
+                  style={{ color: 'var(--gold-400)', cursor: 'pointer', fontWeight: 700 }}
+                >
+                  Entrar
+                </span>
+              </div>
+
+              <button className="btn-secondary" onClick={() => irPara('intro')}>← Voltar</button>
+            </motion.div>
+          )}
+
+          {/* ── LOADING ── */}
+          {modo === 'loading' && (
             <motion.div
               key="loading"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}
             >
-              {/* Spinner dourado */}
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                 style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: '50%',
+                  width: 60, height: 60, borderRadius: '50%',
                   border: '3px solid rgba(212,160,23,0.2)',
                   borderTop: '3px solid var(--gold-400)',
                   boxShadow: '0 0 20px rgba(212, 160, 23, 0.3)',
                 }}
               />
               <p style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 15,
-                color: 'var(--gold-400)',
-                letterSpacing: '0.1em',
+                fontFamily: 'var(--font-display)', fontSize: 15,
+                color: 'var(--gold-400)', letterSpacing: '0.1em',
                 animation: 'glow-pulse 1s ease-in-out infinite',
               }}>
                 Entrando na Arena...
@@ -238,12 +407,10 @@ export function LoginScreen() {
 
         {/* Rodapé */}
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
           style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center' }}
         >
-          Agente Forge v4.0 · Experiência Nível Apple
+          Agente Forge v5.2 · Supabase Auth
         </motion.p>
       </div>
     </div>

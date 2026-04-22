@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import type { GameHistory, PontuacaoDia, Badge, Usuario, JogadorRanking } from '../types';
+import type { GameHistory, PontuacaoDia, Badge, Usuario, JogadorRanking, Amigo } from '../types';
 
 // ── Aba "Meus Jogos": últimas 20 partidas do usuário ──
 export function useMinhasPartidas(userId: string | undefined = undefined) {
@@ -229,9 +229,21 @@ export function usePerfilPublico(userId: string | undefined) {
   return { usuario, loading };
 }
 
+// ── Converter Usuario → Amigo com defaults ──
+function usuarioParaAmigo(usuario: Usuario): Amigo {
+  return {
+    ...usuario,
+    statusMsg: usuario.statusMsg ?? 'Jogador',
+    statusMsgAtualizada: new Date(),
+    statusAmigo: 'offline',
+    modoJogo: undefined,
+    tempoJogandoMin: undefined,
+  };
+}
+
 // ── Ranking de Amigos: lista de amigos ordenados por ranking ────
 export function useAmigosRanking(userId: string | undefined) {
-  const [amigos, setAmigos] = useState<Usuario[]>([]);
+  const [amigos, setAmigos] = useState<Amigo[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -280,7 +292,7 @@ export function useAmigosRanking(userId: string | undefined) {
             if (rankingError) {
               console.warn('Erro ao buscar ranking de amigos:', rankingError?.message ?? rankingError);
             } else if (rankingData) {
-              setAmigos(rankingData.map((r: any) => ({
+              const usuarios = rankingData.map((r: any) => ({
                 id: r.id,
                 nome: r.nick,
                 nick: r.nick,
@@ -294,7 +306,8 @@ export function useAmigosRanking(userId: string | undefined) {
                 vitorias: r.vitorias ?? 0,
                 derrotas: r.derrotas ?? 0,
                 partidas: r.partidas_totais ?? 0,
-              })));
+              } as Usuario));
+              setAmigos(usuarios.map(usuarioParaAmigo));
             }
             setLoading(false);
           });

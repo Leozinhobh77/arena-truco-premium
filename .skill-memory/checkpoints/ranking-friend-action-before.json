@@ -1,0 +1,15 @@
+{
+  "checkpoint_id": "ranking-friend-action-before",
+  "timestamp": "2026-04-22T16:45:00Z",
+  "tipo": "before",
+  "tarefa": "Integrar FriendActionSheet ao RankingScreen",
+  "problema_atual": "Ao clicar em qualquer jogador, abre ProfileOverlay direto (sem ações)",
+  "solucao": "Diferenciar clique: próprio usuário → ProfileOverlay, outro → FriendActionSheet",
+  "arquivos_que_serao_alterados": [
+    {
+      "caminho": "src/screens/RankingScreen.tsx",
+      "o_que_muda": "RankingCard passa usuarioId para callback, diferencia cliques"
+    }
+  ],
+  "status": "pronto_para_implementacao"
+}

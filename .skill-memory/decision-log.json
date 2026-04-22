@@ -1,0 +1,134 @@
+{
+  "projeto": "Arena Truco Premium",
+  "forge_version": "5.2 Consultivo",
+  "entries": [
+    {
+      "skill": "skill-consultor",
+      "fase": "Matriz Tecnológica — Banco de Dados",
+      "decisao": "Usar Supabase (PostgreSQL + Auth + Realtime) como backend",
+      "motivo": "PostgreSQL permite relações complexas para Rankings com JOIN; Auth pronto em minutos com SDK TypeScript nativo que encaixa diretamente no Zustand; FREE tier suporta todo o desenvolvimento sem custo. Realtime embutido pavimenta o caminho para o Lobby ao vivo na Sprint 8.",
+      "alternativas_consideradas": [
+        "Firebase — descartado: custo escala rapidamente com leituras individuais cobradas; vendor lock-in severo; sem SQL nativo dificulta ranking complexo",
+        "PocketBase — descartado: requer gerenciamento de VPS próprio; ecossistema menor; desnecessário para este estágio do projeto"
+      ],
+      "appetite_impacto": "Compatível com appetite M — setup do projeto Supabase + schema SQL em menos de 1 dia; integração com Zustand em 1-2 dias de Sprint",
+      "custo_estimado": "R$ 0/mês (FREE tier: 500MB storage, 50k MAU, 2 projetos) durante todo o desenvolvimento",
+      "aprovado_por": "usuário — confirmação [1] explícita na sessão de consultoria",
+      "timestamp": "2026-04-15T15:50:00Z"
+    },
+    {
+      "skill": "skill-consultor",
+      "fase": "Calibração de Appetite — Escopo do BD",
+      "decisao": "Fase 1 apenas: Auth + Perfil de usuário persistente na Sprint 3",
+      "motivo": "Auditor Anti-Scope vetou Multiplayer WebSocket real (Sprint 8+) e Ranking com dados reais (Sprint 5). Foco imediato: substituir useAuthStore mock por Supabase Auth real, persistir nick/avatar/nível na tabela profiles.",
+      "alternativas_consideradas": [
+        "Implementar tudo de uma vez (Auth + Ranking + Realtime) — vetado: extrapola appetite da Sprint 3 em 3-4 sprints adicionais"
+      ],
+      "appetite_impacto": "Economia de 3-4 sprints no MVP ao adiar Ranking e Realtime",
+      "aprovado_por": "Auditor Anti-Scope (Board interno) + confirmação do usuário",
+      "timestamp": "2026-04-15T15:50:00Z"
+    },
+    {
+      "id": "DEC-SP-001",
+      "skill": "skill-consultor",
+      "projeto": "skill-performance v5.2",
+      "fase": "Stack Technology Selection",
+      "decisao": "Usar Node.js 20+ (TypeScript) como runtime para skill-performance",
+      "motivo": "Compatibilidade perfeita com Forge v5.2 (já usa Node), ecosistema de profiling maduro (clinic.js, 0x), ferramentas Lighthouse CLI nativas, timeline realista (4 semanas)",
+      "alternativas_consideradas": [
+        "Python — descartado: integração com Forge complicada (skill em Node, análise em Py)",
+        "Rust — descartado: tempo build extrapola appetite L em +2 semanas"
+      ],
+      "appetite_impacto": "compatível com L — stack selection zero overhead",
+      "risk_level": "LOW",
+      "reversibility": "MEDIUM",
+      "timestamp": "2026-04-15T13:00:00Z",
+      "aprovado_por": "CTO (Board Executivo)"
+    },
+    {
+      "id": "DEC-SP-002",
+      "skill": "skill-consultor",
+      "projeto": "skill-performance v5.2",
+      "fase": "Library Selection",
+      "decisao": "Usar Lighthouse API (Node) + esbuild + clinic.js + sharp para análises",
+      "motivo": "Libraries maduras, > 100k downloads/semana, zero vendor lock-in, integração nativa Node.js, free tier suficiente (25k PageSpeed requests/dia)",
+      "alternativas_consideradas": [
+        "PageSpeed Insights API puro — descartado: sem análise local",
+        "Ferramentas proprietárias (DataDog, NewRelic) — descartado: caro, overkill para MVP"
+      ],
+      "appetite_impacto": "compatível com L — setup existente, zero learning curve",
+      "risk_level": "LOW",
+      "reversibility": "HIGH",
+      "timestamp": "2026-04-15T13:15:00Z",
+      "aprovado_por": "CTO + Team"
+    },
+    {
+      "id": "DEC-SP-003",
+      "skill": "skill-consultor",
+      "projeto": "skill-performance v5.2",
+      "fase": "Scope & Appetite",
+      "decisao": "Appetite L (4 semanas, ~160 horas) é INVIOLÁVEL — 3 fases de features cabem exatamente",
+      "motivo": "Fase 1 MVP (1 week) resolve problema core, Fase 2 (1.5 weeks) valida, Fase 3 (1.5 weeks) escala. Nenhuma feature foi vetada.",
+      "alternativas_consideradas": [
+        "Appetite M (3 semanas) — cortaria fase monitoramento pós-deploy",
+        "Appetite L+ (5+ semanas) — violaria regra inviolável Forge"
+      ],
+      "appetite_impacto": "L = realista, sem pressa, sem compressão",
+      "risk_level": "LOW",
+      "reversibility": "LOW",
+      "timestamp": "2026-04-15T13:30:00Z",
+      "aprovado_por": "Orquestrador + Board Executivo"
+    },
+    {
+      "id": "DEC-SP-004",
+      "skill": "skill-consultor",
+      "projeto": "skill-performance v5.2",
+      "fase": "False-Positive Threshold",
+      "decisao": "Máximo 10% false-positive rate — melhor não avisar do que avisar errado (LEI-P03)",
+      "motivo": "Dev perde confiança se skill grita por coisas irrelevantes. Threshold de confiança > 80% para HIGH/MEDIUM recomendações.",
+      "alternativas_consideradas": [
+        "20% false-positive — mais detecções, menos confiabilidade",
+        "0% false-positive — impossível, perderia verdadeiros-positivos"
+      ],
+      "appetite_impacto": "afeta estratégia de tuning (mais conservative)",
+      "risk_level": "MEDIUM",
+      "reversibility": "HIGH",
+      "timestamp": "2026-04-15T13:45:00Z",
+      "aprovado_por": "Frontend Analyst + React Specialist"
+    },
+    {
+      "id": "DEC-SP-005",
+      "skill": "skill-consultor",
+      "projeto": "skill-performance v5.2",
+      "fase": "Never Modify Code",
+      "decisao": "skill-performance é read-only — NUNCA modifica código, só recomenda (LEI-P05)",
+      "motivo": "Garantir que dev mantém controle. Implementação é responsabilidade do Construtor, não da skill.",
+      "alternativas_consideradas": [
+        "Auto-fix — quebra separação de responsabilidades",
+        "Gerar PRs — overhead alto, complexidade extra"
+      ],
+      "appetite_impacto": "compatível — simplifica implementação",
+      "risk_level": "LOW",
+      "reversibility": "LOW",
+      "timestamp": "2026-04-15T14:00:00Z",
+      "aprovado_por": "CEO (Strategic Officer)"
+    },
+    {
+      "id": "DEC-SP-006",
+      "skill": "skill-consultor",
+      "projeto": "skill-performance v5.2",
+      "fase": "Documentation Standards",
+      "decisao": "Recomendações SEMPRE específicas: arquivo:linha + fix (não genéricas — LEI-P02)",
+      "motivo": "Dev consegue implementar sem pesquisa. Ex: 'RankingScreen.tsx:145 — abrirPerfilGlobal não usa useCallback. Envolver em useCallback([amigoId], [deps])'",
+      "alternativas_consideradas": [
+        "Output genérico — fácil codificar, inútil",
+        "AI-generated PRs — complexo, overhead"
+      ],
+      "appetite_impacto": "requer mais tempo de tuning (~10% overhead)",
+      "risk_level": "LOW",
+      "reversibility": "MEDIUM",
+      "timestamp": "2026-04-15T14:15:00Z",
+      "aprovado_por": "UX Principles Board"
+    }
+  ]
+}

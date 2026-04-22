@@ -3,7 +3,7 @@
 // Dados de demonstração de alto nível para todas as telas
 // ============================================================
 
-import type { Usuario, Clan, Sala, JogadorRanking, ItemLoja, MensagemChat } from './types';
+import type { Usuario, Clan, Sala, JogadorRanking, ItemLoja, MensagemChat, Amigo, Badge, GameHistory, PontuacaoDia } from './types';
 
 // ── Usuário Logado (Mock de Sessão) ──────────────────────────
 export const USUARIO_MOCK: Usuario = {
@@ -180,6 +180,131 @@ export const RANKING_MOCK: JogadorRanking[] = [
     pontos: 8000 - i * 400,
   })),
   { posicao: 312, usuario: USUARIO_MOCK, pontos: 4800 },
+];
+
+// ── Amigos Mock ──────────────────────────────────────────────
+export const AMIGOS_MOCK: Amigo[] = [
+  // ── Disponíveis (online, sem jogo ativo) ─────────────────
+  {
+    id: '00000000-0000-0000-0000-000000000001', nome: 'Carlos Silva', nick: 'TrucoMestre',
+    avatar: 'https://api.dicebear.com/8.x/bottts-neutral/svg?seed=TrucoMestre&backgroundColor=1a1040',
+    nivel: 42, vitorias: 380, derrotas: 140, partidas: 520, ranking: 88, clan: 'TRB',
+    statusMsg: 'Pronto pra dar truco em qualquer um 🃏',
+    statusMsgAtualizada: new Date(Date.now() - 1000 * 60 * 60 * 2),
+    statusAmigo: 'disponivel',
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000002', nome: 'Ana Lima', nick: 'RainhaTruco',
+    avatar: 'https://api.dicebear.com/8.x/bottts-neutral/svg?seed=RainhaTruco&backgroundColor=880e4f',
+    nivel: 58, vitorias: 511, derrotas: 198, partidas: 709, ranking: 45,
+    statusMsg: 'Eu sou o melhor do truco ninguem ganhe de mim kkkk',
+    statusMsgAtualizada: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2),
+    statusAmigo: 'disponivel',
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000003', nome: 'Pedro Rocha', nick: 'Ferreiro77',
+    avatar: 'https://api.dicebear.com/8.x/bottts-neutral/svg?seed=Ferreiro77&backgroundColor=1b5e20',
+    nivel: 31, vitorias: 220, derrotas: 195, partidas: 415, ranking: 401, clan: 'EDT',
+    statusMsg: 'Voltei! Vamos nessa 🔥',
+    statusMsgAtualizada: new Date(Date.now() - 1000 * 60 * 30),
+    statusAmigo: 'disponivel',
+  },
+  // ── Jogando (em partida ativa) ───────────────────────────
+  {
+    id: '00000000-0000-0000-0000-000000000004', nome: 'Marcos Costa', nick: 'ZeroMedo',
+    avatar: 'https://api.dicebear.com/8.x/bottts-neutral/svg?seed=ZeroMedo&backgroundColor=2d1b69',
+    nivel: 67, vitorias: 612, derrotas: 201, partidas: 813, ranking: 12,
+    statusMsg: 'Ninguém me para no Paulista 💪',
+    statusMsgAtualizada: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5),
+    statusAmigo: 'jogando', modoJogo: 'paulista', tempoJogandoMin: 18,
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000005', nome: 'Fernanda Alves', nick: 'FerTruco',
+    avatar: 'https://api.dicebear.com/8.x/bottts-neutral/svg?seed=FerTruco&backgroundColor=37474f',
+    nivel: 44, vitorias: 390, derrotas: 170, partidas: 560, ranking: 77,
+    statusMsg: 'Mineiro é o melhor modo, ponto final.',
+    statusMsgAtualizada: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10),
+    statusAmigo: 'jogando', modoJogo: 'mineiro', tempoJogandoMin: 5,
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000006', nome: 'Ricardo Nunes', nick: 'ManilhaMax',
+    avatar: 'https://api.dicebear.com/8.x/bottts-neutral/svg?seed=ManilhaMax&backgroundColor=1a237e',
+    nivel: 29, vitorias: 180, derrotas: 155, partidas: 335, ranking: 660,
+    statusMsg: 'Aprendendo cada dia mais...',
+    statusMsgAtualizada: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3),
+    statusAmigo: 'jogando', modoJogo: 'paulista', tempoJogandoMin: 31,
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000007', nome: 'Juliana Melo', nick: 'Julinha11',
+    avatar: 'https://api.dicebear.com/8.x/bottts-neutral/svg?seed=Julinha11&backgroundColor=4a148c',
+    nivel: 53, vitorias: 470, derrotas: 182, partidas: 652, ranking: 55, clan: 'CDF',
+    statusMsg: '😎 Truco é vida',
+    statusMsgAtualizada: new Date(Date.now() - 1000 * 60 * 60 * 24),
+    statusAmigo: 'jogando', modoJogo: 'mineiro', tempoJogandoMin: 44,
+  },
+  // ── Offline ──────────────────────────────────────────────
+  {
+    id: '00000000-0000-0000-0000-000000000008', nome: 'Diego Pinto', nick: 'DiegoFull',
+    avatar: 'https://api.dicebear.com/8.x/bottts-neutral/svg?seed=DiegoFull&backgroundColor=212121',
+    nivel: 38, vitorias: 290, derrotas: 210, partidas: 500, ranking: 280,
+    statusMsg: 'Voltarei em breve, aguardem 🤙',
+    statusMsgAtualizada: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
+    statusAmigo: 'offline',
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000009', nome: 'Lucia Ramos', nick: 'Baralho23',
+    avatar: 'https://api.dicebear.com/8.x/bottts-neutral/svg?seed=Baralho23&backgroundColor=263238',
+    nivel: 22, vitorias: 140, derrotas: 130, partidas: 270, ranking: 890, clan: 'EDT',
+    statusMsg: 'Estudando as manilhas 📚',
+    statusMsgAtualizada: new Date(Date.now() - 1000 * 60 * 60 * 24 * 14),
+    statusAmigo: 'offline',
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000010', nome: 'José Cardoso', nick: 'ZapaDor',
+    avatar: 'https://api.dicebear.com/8.x/bottts-neutral/svg?seed=ZapaDor&backgroundColor=1a1040',
+    nivel: 71, vitorias: 688, derrotas: 220, partidas: 908, ranking: 8, clan: 'TRB',
+    statusMsg: 'Lendário do truco 👑',
+    statusMsgAtualizada: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2),
+    statusAmigo: 'offline',
+  },
+];
+
+// ── Badges Mock ──────────────────────────────────────────────
+export const BADGES_MOCK: Badge[] = [
+  { id: 'b1', nome: 'Primeira Partida', descricao: 'Completou a primeira partida da carreira', icone: '🎴', tier: 1, conquistado: true, dataConquista: new Date('2026-04-12') },
+  { id: 'b2', nome: '10 Vitórias', descricao: 'Conquistou 10 vitórias no total', icone: '🏆', tier: 1, conquistado: true, dataConquista: new Date('2026-04-12') },
+  { id: 'b3', nome: 'Sobe Nível', descricao: 'Atingiu o nível 25', icone: '⭐', tier: 2, conquistado: true, dataConquista: new Date('2026-04-13') },
+  { id: 'b4', nome: 'Top 500', descricao: 'Entrou no top 500 do ranking global', icone: '📊', tier: 2, conquistado: true, dataConquista: new Date('2026-04-13') },
+  { id: 'b5', nome: '100 Vitórias', descricao: 'Acumulou 100 vitórias históricas', icone: '💎', tier: 2, conquistado: true, dataConquista: new Date('2026-04-14') },
+  { id: 'b6', nome: 'Top 100', descricao: 'Entre os 100 melhores do ranking', icone: '👑', tier: 3, conquistado: false, progressoAtual: 312, progressoMax: 100 },
+  { id: 'b7', nome: 'Nível 50', descricao: 'Atingiu o nível 50 — semi-lendário', icone: '🚀', tier: 3, conquistado: false, progressoAtual: 47, progressoMax: 50 },
+  { id: 'b8', nome: 'Truco Master', descricao: '1.000 pontos em um único dia', icone: '⚡', tier: 4, conquistado: false, progressoAtual: 480, progressoMax: 1000 },
+];
+
+// ── Pontuação Semanal Mock ────────────────────────────────────
+export const PONTUACAO_SEMANAL_MOCK: PontuacaoDia[] = [
+  { data: '09/04', pontos: 340 },
+  { data: '10/04', pontos: 180 },
+  { data: '11/04', pontos: 520 },
+  { data: '12/04', pontos: 95  },
+  { data: '13/04', pontos: 410 },
+  { data: '14/04', pontos: 280 },
+  { data: '15/04', pontos: 480 },
+];
+
+// ── Histórico de Partidas Mock ────────────────────────────────
+const _av = (seed: string) => `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${seed}&backgroundColor=1a1040`;
+export const GAME_HISTORY_MOCK: GameHistory[] = [
+  { id: 'g01', data: new Date('2026-04-15T22:30:00'), oponenteId: 'amigo-001', oponenteNick: 'TrucoMestre', oponenteAvatar: _av('TrucoMestre'), resultado: 'vitoria',  pontosGanhos:  120, modo: 'paulista', duracaoMin: 12 },
+  { id: 'g02', data: new Date('2026-04-15T21:00:00'), oponenteId: 'amigo-002', oponenteNick: 'RainhaTruco', oponenteAvatar: _av('RainhaTruco'), resultado: 'derrota',  pontosGanhos:  -80, modo: 'mineiro',  duracaoMin:  8 },
+  { id: 'g03', data: new Date('2026-04-15T19:00:00'), oponenteId: 'oponente-ZeroMedo', oponenteNick: 'ZeroMedo',    oponenteAvatar: _av('ZeroMedo'),    resultado: 'vitoria',  pontosGanhos:  95,  modo: 'paulista', duracaoMin: 15 },
+  { id: 'g04', data: new Date('2026-04-14T23:10:00'), oponenteId: 'amigo-003', oponenteNick: 'Ferreiro77',  oponenteAvatar: _av('Ferreiro77'),  resultado: 'vitoria',  pontosGanhos: 140,  modo: 'mineiro',  duracaoMin: 11 },
+  { id: 'g05', data: new Date('2026-04-14T21:00:00'), oponenteId: 'oponente-ManilhaMax', oponenteNick: 'ManilhaMax',  oponenteAvatar: _av('ManilhaMax'),  resultado: 'derrota',  pontosGanhos:  -60, modo: 'paulista', duracaoMin:  7 },
+  { id: 'g06', data: new Date('2026-04-14T19:30:00'), oponenteId: 'oponente-FerTruco', oponenteNick: 'FerTruco',    oponenteAvatar: _av('FerTruco'),    resultado: 'abandono', pontosGanhos:  -30, modo: 'mineiro',  duracaoMin:  3 },
+  { id: 'g07', data: new Date('2026-04-13T22:00:00'), oponenteId: 'oponente-Julinha11', oponenteNick: 'Julinha11',   oponenteAvatar: _av('Julinha11'),   resultado: 'vitoria',  pontosGanhos: 110,  modo: 'paulista', duracaoMin: 14 },
+  { id: 'g08', data: new Date('2026-04-13T20:00:00'), oponenteId: 'oponente-ZapaDor', oponenteNick: 'ZapaDor',     oponenteAvatar: _av('ZapaDor'),     resultado: 'derrota',  pontosGanhos:  -90, modo: 'mineiro',  duracaoMin:  9 },
+  { id: 'g09', data: new Date('2026-04-13T18:00:00'), oponenteId: 'oponente-DiegoFull', oponenteNick: 'DiegoFull',   oponenteAvatar: _av('DiegoFull'),   resultado: 'vitoria',  pontosGanhos:  75,  modo: 'paulista', duracaoMin: 16 },
+  { id: 'g10', data: new Date('2026-04-12T22:00:00'), oponenteId: 'oponente-Baralho23', oponenteNick: 'Baralho23',   oponenteAvatar: _av('Baralho23'),   resultado: 'vitoria',  pontosGanhos:  90,  modo: 'mineiro',  duracaoMin: 13 },
 ];
 
 // ── Loja Mock ────────────────────────────────────────────────

@@ -1,0 +1,423 @@
+/* ============================================================
+   ARENA ILLUSTRATION — ArenaIllustration.css
+   Animações e efeitos visuais para o estádio
+   ============================================================ */
+
+.arena-illustration-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(135deg, #0a0a14 0%, #1a1a2e 100%);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arena-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 30px rgba(212, 160, 23, 0.2));
+}
+
+/* ── LIGHT RAYS ANIMATION ──────────────────────────────── */
+.light-rays {
+  animation: raysPulse 3s ease-in-out infinite;
+}
+
+@keyframes raysPulse {
+  0% {
+    opacity: 0.4;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+  }
+  50% {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.6));
+  }
+  100% {
+    opacity: 0.4;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+  }
+}
+
+.ray-1 {
+  animation: rayRadiate1 2.5s ease-out infinite;
+}
+
+.ray-2 {
+  animation: rayRadiate2 2.5s ease-out infinite 0.2s;
+}
+
+.ray-3 {
+  animation: rayRadiate3 2.5s ease-out infinite 0.2s;
+}
+
+.ray-4 {
+  animation: rayRadiate4 2.5s ease-out infinite;
+}
+
+@keyframes rayRadiate1 {
+  0% {
+    x1: 400;
+    y1: 20;
+    x2: 180;
+    y2: 450;
+    stroke-width: 12;
+    opacity: 0.6;
+  }
+  50% {
+    stroke-width: 14;
+    opacity: 0.8;
+  }
+  100% {
+    stroke-width: 12;
+    opacity: 0.6;
+  }
+}
+
+@keyframes rayRadiate2 {
+  0% {
+    x1: 400;
+    y1: 20;
+    x2: 250;
+    y2: 480;
+    stroke-width: 10;
+    opacity: 0.5;
+  }
+  50% {
+    stroke-width: 12;
+    opacity: 0.7;
+  }
+  100% {
+    stroke-width: 10;
+    opacity: 0.5;
+  }
+}
+
+@keyframes rayRadiate3 {
+  0% {
+    x1: 400;
+    y1: 20;
+    x2: 620;
+    y2: 480;
+    stroke-width: 10;
+    opacity: 0.5;
+  }
+  50% {
+    stroke-width: 12;
+    opacity: 0.7;
+  }
+  100% {
+    stroke-width: 10;
+    opacity: 0.5;
+  }
+}
+
+@keyframes rayRadiate4 {
+  0% {
+    x1: 400;
+    y1: 20;
+    x2: 690;
+    y2: 450;
+    stroke-width: 12;
+    opacity: 0.6;
+  }
+  50% {
+    stroke-width: 14;
+    opacity: 0.8;
+  }
+  100% {
+    stroke-width: 12;
+    opacity: 0.6;
+  }
+}
+
+/* ── RED ACCENT LIGHTS ──────────────────────────────────── */
+.red-lights {
+  animation: redGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes redGlow {
+  0% {
+    opacity: 0.6;
+    filter: drop-shadow(0 0 5px rgba(230, 57, 70, 0.4));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 15px rgba(230, 57, 70, 0.8));
+  }
+  100% {
+    opacity: 0.6;
+    filter: drop-shadow(0 0 5px rgba(230, 57, 70, 0.4));
+  }
+}
+
+.red-light-1,
+.red-light-2 {
+  animation: redFlicker 0.4s ease-in-out infinite;
+}
+
+.red-light-3,
+.red-light-4 {
+  animation: redFlicker 0.5s ease-in-out infinite 0.1s;
+}
+
+@keyframes redFlicker {
+  0% {
+    r: 8px;
+    opacity: 0.8;
+  }
+  50% {
+    r: 10px;
+    opacity: 1;
+  }
+  100% {
+    r: 8px;
+    opacity: 0.8;
+  }
+}
+
+/* ── COLUMNS ANIMATION ──────────────────────────────────── */
+.column {
+  animation: columnGlow 2.5s ease-in-out infinite;
+}
+
+.column-center {
+  animation: columnGlow 2.5s ease-in-out infinite, columnPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes columnGlow {
+  0% {
+    filter: drop-shadow(0 0 5px rgba(212, 160, 23, 0.2));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+  }
+  100% {
+    filter: drop-shadow(0 0 5px rgba(212, 160, 23, 0.2));
+  }
+}
+
+@keyframes columnPulse {
+  0% {
+    opacity: 0.95;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.95;
+  }
+}
+
+/* Stagger animation nas colunas */
+.column-1 {
+  animation-delay: 0s;
+}
+
+.column-2 {
+  animation-delay: 0.15s;
+}
+
+.column-3 {
+  animation-delay: 0.3s;
+}
+
+.column-4 {
+  animation-delay: 0.45s;
+}
+
+.column-5 {
+  animation-delay: 0.6s;
+}
+
+.column-6 {
+  animation-delay: 0.75s;
+}
+
+.column-7 {
+  animation-delay: 0.6s;
+}
+
+.column-8 {
+  animation-delay: 0.45s;
+}
+
+.column-9 {
+  animation-delay: 0.3s;
+}
+
+.column-10 {
+  animation-delay: 0.15s;
+}
+
+.column-11 {
+  animation-delay: 0s;
+}
+
+/* ── ENTRANCE ANIMATION ──────────────────────────────────── */
+.entrance {
+  animation: entranceGlow 2s ease-in-out infinite;
+}
+
+@keyframes entranceGlow {
+  0% {
+    filter: drop-shadow(0 0 10px rgba(212, 160, 23, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(212, 160, 23, 0.6));
+  }
+  100% {
+    filter: drop-shadow(0 0 10px rgba(212, 160, 23, 0.3));
+  }
+}
+
+.arena-logo-text {
+  animation: logoPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+  0% {
+    font-size: 32px;
+    opacity: 0.8;
+  }
+  50% {
+    font-size: 34px;
+    opacity: 1;
+  }
+  100% {
+    font-size: 32px;
+    opacity: 0.8;
+  }
+}
+
+/* ── PERIMETER LIGHTS ──────────────────────────────────────*/
+.perimeter-lights {
+  animation: perimeterGlow 2s ease-in-out infinite;
+}
+
+@keyframes perimeterGlow {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+.light {
+  animation: lightPulse 1.5s ease-in-out infinite;
+}
+
+.light-1 {
+  animation-delay: 0s;
+}
+
+.light-2 {
+  animation-delay: 0.15s;
+}
+
+.light-3 {
+  animation-delay: 0.3s;
+}
+
+.light-4 {
+  animation-delay: 0.45s;
+}
+
+.light-5 {
+  animation-delay: 0.3s;
+}
+
+.light-6 {
+  animation-delay: 0.15s;
+}
+
+.light-7 {
+  animation-delay: 0s;
+}
+
+@keyframes lightPulse {
+  0% {
+    r: 5px;
+    opacity: 0.6;
+  }
+  50% {
+    r: 7px;
+    opacity: 1;
+  }
+  100% {
+    r: 5px;
+    opacity: 0.6;
+  }
+}
+
+/* ── PARTICLES (FLOATING) ──────────────────────────────────*/
+.particles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  bottom: 0;
+  background: radial-gradient(circle, #FFD700, #D4A017);
+  border-radius: 50%;
+  opacity: 0.8;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+/* Resposta a preferências de acessibilidade */
+@media (prefers-reduced-motion: reduce) {
+  .light-rays,
+  .ray-1,
+  .ray-2,
+  .ray-3,
+  .ray-4,
+  .red-lights,
+  .red-light-1,
+  .red-light-2,
+  .red-light-3,
+  .red-light-4,
+  .column,
+  .column-center,
+  .entrance,
+  .arena-logo-text,
+  .perimeter-lights,
+  .light,
+  .particle {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .light-rays {
+    filter: drop-shadow(0 0 15px rgba(212, 160, 23, 0.4));
+  }
+
+  .red-lights {
+    opacity: 0.8;
+  }
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .arena-illustration-container {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .arena-svg {
+    filter: drop-shadow(0 0 20px rgba(212, 160, 23, 0.15));
+  }
+}

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Carta } from '../types';
 import clsx from 'clsx';
@@ -28,7 +28,7 @@ const NAIPE_CORES = {
 
 export function PlayingCard({ card, hide = false, playable = false, onClick, className, style }: PlayingCardProps) {
   // Rotação fixa por instância — evita recalcular a cada render
-  const hoverRotation = useMemo(() => Math.random() * 4 - 2, []);
+  const [hoverRotation] = useState(() => Math.random() * 4 - 2);
 
   // Verso da carta
   if (hide) {

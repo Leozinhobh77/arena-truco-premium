@@ -126,7 +126,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const callerTeam = game.players[game.trucoCaller!].team;
       const refuserTeam = callerTeam === 1 ? 2 : 1;
       
-      let newGame = applyRoundPoints(game, callerTeam);
+      const newGame = applyRoundPoints(game, callerTeam);
       const overCheck = isGameOver(newGame);
       if (overCheck.over) {
         set({ game: newGame, gameOver: overCheck });

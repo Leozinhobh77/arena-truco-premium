@@ -43,11 +43,39 @@
   - Quando acontece, MODAL DE TELA CHEIA escurece tudo. Texto "TRUCO" tremendo (shake/flicker vermelho).
   - Botões para a resposta: Correr, Aceitar, Pedir SEIS.
 
-## 4. Requisitos Técnicos
-- **Stack:** React 19 + TypeScript + Vite + Zustand + Tailwind v4 + Framer Motion.
-- **Dados:** Toda a estrutura de lobby e clãs será "Mockada" para demonstração imediata de alto nível. O Gameplay do Truco (Regras, força de cartas, manilhas) deve ser **100% Funcional no frontend** (contra bots locais).
+## 5. Stack & Infraestrutura (atualizado em 2026-04-15)
 
-## 5. Próximos Passos
-- Gerar o **SDD (Spec Driven Document)** detalhando a arquitetura Zustand e Tailwind.
-- Demolir a versão antiga.
-- Iniciar a Sprint 1.
+### Frontend
+- **Framework:** React 19 + TypeScript + Vite 8
+- **UI:** Tailwind v4 + Framer Motion + Zustand
+- **Tema:** Obsidian & Gold (tokens CSS em `index.css`)
+
+### Backend & Banco de Dados
+- **BaaS:** [Supabase](https://supabase.com) — PostgreSQL + Auth + Realtime
+- **Auth:** Email/Password + Google OAuth (via Supabase Auth)
+- **SDK:** `@supabase/supabase-js` (instalado em Sprint 3)
+- **Schema:** `docs/SCHEMA.md` — estrutura completa em SQL
+- **Decisão registrada em:** `.skill-memory/decision-log.json`
+
+**Por que Supabase:**
+PostgreSQL permite relações complexas (Ranking com JOIN); Auth pronto em minutos;
+SDK TypeScript nativo encaixa direto no Zustand; FREE tier suporta todo o desenvolvimento.
+Firebase descartado por custo escalável imprevisível e vendor lock-in.
+
+### Deploy
+- **Ambiente local:** `npm run dev` + `.env.local`
+- **Produção:** Netlify (variáveis de ambiente configuradas no painel)
+- **Custo estimado:** R$ 0/mês (FREE tier Supabase + Netlify free)
+
+### Roadmap de Dados (Fases)
+| Fase | Sprint | O quê |
+|------|--------|-------|
+| 1 — Auth & Perfil | 3 | Login real, nick, avatar, nível, XP, moedas |
+| 2 — Histórico & Ranking | 5 | Partidas, winrate, ranking global |
+| 3 — Social & Realtime | 8 | Lobby ao vivo, chat de clã, convites |
+
+## 6. Próximos Passos
+- **Sprint 3 (atual):** Integração Supabase Auth + `useAuthStore` real + Bot Gemini
+- **Sprint 4:** Áudio Imersivo & SFX
+- **Sprint 5:** Torneios & Meta-Game Ranking (com dados reais do Supabase)
+

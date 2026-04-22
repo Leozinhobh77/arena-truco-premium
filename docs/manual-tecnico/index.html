@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arena Truco: Enciclopédia Técnica v1.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <!-- Background Neural de Forja -->
+    <canvas id="neural-bg"></canvas>
+
+    <!-- Sidebar de Navegação -->
+    <nav class="sidebar" id="sidebar">
+        <ul class="nav-links">
+            <li><a href="#hero" class="active" data-tooltip="Visão Geral"><i class="fa-solid fa-crown"></i></a></li>
+            <li><a href="#tech" data-tooltip="Stack Técnica"><i class="fa-solid fa-microchip"></i></a></li>
+            <li><a href="#architecture" data-tooltip="Mapa do Projeto"><i class="fa-solid fa-sitemap"></i></a></li>
+            <li><a href="#timeline" data-tooltip="Jornada (Sprints)"><i class="fa-solid fa-timeline"></i></a></li>
+            <li><a href="#bugdna" data-tooltip="Bug-DNA (Lições)"><i class="fa-solid fa-dna"></i></a></li>
+        </ul>
+    </nav>
+
+    <main class="content-wrapper">
+        
+        <!-- Hero Section -->
+        <section id="hero" class="hero-section section-animate">
+            <div class="hero-content" data-tilt data-tilt-max="3" data-tilt-glare="true">
+                <div class="hologram-container">
+                    <span class="badge titan-badge">FORGE TITAN MANUAL v1.0</span>
+                    <h1 class="glitch-text" data-text="Arena Truco">Arena <span class="accent-color">Truco</span></h1>
+                    <h2 class="sub-glowing">Engenharia Premium & Meta-Game IA</h2>
+                </div>
+                <p class="subtitle">Documentação técnica oficial do ecossistema Arena Truco Premium. Uma obra-prima forjada com a metodologia SDD (Spec Driven Development) e arquitetura de memórias hierárquicas.</p>
+                
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-val">60%</span>
+                        <span class="stat-lab">Concluído</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-val">100/100</span>
+                        <span class="stat-lab">Health Score</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-val">15</span>
+                        <span class="stat-lab">Ativos Core</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-visual">
+                <div class="forge-core-3d">
+                    <div class="ring-x"></div><div class="ring-y"></div><div class="ring-z"></div>
+                    <div class="core-nucleus"><i class="fa-solid fa-spade"></i></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech Stack -->
+        <section id="tech" class="glass-panel section-animate">
+            <div class="section-header">
+                <h2 class="holographic-title">Motor <span class="accent-color">& Tecnologias</span></h2>
+                <p>O arsenal tecnológico por trás da fluidez Apple-like.</p>
+            </div>
+            
+            <div class="tech-grid">
+                <div class="tech-card" data-tilt>
+                    <i class="fa-brands fa-react tech-icon blue"></i>
+                    <h3>React 19</h3>
+                    <p>O topo da performance. Próxima geração de renderização com suporte a hooks modernos e concorrência nativa.</p>
+                </div>
+                <div class="tech-card" data-tilt>
+                    <i class="fa-solid fa-bolt tech-icon gold"></i>
+                    <h3>Vite 8</h3>
+                    <p>HMR instantâneo e build ultra-rápida. O motor que mantém a iteração do desenvolvedor em tempo real.</p>
+                </div>
+                <div class="tech-card" data-tilt>
+                    <i class="fa-solid fa-shapes tech-icon purple"></i>
+                    <h3>Framer Motion</h3>
+                    <p>Interatividade orgânica. Orquestração de animações 60fps, gestos de swipe e transições de tela.</p>
+                </div>
+                <div class="tech-card" data-tilt>
+                    <i class="fa-solid fa-brain tech-icon green"></i>
+                    <h3>Zustand</h3>
+                    <p>Estado atômico. Gerenciamento de store desacoplado e performático para a lógica de jogo e navegação.</p>
+                </div>
+                <div class="tech-card" data-tilt>
+                    <i class="fa-solid fa-wind tech-icon blue"></i>
+                    <h3>Tailwind v4</h3>
+                    <p>Utility-first refinado. Design tokens Obsidian & Gold implementados com precisão cirúrgica no CSS.</p>
+                </div>
+                <div class="tech-card" data-tilt>
+                    <i class="fa-solid fa-robot tech-icon red"></i>
+                    <h3>Gemini AI</h3>
+                    <p>O cérebro dos bots. Integração futura para provocações táticas e análise de mesa em tempo real.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Arquitetura e Estrutura -->
+        <section id="architecture" class="glass-panel section-animate layout-split">
+            <div class="split-left">
+                <div class="section-header align-left">
+                    <h2>Mapa do <span class="accent-color">Projeto</span></h2>
+                    <p>A anatomia organizada de um app Titan.</p>
+                </div>
+                
+                <div class="file-explorer" id="file-explorer-root">
+                    <!-- Iterated by JS -->
+                </div>
+            </div>
+            
+            <div class="split-right">
+                <div class="info-card" id="architecture-detail">
+                    <div class="card-header">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <h3 id="detail-title">Selecione um módulo</h3>
+                    </div>
+                    <p id="detail-desc" class="desc-text">Explore a estrutura de pastas à esquerda para entender a responsabilidade de cada diretório no ecossistema Arena Truco.</p>
+                    
+                    <div id="detail-files" class="file-list-tags">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline (Sprints) -->
+        <section id="timeline" class="glass-panel section-animate">
+            <div class="section-header">
+                <h2>A Jornada <span class="accent-color">de Forja</span></h2>
+                <p>O registro histórico das Sprints concluídas.</p>
+            </div>
+            
+            <div class="timeline-container" id="sprint-timeline">
+                <!-- Populated by JS from memory -->
+            </div>
+        </section>
+
+        <!-- Bug DNA -->
+        <section id="bugdna" class="glass-panel section-animate no-border-panel">
+            <div class="section-header">
+                <h2>Imunidade <span class="accent-color">Bug-DNA</span></h2>
+                <p>Memória institucional das lições aprendidas e erros superados.</p>
+            </div>
+            
+            <div class="knowledge-grid">
+                <div class="knowledge-card">
+                    <div class="k-header">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>TS6133 - Variáveis Ociosas</span>
+                    </div>
+                    <p>O Netlify configurado com 'Strict' barra builds com variáveis não lidas. Solução: Limpeza rigorosa no Construtor v4.0.</p>
+                </div>
+                <div class="knowledge-card">
+                    <div class="k-header">
+                        <i class="fa-solid fa-code"></i>
+                        <span>Vite Type Imports</span>
+                    </div>
+                    <p>Imports de Interfaces no Vite requerem a tag 'type' para evitar erros de compilação isolada (IsolatedModules).</p>
+                </div>
+                <div class="knowledge-card">
+                    <div class="k-header">
+                        <i class="fa-solid fa-mobile-screen"></i>
+                        <span>Safe Area & Notch</span>
+                    </div>
+                    <p>Em dispositivos mobile, headers devem respeitar 'env(safe-area-inset-top)' para não sumirem atrás do notch.</p>
+                </div>
+                <div class="knowledge-card">
+                    <div class="k-header">
+                        <i class="fa-solid fa-arrows-left-right"></i>
+                        <span>Flex Scroll Squish</span>
+                    </div>
+                    <p>Containers flexíveis de 500vw podem sofrer compressão lateral. Solução: 'display: block' no container pai.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-line"></div>
+            <p>DOCUMENTO GERADO VIA PROTOCOLO AGENTE FORGE v4.0 — TITAN DOCUMENTATION UNIT</p>
+        </footer>
+
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

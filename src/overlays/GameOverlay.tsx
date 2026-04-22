@@ -25,7 +25,7 @@ export function GameOverlay() {
       }, 2000);
       return () => clearTimeout(t);
     }
-  }, [usuario, game.status, game.iniciarPartida]);
+  }, [usuario, game]);
 
   // Bot provocations — aparece a cada 5s, some após 3s
   useEffect(() => {

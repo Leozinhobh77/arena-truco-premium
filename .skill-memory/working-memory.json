@@ -16,16 +16,18 @@
   },
   "__foco_atual": {
     "sprint_numero": 4,
-    "sprint_nome": "Sprint 4.2: Ranking Refatorizado (4 abas)",
+    "sprint_nome": "Sprint 4.2: Ranking Refatorizado + FriendActionSheet Integration",
     "task_total": 4,
-    "task_atual": 3,
+    "task_atual": 4,
     "arquivo_em_edicao": null,
-    "status": "sprint_4.2_concluida_aguardando_auditoria",
+    "status": "sprint_4.2_completa_com_friend_action_integration",
     "file_lock_ativo": false,
     "lock_inicio": null,
-    "aguardando_auditoria": true,
+    "aguardando_auditoria": false,
     "checkpoint_before": ".skill-memory/checkpoints/sprint-4.2-before.json",
-    "checkpoint_after": ".skill-memory/checkpoints/sprint-4.2-after.json"
+    "checkpoint_after": ".skill-memory/checkpoints/sprint-4.2-after.json",
+    "task_4_3_checkpoint_before": ".skill-memory/checkpoints/ranking-friend-action-before.json",
+    "task_4_3_checkpoint_after": ".skill-memory/checkpoints/ranking-friend-action-after.json"
   },
   "__ponteiros": {
     "sprint_journal": ".skill-memory/sprint-journal.json",

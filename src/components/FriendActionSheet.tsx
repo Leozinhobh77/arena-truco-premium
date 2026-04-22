@@ -1,12 +1,14 @@
 // ============================================================
 // FRIEND ACTION SHEET — Arena Truco Premium
 // Mini-card premium + ações para um amigo
-// Compartilhado entre AmigosOnlineOverlay e RankingScreen
+// Agora com sistema de amizade integrado ao Supabase
 // ============================================================
 
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
-import type { Amigo } from '../types';
+import { useStatusAmizade, useAmizadeActions } from '../hooks/useAmizade';
+import type { Amigo, Usuario } from '../types';
 
 interface FriendActionSheetProps {
   amigo: Amigo;
@@ -23,6 +25,11 @@ interface ActionBtn {
 
 export function FriendActionSheet({ amigo, onClose }: FriendActionSheetProps) {
   const { pushOverlay } = useNavigationStore();
+  const { status, amizadeId, loading: statusLoading, cooldownAte, euEnviei } = useStatusAmizade(amigo.id);
+  const { enviarSolicitacao, aceitarSolicitacao, removerAmigo, loading: acaoLoading } = useAmizadeActions();
+
+  const [toast, setToast] = useState<string | null>(null);
+  const [cooldownTexto, setCooldownTexto] = useState('');
 
   const winRate = Math.round((amigo.vitorias / Math.max(amigo.partidas, 1)) * 100);
 
@@ -41,31 +48,155 @@ export function FriendActionSheet({ amigo, onClose }: FriendActionSheetProps) {
   const disponivel = amigo.statusAmigo === 'disponivel';
   const jogando    = amigo.statusAmigo === 'jogando';
 
-  const botoes: ActionBtn[] = [
-    {
+  // Cooldown timer
+  useEffect(() => {
+    if (!cooldownAte) { setCooldownTexto(''); return; }
+
+    const atualizar = () => {
+      const agora = new Date();
+      const diff = cooldownAte.getTime() - agora.getTime();
+      if (diff <= 0) {
+        setCooldownTexto('');
+        return;
+      }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      setCooldownTexto(`${h}h ${m}min`);
+    };
+
+    atualizar();
+    const interval = setInterval(atualizar, 60000);
+    return () => clearInterval(interval);
+  }, [cooldownAte]);
+
+  // Ações
+  const handleEnviarSolicitacao = async () => {
+    const { ok, erro } = await enviarSolicitacao(amigo.id);
+    if (ok) {
+      setToast('✅ Solicitação de amizade enviada!');
+      setTimeout(() => { setToast(null); onClose(); }, 1500);
+    } else {
+      setToast(`❌ ${erro ?? 'Erro ao enviar'}`);
+      setTimeout(() => setToast(null), 2500);
+    }
+  };
+
+  const handleAceitar = async () => {
+    if (!amizadeId) return;
+    const { ok } = await aceitarSolicitacao(amizadeId);
+    if (ok) {
+      setToast(`🎉 Você e ${amigo.nick} agora são amigos!`);
+      setTimeout(() => { setToast(null); onClose(); }, 2000);
+    }
+  };
+
+  const handleRemover = async () => {
+    if (!amizadeId) return;
+    const { ok } = await removerAmigo(amizadeId);
+    if (ok) {
+      setToast('Amizade removida');
+      setTimeout(() => { setToast(null); onClose(); }, 1500);
+    }
+  };
+
+  // ── Montar botões conforme estado da amizade ──────────────
+  const botoes: ActionBtn[] = [];
+
+  if (statusLoading) {
+    // Enquanto carrega, mostra botão genérico
+    botoes.push({ icon: '⏳', label: 'Carregando...', disabled: true, acao: () => {} });
+  } else if (status === 'aceita') {
+    // JÁ SÃO AMIGOS — todas as ações
+    botoes.push({
       icon: '⚔️',
       label: disponivel ? 'Jogar Agora' : jogando ? 'Aguardando partida acabar' : 'Jogador offline',
       destaque: disponivel,
       disabled: !disponivel,
       acao: disponivel ? onClose : () => {},
-    },
-    {
+    });
+    botoes.push({
       icon: jogando ? '👁️' : '💬',
       label: jogando ? 'Assistir Partida' : 'Enviar Chat',
       disabled: false,
       acao: onClose,
-    },
-    { icon: '📬', label: 'Deixar Recado', disabled: false, acao: onClose },
-    {
-      icon: '👤',
-      label: 'Ver Perfil Completo',
+    });
+    botoes.push({
+      icon: '📬',
+      label: 'Deixar Recado',
       disabled: false,
       acao: () => {
         onClose();
-        pushOverlay('perfil', { usuarioId: amigo.id });
+        pushOverlay('deixar-recado', { amigoId: amigo.id, amigoNick: amigo.nick, amigoAvatar: amigo.avatar });
       },
+    });
+    botoes.push({
+      icon: '❌',
+      label: 'Remover Amigo',
+      disabled: acaoLoading,
+      acao: handleRemover,
+    });
+  } else if (status === 'pendente' && euEnviei) {
+    // EU ENVIEI — aguardando resposta
+    botoes.push({
+      icon: '⏳',
+      label: 'Solicitação Enviada',
+      disabled: true,
+      acao: () => {},
+    });
+  } else if (status === 'pendente' && !euEnviei) {
+    // EU RECEBI — posso aceitar
+    botoes.push({
+      icon: '✅',
+      label: 'Aceitar Amizade',
+      destaque: true,
+      disabled: acaoLoading,
+      acao: handleAceitar,
+    });
+  } else if (status === 'rejeitada' && cooldownTexto) {
+    // FOI REJEITADO — cooldown ativo
+    botoes.push({
+      icon: '🚫',
+      label: `Aguarde ${cooldownTexto}`,
+      disabled: true,
+      acao: () => {},
+    });
+  } else {
+    // NÃO SÃO AMIGOS — pode enviar
+    botoes.push({
+      icon: '➕',
+      label: 'Adicionar Amigo',
+      destaque: true,
+      disabled: acaoLoading,
+      acao: handleEnviarSolicitacao,
+    });
+  }
+
+  // Ver perfil sempre disponível
+  botoes.push({
+    icon: '👤',
+    label: 'Ver Perfil Completo',
+    disabled: false,
+    acao: () => {
+      onClose();
+      const amigoComoUsuario: Usuario = {
+        id: amigo.id,
+        nome: amigo.nick,
+        nick: amigo.nick,
+        avatar: amigo.avatar,
+        nivel: amigo.nivel,
+        xp: 0,
+        xpProximoNivel: 1000,
+        moedas: 0,
+        gemas: 0,
+        ranking: amigo.ranking,
+        vitorias: amigo.vitorias,
+        derrotas: 0,
+        partidas: amigo.partidas,
+        clan: amigo.clan,
+      };
+      pushOverlay('perfil', { usuarioDireto: amigoComoUsuario });
     },
-  ];
+  });
 
   return (
     <div className="overlay" style={{ alignItems: 'stretch' }}>
@@ -146,6 +277,16 @@ export function FriendActionSheet({ amigo, onClose }: FriendActionSheetProps) {
                     color: 'var(--text-muted)', fontWeight: 600,
                   }}>
                     🏠 {amigo.clan}
+                  </span>
+                )}
+                {/* Badge de status de amizade */}
+                {status === 'aceita' && (
+                  <span style={{
+                    fontSize: 9, padding: '2px 8px', borderRadius: 20,
+                    background: 'rgba(45,198,83,0.15)',
+                    color: '#2dc653', fontWeight: 700,
+                  }}>
+                    🤝 Amigos
                   </span>
                 )}
               </div>
@@ -232,6 +373,28 @@ export function FriendActionSheet({ amigo, onClose }: FriendActionSheetProps) {
             </motion.button>
           ))}
         </div>
+
+        {/* Toast */}
+        <AnimatePresence>
+          {toast && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              style={{
+                position: 'absolute', bottom: 70, left: 16, right: 16,
+                background: toast.startsWith('❌') ? 'rgba(230,57,70,0.15)' : 'rgba(45,198,83,0.15)',
+                border: `1px solid ${toast.startsWith('❌') ? 'rgba(230,57,70,0.4)' : 'rgba(45,198,83,0.4)'}`,
+                borderRadius: 12, padding: '12px 16px',
+                textAlign: 'center',
+                fontFamily: 'var(--font-display)', fontSize: 13,
+                fontWeight: 700, color: toast.startsWith('❌') ? '#e63946' : '#2dc653',
+              }}
+            >
+              {toast}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div style={{ padding: '8px 16px 16px', flexShrink: 0 }}>
           <button

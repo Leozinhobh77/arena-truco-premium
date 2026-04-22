@@ -7,7 +7,8 @@ import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useNavigationStore } from '../stores/useNavigationStore';
-import { AMIGOS_MOCK } from '../mockData';
+import { useContadorSolicitacoes } from '../hooks/useAmizade';
+import { useAmigosRanking } from '../hooks/useProfileData';
 
 // Componente de barra XP circular em SVG
 function CircularXP({ xp, max, nivel }: { xp: number; max: number; nivel: number }) {
@@ -106,17 +107,19 @@ function AvatarStack({ avatares }: { avatares: string[] }) {
 export function ArenaScreen() {
   const { usuario } = useAuthStore();
   const { pushOverlay } = useNavigationStore();
+  const { total: solicitacoesTotal } = useContadorSolicitacoes();
 
+  if (!usuario) return null;
+
+  const { amigos } = useAmigosRanking(usuario.id);
   // Amigos online (disponivel + jogando)
   const amigosOnline = useMemo(
-    () => AMIGOS_MOCK.filter(a => a.statusAmigo !== 'offline'),
-    [],
+    () => amigos.filter(a => a.statusAmigo !== 'offline'),
+    [amigos],
   );
   const onlineCount = amigosOnline.length;
   const displayCount = onlineCount > 99 ? '+99' : String(onlineCount);
   const avatarStack = amigosOnline.slice(0, 3).map(a => a.avatar);
-
-  if (!usuario) return null;
 
   const winRate = Math.round((usuario.vitorias / Math.max(usuario.partidas, 1)) * 100);
 
@@ -162,23 +165,113 @@ export function ArenaScreen() {
           </div>
         </div>
 
-        {/* Configurações */}
-        <button
-          onClick={() => pushOverlay('configuracoes')}
-          style={{
-            width: 40, height: 40,
-            borderRadius: '50%',
-            background: 'rgba(255,255,255,0.07)',
-            border: '1px solid var(--border-subtle)',
-            fontSize: 18,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          ⚙️
-        </button>
+        {/* Solicitações, Recados e Configurações */}
+        <div style={{ display: 'flex', gap: 8 }}>
+          {/* Botão Solicitações de Amizade */}
+          <button
+            onClick={() => pushOverlay('solicitacoes-amizade')}
+            style={{
+              width: 40, height: 40,
+              borderRadius: '50%',
+              background: solicitacoesTotal > 0 ? 'rgba(45,198,83,0.15)' : 'rgba(255,255,255,0.07)',
+              border: solicitacoesTotal > 0 ? '1px solid rgba(45,198,83,0.4)' : '1px solid var(--border-subtle)',
+              fontSize: 18,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s',
+              position: 'relative',
+            }}
+          >
+            🤝
+            {solicitacoesTotal > 0 && (
+              <div style={{
+                position: 'absolute',
+                top: -4,
+                right: -4,
+                background: '#e63946',
+                color: '#fff',
+                width: 18,
+                height: 18,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 9,
+                fontWeight: 900,
+                fontFamily: 'var(--font-display)',
+                border: '2px solid rgba(10,8,30,0.9)',
+              }}>
+                {solicitacoesTotal > 9 ? '9+' : solicitacoesTotal}
+              </div>
+            )}
+          </button>
+
+          <button
+            onClick={() => pushOverlay('recados')}
+            style={{
+              width: 40, height: 40,
+              borderRadius: '50%',
+              background: 'rgba(212,160,23,0.15)',
+              border: '1px solid var(--gold-400)',
+              fontSize: 18,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s',
+              position: 'relative',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(212,160,23,0.25)';
+              e.currentTarget.style.transform = 'scale(1.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(212,160,23,0.15)';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            📬
+            {/* Badge com número de recados */}
+            <div style={{
+              position: 'absolute',
+              top: -4,
+              right: -4,
+              background: 'var(--gold-400)',
+              color: '#0a081e',
+              width: 20,
+              height: 20,
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 10,
+              fontWeight: 900,
+              fontFamily: 'var(--font-display)',
+              border: '2px solid rgba(10,8,30,0.9)',
+            }}>
+              3
+            </div>
+          </button>
+
+          <button
+            onClick={() => pushOverlay('configuracoes')}
+            style={{
+              width: 40, height: 40,
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.07)',
+              border: '1px solid var(--border-subtle)',
+              fontSize: 18,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            ⚙️
+          </button>
+        </div>
       </motion.div>
 
       {/* PERFIL DO JOGADOR */}

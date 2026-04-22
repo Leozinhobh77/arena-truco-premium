@@ -287,6 +287,25 @@ h1, h2, h3, h4, h5, h6,
 
 .btn-secondary:active { transform: scale(0.97); }
 
+.btn-social {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-social:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-1px);
+}
+
+.btn-social:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-social:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .btn-ruby {
   background: var(--ruby-gradient);
   color: white;
@@ -462,6 +481,12 @@ h1, h2, h3, h4, h5, h6,
 .input-field:focus {
   border-color: var(--gold-500);
   box-shadow: 0 0 0 3px rgba(212,160,23,0.15);
+}
+
+.input-field.input-error {
+  border-color: var(--ruby);
+  background: rgba(230, 57, 70, 0.05);
+  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
 }
 
 .input-field::placeholder { color: var(--text-muted); }
