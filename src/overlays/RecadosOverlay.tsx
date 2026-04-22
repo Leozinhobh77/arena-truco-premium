@@ -4,46 +4,10 @@
 // Mesmo padrão que ProfileOverlay, AmigosOnlineOverlay
 // ============================================================
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
-
-interface Recado {
-  id: string;
-  amigoId: string;
-  amigoNick: string;
-  amigoAvatar: string;
-  mensagem: string;
-  dataCriacao: string; // ISO string
-}
-
-// Mock data — depois conecta ao Supabase
-const RECADOS_MOCK: Recado[] = [
-  {
-    id: '1',
-    amigoId: 'amigo-001',
-    amigoNick: 'ThugSlayer',
-    amigoAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ThugSlayer',
-    mensagem: 'Ó bora jogar uma aí! 🎮⚔️',
-    dataCriacao: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2h atrás
-  },
-  {
-    id: '2',
-    amigoId: 'amigo-002',
-    amigoNick: 'ElRey',
-    amigoAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ElRey',
-    mensagem: 'Parabéns pela vitória de ontem! 🏆💪',
-    dataCriacao: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(), // 8h atrás
-  },
-  {
-    id: '3',
-    amigoId: 'amigo-003',
-    amigoNick: 'CardMaster',
-    amigoAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=CardMaster',
-    mensagem: 'Vamo racha amanhã? 🔥😎',
-    dataCriacao: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 dia atrás
-  },
-];
+import { useRecados, useMarcarRecadoLido } from '../hooks/useRecados';
 
 function formatarTempo(dataIso: string): string {
   const agora = new Date();
@@ -64,21 +28,20 @@ function formatarTempo(dataIso: string): string {
 
 export function RecadosOverlay() {
   const { popOverlay } = useNavigationStore();
-  const [recadosLidos, setRecadosLidos] = useState<string[]>([]);
+  const { recados, loading } = useRecados();
+  const { marcarLido } = useMarcarRecadoLido();
 
   const recadosOrdenados = useMemo(() => {
-    return [...RECADOS_MOCK].sort(
+    return [...recados].sort(
       (a, b) => new Date(b.dataCriacao).getTime() - new Date(a.dataCriacao).getTime()
     );
-  }, []);
+  }, [recados]);
 
-  const marcarComoLido = (recadoId: string) => {
-    if (!recadosLidos.includes(recadoId)) {
-      setRecadosLidos([...recadosLidos, recadoId]);
-    }
+  const marcarComoLido = async (recadoId: string) => {
+    await marcarLido(recadoId);
   };
 
-  const recadosNaoLidos = recadosOrdenados.filter(r => !recadosLidos.includes(r.id));
+  const recadosNaoLidos = recadosOrdenados.filter(r => !r.lido);
 
   return (
     <div className="overlay" style={{ alignItems: 'stretch' }}>
@@ -142,10 +105,29 @@ export function RecadosOverlay() {
 
         {/* Conteúdo */}
         <div className="list-container" style={{ flex: 1, padding: '12px 16px' }}>
-          <AnimatePresence>
-            {recadosOrdenados.length > 0 ? (
+          {loading ? (
+            <div style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 12,
+              minHeight: '200px',
+            }}>
+              <div style={{ fontSize: 24 }}>⏳</div>
+              <div style={{
+                textAlign: 'center',
+                color: 'var(--text-muted)',
+              }}>
+                <div style={{ fontSize: 13, fontWeight: 600 }}>Carregando...</div>
+              </div>
+            </div>
+          ) : (
+            <AnimatePresence>
+              {recadosOrdenados.length > 0 ? (
               recadosOrdenados.map((recado, i) => {
-                const ehNovo = !recadosLidos.includes(recado.id);
+                const ehNovo = !recado.lido;
                 return (
                   <motion.div
                     key={recado.id}
@@ -222,29 +204,30 @@ export function RecadosOverlay() {
                       </div>
                     </div>
                   </motion.div>
-                );
-              })
-            ) : (
-              <div style={{
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 12,
-                minHeight: '200px',
-              }}>
-                <div style={{ fontSize: 40 }}>📭</div>
+                  );
+                })
+              ) : (
                 <div style={{
-                  textAlign: 'center',
-                  color: 'var(--text-muted)',
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 12,
+                  minHeight: '200px',
                 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Nenhum recado ainda</div>
-                  <div style={{ fontSize: 11 }}>Convide amigos para deixar recados especiais</div>
+                  <div style={{ fontSize: 40 }}>📭</div>
+                  <div style={{
+                    textAlign: 'center',
+                    color: 'var(--text-muted)',
+                  }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Nenhum recado ainda</div>
+                    <div style={{ fontSize: 11 }}>Convide amigos para deixar recados especiais</div>
+                  </div>
                 </div>
-              </div>
-            )}
-          </AnimatePresence>
+              )}
+            </AnimatePresence>
+          )}
         </div>
 
         {/* Botão Fechar */}

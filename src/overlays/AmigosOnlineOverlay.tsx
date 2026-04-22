@@ -4,11 +4,11 @@
 // Mesmo padrão visual que SalasOverlay
 // ============================================================
 
-import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
 import { useAuthStore } from '../stores/useAuthStore';
-import { useAmigosRanking } from '../hooks/useProfileData';
+import { useAmigosRealtime } from '../hooks/useAmigosRealtime';
 import type { Amigo } from '../types';
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -32,10 +32,9 @@ function StatusDot({ status, size = 10 }: { status: Amigo['statusAmigo']; size?:
 }
 
 // ── AmigoCard ────────────────────────────────────────────────
-function AmigoCard({ amigo, onSelect, onConvidar }: {
+function AmigoCard({ amigo, onSelect }: {
   amigo: Amigo;
   onSelect: (a: Amigo) => void;
-  onConvidar: (a: Amigo) => void;
 }) {
   const isOffline = amigo.statusAmigo === 'offline';
 
@@ -92,21 +91,18 @@ function AmigoCard({ amigo, onSelect, onConvidar }: {
           {amigo.nick}
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-          {subTexto}
+          {amigo.ultimaAtividade || subTexto}
         </div>
       </div>
 
-      {/* Botão ou chevron */}
-      {amigo.statusAmigo === 'disponivel' && (
-        <button
-          className="btn-secondary"
-          style={{ padding: '5px 10px', fontSize: 11, flexShrink: 0 }}
-          onClick={(e) => { e.stopPropagation(); onConvidar(amigo); }}
-        >
-          Convidar
-        </button>
-      )}
+      {/* Ícone conforme status */}
       {amigo.statusAmigo === 'jogando' && (
+        <span style={{ color: 'var(--gold-400)', fontSize: 16, flexShrink: 0, position: 'relative' }}>
+          👁️
+          {/* Espaço para contador de espectadores será adicionado depois */}
+        </span>
+      )}
+      {amigo.statusAmigo !== 'offline' && (
         <span style={{ color: 'var(--text-muted)', fontSize: 16, flexShrink: 0 }}>›</span>
       )}
     </motion.div>
@@ -116,23 +112,12 @@ function AmigoCard({ amigo, onSelect, onConvidar }: {
 // ── AmigosOnlineOverlay (main) ────────────────────────────────
 export function AmigosOnlineOverlay() {
   const { popOverlay, pushOverlay } = useNavigationStore();
-  const [search, setSearch] = useState('');
   const { usuario } = useAuthStore();
-  const { amigos } = useAmigosRanking(usuario?.id);
+  const { amigos, totalOnline, loading } = useAmigosRealtime(usuario?.id);
 
-  const filtrados = useMemo(() => {
-    if (!search.trim()) return amigos;
-    const q = search.toLowerCase();
-    return amigos.filter(a =>
-      a.nick.toLowerCase().includes(q) || a.nome.toLowerCase().includes(q)
-    );
-  }, [search, amigos]);
-
-  const disponivel = filtrados.filter(a => a.statusAmigo === 'disponivel');
-  const jogando = filtrados.filter(a => a.statusAmigo === 'jogando');
-  const offline = filtrados.filter(a => a.statusAmigo === 'offline');
-
-  const totalOnline = amigos.filter(a => a.statusAmigo !== 'offline').length;
+  const disponivel = useMemo(() => amigos.filter(a => a.statusAmigo === 'disponivel'), [amigos]);
+  const jogando = useMemo(() => amigos.filter(a => a.statusAmigo === 'jogando'), [amigos]);
+  const offline = useMemo(() => amigos.filter(a => a.statusAmigo === 'offline'), [amigos]);
 
   return (
     <div className="overlay" style={{ alignItems: 'stretch' }}>
@@ -215,83 +200,110 @@ export function AmigosOnlineOverlay() {
           </div>
         </div>
 
-        {/* Busca */}
-        <div style={{ padding: '10px 16px', flexShrink: 0 }}>
-          <div style={{ position: 'relative' }}>
-            <span style={{
-              position: 'absolute', left: 12, top: '50%',
-              transform: 'translateY(-50%)', fontSize: 15, opacity: 0.4,
-              pointerEvents: 'none',
-            }}>
-              🔍
-            </span>
-            <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Buscar amigo..."
-              style={{
-                width: '100%', boxSizing: 'border-box',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 10, color: 'var(--text-primary)',
-                fontSize: 13, padding: '8px 12px 8px 36px',
-                fontFamily: 'inherit', outline: 'none',
-              }}
-            />
-          </div>
-        </div>
-
         {/* Lista */}
-        <div className="list-container" style={{ flex: 1, padding: '0 16px 16px' }}>
-          {disponivel.length > 0 && (
-            <>
-              <div style={{
-                fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 700,
-                marginBottom: 8, marginTop: 8, letterSpacing: '0.08em',
-                textTransform: 'uppercase', color: 'var(--emerald)',
-              }}>
-                🟢 Disponíveis ({disponivel.length})
-              </div>
-              {disponivel.map(a => (
-                <AmigoCard key={a.id} amigo={a} onSelect={a => pushOverlay('friend-action', { amigo: a })} onConvidar={a => pushOverlay('friend-action', { amigo: a })} />
-              ))}
-            </>
-          )}
-
-          {jogando.length > 0 && (
-            <>
-              <div style={{
-                fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 700,
-                marginBottom: 8, marginTop: 10, letterSpacing: '0.08em',
-                textTransform: 'uppercase', color: 'var(--ruby)',
-              }}>
-                🟡 Jogando ({jogando.length})
-              </div>
-              {jogando.map(a => (
-                <AmigoCard key={a.id} amigo={a} onSelect={a => pushOverlay('friend-action', { amigo: a })} onConvidar={a => pushOverlay('friend-action', { amigo: a })} />
-              ))}
-            </>
-          )}
-
-          {offline.length > 0 && (
-            <>
-              <div style={{
-                fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 700,
-                marginBottom: 8, marginTop: 10, letterSpacing: '0.08em',
-                textTransform: 'uppercase', color: 'var(--text-muted)',
-              }}>
-                ⚫ Offline ({offline.length})
-              </div>
-              {offline.map(a => (
-                <AmigoCard key={a.id} amigo={a} onSelect={() => {}} onConvidar={() => {}} />
-              ))}
-            </>
-          )}
-
-          {filtrados.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '32px 16px', color: 'var(--text-muted)' }}>
-              Nenhum amigo encontrado
+        <div className="list-container" style={{ flex: 1, padding: '0 16px 16px', overflow: 'auto' }}>
+          {loading && (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 12,
+              minHeight: '200px',
+            }}>
+              <div style={{ fontSize: 24 }}>⏳</div>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Carregando amigos...</div>
             </div>
+          )}
+
+          {!loading && (
+            <AnimatePresence mode="wait">
+              {disponivel.length > 0 && (
+                <motion.div
+                  key="disponivel"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <div style={{
+                    fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 700,
+                    marginBottom: 8, marginTop: 8, letterSpacing: '0.08em',
+                    textTransform: 'uppercase', color: 'var(--emerald)',
+                  }}>
+                    🟢 Disponíveis ({disponivel.length})
+                  </div>
+                  {disponivel.map(a => (
+                    <AmigoCard
+                      key={a.id}
+                      amigo={a}
+                      onSelect={a => pushOverlay('friend-action', { amigo: a, status: 'disponivel' })}
+                    />
+                  ))}
+                </motion.div>
+              )}
+
+              {jogando.length > 0 && (
+                <motion.div
+                  key="jogando"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <div style={{
+                    fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 700,
+                    marginBottom: 8, marginTop: 10, letterSpacing: '0.08em',
+                    textTransform: 'uppercase', color: 'var(--ruby)',
+                  }}>
+                    🟡 Jogando ({jogando.length})
+                  </div>
+                  {jogando.map(a => (
+                    <AmigoCard
+                      key={a.id}
+                      amigo={a}
+                      onSelect={a => pushOverlay('friend-action', { amigo: a, status: 'jogando' })}
+                    />
+                  ))}
+                </motion.div>
+              )}
+
+              {offline.length > 0 && (
+                <motion.div
+                  key="offline"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <div style={{
+                    fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 700,
+                    marginBottom: 8, marginTop: 10, letterSpacing: '0.08em',
+                    textTransform: 'uppercase', color: 'var(--text-muted)',
+                  }}>
+                    ⚫ Offline ({offline.length})
+                  </div>
+                  {offline.map(a => (
+                    <AmigoCard
+                      key={a.id}
+                      amigo={a}
+                      onSelect={a => pushOverlay('friend-action', { amigo: a, status: 'offline' })}
+                    />
+                  ))}
+                </motion.div>
+              )}
+
+              {!loading && amigos.length === 0 && (
+                <motion.div
+                  key="vazio"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  style={{ textAlign: 'center', padding: '32px 16px', color: 'var(--text-muted)' }}
+                >
+                  <div style={{ fontSize: 24, marginBottom: 12 }}>👥</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Nenhum amigo ainda</div>
+                  <div style={{ fontSize: 11 }}>Adicione amigos para vê-los aqui</div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           )}
         </div>
       </motion.div>

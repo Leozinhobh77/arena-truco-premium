@@ -17,7 +17,7 @@ import { RankingScreen } from './screens/RankingScreen';
 import { ClansScreen } from './screens/ClansScreen';
 import { SalasOverlay } from './overlays/SalasOverlay';
 import { GameOverlay } from './overlays/GameOverlay';
-import { AmigosOnlineOverlay } from './overlays/AmigosOnlineOverlay';
+import { AmigosUsuariosOverlay } from './overlays/AmigosUsuariosOverlay';
 import { ProfileOverlay } from './overlays/ProfileOverlay';
 import { ConfiguracoesOverlay } from './overlays/ConfiguracoesOverlay';
 import { DeixarRecadoOverlay } from './overlays/DeixarRecadoOverlay';
@@ -207,7 +207,7 @@ export function App() {
       <AnimatePresence>
         {activeOverlay === 'salas'         && <SalasOverlay         key="salas"         />}
         {activeOverlay === 'jogo'          && <GameOverlay          key="jogo"          />}
-        {activeOverlay === 'amigos-online' && <AmigosOnlineOverlay  key="amigos-online" />}
+        {activeOverlay === 'amigos-online' && <AmigosUsuariosOverlay  key="amigos-online" />}
         {activeOverlay === 'perfil'        && <ProfileOverlay       key="perfil"        />}
         {activeOverlay === 'configuracoes' && <ConfiguracoesOverlay key="configuracoes" />}
         {activeOverlay === 'deixar-recado' && <DeixarRecadoOverlay key="deixar-recado" />}
@@ -218,6 +218,7 @@ export function App() {
           <FriendActionSheet
             key="friend-action"
             amigo={getActiveOverlayProps().amigo as Amigo}
+            status={getActiveOverlayProps().status as 'disponivel' | 'jogando' | 'offline' | undefined}
             onClose={popOverlay}
           />
         )}

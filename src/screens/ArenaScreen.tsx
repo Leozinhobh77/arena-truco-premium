@@ -8,7 +8,9 @@ import { motion } from 'framer-motion';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useNavigationStore } from '../stores/useNavigationStore';
 import { useContadorSolicitacoes } from '../hooks/useAmizade';
+import { useContadorRecados } from '../hooks/useRecados';
 import { useAmigosRanking } from '../hooks/useProfileData';
+import { useAmigosRealtime } from '../hooks/useAmigosRealtime';
 
 // Componente de barra XP circular em SVG
 function CircularXP({ xp, max, nivel }: { xp: number; max: number; nivel: number }) {
@@ -108,17 +110,16 @@ export function ArenaScreen() {
   const { usuario } = useAuthStore();
   const { pushOverlay } = useNavigationStore();
   const { total: solicitacoesTotal } = useContadorSolicitacoes();
+  const { contador: recadosNaoLidos } = useContadorRecados();
+  const { totalOnline } = useAmigosRealtime(usuario?.id);
 
   if (!usuario) return null;
 
   const { amigos } = useAmigosRanking(usuario.id);
-  // Amigos online (disponivel + jogando)
   const amigosOnline = useMemo(
     () => amigos.filter(a => a.statusAmigo !== 'offline'),
     [amigos],
   );
-  const onlineCount = amigosOnline.length;
-  const displayCount = onlineCount > 99 ? '+99' : String(onlineCount);
   const avatarStack = amigosOnline.slice(0, 3).map(a => a.avatar);
 
   const winRate = Math.round((usuario.vitorias / Math.max(usuario.partidas, 1)) * 100);
@@ -208,7 +209,7 @@ export function ArenaScreen() {
             )}
           </button>
 
-          <button
+<button
             onClick={() => pushOverlay('recados')}
             style={{
               width: 40, height: 40,
@@ -234,25 +235,27 @@ export function ArenaScreen() {
           >
             📬
             {/* Badge com número de recados */}
-            <div style={{
-              position: 'absolute',
-              top: -4,
-              right: -4,
-              background: 'var(--gold-400)',
-              color: '#0a081e',
-              width: 20,
-              height: 20,
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 10,
-              fontWeight: 900,
-              fontFamily: 'var(--font-display)',
-              border: '2px solid rgba(10,8,30,0.9)',
-            }}>
-              3
-            </div>
+            {recadosNaoLidos > 0 && (
+              <div style={{
+                position: 'absolute',
+                top: -4,
+                right: -4,
+                background: 'var(--gold-400)',
+                color: '#0a081e',
+                width: 20,
+                height: 20,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 10,
+                fontWeight: 900,
+                fontFamily: 'var(--font-display)',
+                border: '2px solid rgba(10,8,30,0.9)',
+              }}>
+                {recadosNaoLidos > 9 ? '9+' : recadosNaoLidos}
+              </div>
+            )}
           </button>
 
           <button
@@ -454,17 +457,16 @@ export function ArenaScreen() {
             🎯 Salas Online
           </button>
 
-          {/* Botão Amigos Online com contador + avatar stack */}
+          {/* Botão Amigos Online — sempre clicável, com atualizações em tempo real */}
           <motion.button
             className="btn-secondary"
             style={{
               flex: 1, fontSize: 12,
               display: 'flex', alignItems: 'center',
               justifyContent: 'center', gap: 6,
-              opacity: onlineCount === 0 ? 0.45 : 1,
-              cursor: onlineCount === 0 ? 'not-allowed' : 'pointer',
+              position: 'relative',
             }}
-            animate={onlineCount > 0 ? {
+            animate={totalOnline > 0 ? {
               boxShadow: [
                 '0 0 0 0 rgba(45,198,83,0)',
                 '0 0 0 4px rgba(45,198,83,0.25)',
@@ -472,10 +474,37 @@ export function ArenaScreen() {
               ],
             } : {}}
             transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-            onClick={() => onlineCount > 0 && pushOverlay('amigos-online')}
+            onClick={() => pushOverlay('amigos-online')}
           >
-            {onlineCount > 0 && <AvatarStack avatares={avatarStack} />}
-            <span>👥 {displayCount} Online</span>
+            {totalOnline > 0 && <AvatarStack avatares={avatarStack} />}
+            <span>👥 {totalOnline > 99 ? '+99' : totalOnline} Online</span>
+            {totalOnline > 0 && (
+              <motion.div
+                key={`badge-amigos-${totalOnline}`}
+                initial={{ scale: 0.7 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.7 }}
+                style={{
+                  position: 'absolute',
+                  top: -6,
+                  right: 4,
+                  background: 'rgba(45,198,83,0.9)',
+                  color: '#fff',
+                  width: 18,
+                  height: 18,
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 9,
+                  fontWeight: 900,
+                  fontFamily: 'var(--font-display)',
+                  border: '2px solid rgba(10,8,30,0.9)',
+                }}
+              >
+                {totalOnline > 9 ? '9+' : totalOnline}
+              </motion.div>
+            )}
           </motion.button>
         </div>
       </motion.div>

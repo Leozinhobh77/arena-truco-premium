@@ -7,17 +7,19 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
+import { useSendRecado } from '../hooks/useRecados';
 
 const EMOJIS_POPULARES = ['😄', '😂', '🤣', '😊', '❤️', '🔥', '💯', '👏', '🎉', '⚔️', '🏆', '🎮', '💪', '🚀', '😎', '👍'];
 
 export function DeixarRecadoOverlay() {
   const { popOverlay, getActiveOverlayProps } = useNavigationStore();
   const props = getActiveOverlayProps();
+  const amigoId = (props.amigoId as string) || '';
   const amigoNick = (props.amigoNick as string) || 'Amigo';
   const amigoAvatar = (props.amigoAvatar as string) || '';
 
   const [recado, setRecado] = useState('');
-  const [enviando, setEnviando] = useState(false);
+  const { enviarRecado, enviando } = useSendRecado();
 
   const handleAdicionarEmoji = (emoji: string) => {
     setRecado(recado + emoji);
@@ -29,13 +31,18 @@ export function DeixarRecadoOverlay() {
       return;
     }
 
-    setEnviando(true);
-    // Simula envio (depois conecta ao Supabase)
-    setTimeout(() => {
-      setEnviando(false);
+    if (!amigoId) {
+      alert('Erro ao enviar recado. Tente novamente.');
+      return;
+    }
+
+    const resultado = await enviarRecado(amigoId, recado);
+    if (resultado.ok) {
       alert('Recado enviado com sucesso! 🎉');
       popOverlay();
-    }, 1000);
+    } else {
+      alert(`Erro ao enviar: ${resultado.erro}`);
+    }
   };
 
   return (

@@ -9,6 +9,8 @@
 ```
 auth.users (gerenciada pelo Supabase Auth — não editar diretamente)
     └── profiles          ← extensão pública do usuário
+         └── amizades     ← relações de amizade bidirecional (Sprint 4)
+         └── recados      ← mensagens entre amigos (Sprint 4)
          └── partidas     ← histórico de partidas jogadas (Sprint 5)
               └── ranking ← VIEW computada (Sprint 5)
          └── inventario   ← itens da loja comprados (Sprint 6)
@@ -144,6 +146,80 @@ create or replace view public.ranking as
 
 ---
 
+## 🗄️ FASE 2.5 — Recados & Amizades (Sprint 4) ← IMPLEMENTAR AGORA
+
+### Tabela: `amizades`
+
+```sql
+-- ============================================================
+-- TABELA: amizades (Relação bidirecional de amizade)
+-- ============================================================
+create table public.amizades (
+  id              uuid primary key default gen_random_uuid(),
+  remetente_id    uuid not null references public.profiles(id) on delete cascade,
+  destinatario_id uuid not null references public.profiles(id) on delete cascade,
+  status          text not null check (status in ('pendente', 'aceita', 'rejeitada')) default 'pendente',
+  criado_em       timestamptz not null default now(),
+  atualizado_em   timestamptz not null default now(),
+  unique(remetente_id, destinatario_id)
+);
+
+alter table public.amizades enable row level security;
+
+-- Qualquer um pode ver suas próprias amizades (como remetente ou destinatário)
+create policy "Amizades visíveis aos envolvidos"
+  on public.amizades for select
+  using (auth.uid() = remetente_id or auth.uid() = destinatario_id);
+
+-- Só remetente pode enviar (insert) sua própria solicitação
+create policy "Remetente pode criar amizade"
+  on public.amizades for insert
+  with check (auth.uid() = remetente_id);
+
+-- Só destinatário pode aceitar/rejeitar sua própria solicitação
+create policy "Destinatário pode atualizar sua solicitação"
+  on public.amizades for update
+  using (auth.uid() = destinatario_id);
+```
+
+### Tabela: `recados`
+
+```sql
+-- ============================================================
+-- TABELA: recados (Mensagens entre amigos)
+-- ============================================================
+create table public.recados (
+  id              uuid primary key default gen_random_uuid(),
+  remetente_id    uuid not null references public.profiles(id) on delete cascade,
+  destinatario_id uuid not null references public.profiles(id) on delete cascade,
+  mensagem        text not null,
+  lido            boolean not null default false,
+  criado_em       timestamptz not null default now()
+);
+
+-- Índice para buscar recados do usuário rapidamente
+create index recados_destinatario_idx on public.recados(destinatario_id, criado_em desc);
+
+alter table public.recados enable row level security;
+
+-- Apenas o destinatário pode ver seus próprios recados
+create policy "Recados visíveis ao destinatário"
+  on public.recados for select
+  using (auth.uid() = destinatario_id);
+
+-- Qualquer um autenticado pode enviar recado (limitado por RLS)
+create policy "Remetente pode enviar recado"
+  on public.recados for insert
+  with check (auth.uid() = remetente_id);
+
+-- Destinatário pode marcar como lido
+create policy "Destinatário marca recado como lido"
+  on public.recados for update
+  using (auth.uid() = destinatario_id);
+```
+
+---
+
 ## 🗄️ FASE 3 — Social & Loja (Sprint 6-8) ← FUTURO
 
 ### Tabela: `inventario`
@@ -190,11 +266,12 @@ create table public.clans (
 [ ] 1. Criar projeto em supabase.com (FREE tier)
 [ ] 2. Ir em SQL Editor → New Query
 [ ] 3. Colar e rodar o bloco "FASE 1" deste schema
-[ ] 4. Ir em Authentication → Providers
-[ ] 5. Habilitar: Email/Password e Google OAuth
-[ ] 6. Ir em Settings → API → copiar URL + anon key
-[ ] 7. Criar .env.local com as duas chaves
-[ ] 8. Testar: npm run dev → cadastrar usuário → ver em Table Editor → profiles
+[ ] 4. Colar e rodar o bloco "FASE 2.5" (amizades + recados)
+[ ] 5. Ir em Authentication → Providers
+[ ] 6. Habilitar: Email/Password e Google OAuth
+[ ] 7. Ir em Settings → API → copiar URL + anon key
+[ ] 8. Criar .env.local com as duas chaves
+[ ] 9. Testar: npm run dev → cadastrar usuário → ver em Table Editor → profiles
 ```
 
 ---

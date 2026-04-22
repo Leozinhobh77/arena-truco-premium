@@ -13,6 +13,7 @@ import type { Amigo, Usuario } from '../types';
 interface FriendActionSheetProps {
   amigo: Amigo;
   onClose: () => void;
+  status?: 'disponivel' | 'jogando' | 'offline';
 }
 
 interface ActionBtn {
@@ -23,7 +24,7 @@ interface ActionBtn {
   acao: () => void;
 }
 
-export function FriendActionSheet({ amigo, onClose }: FriendActionSheetProps) {
+export function FriendActionSheet({ amigo, onClose, status: statusProp }: FriendActionSheetProps) {
   const { pushOverlay } = useNavigationStore();
   const { status, amizadeId, loading: statusLoading, cooldownAte, euEnviei } = useStatusAmizade(amigo.id);
   const { enviarSolicitacao, aceitarSolicitacao, removerAmigo, loading: acaoLoading } = useAmizadeActions();
@@ -33,20 +34,23 @@ export function FriendActionSheet({ amigo, onClose }: FriendActionSheetProps) {
 
   const winRate = Math.round((amigo.vitorias / Math.max(amigo.partidas, 1)) * 100);
 
+  // Se vem status prop (do AmigosOnlineOverlay), usa esse. Senão usa o do amigo
+  const statusAtual = statusProp || amigo.statusAmigo;
+
   const statusLabel =
-    amigo.statusAmigo === 'disponivel'
+    statusAtual === 'disponivel'
       ? '🟢 Disponível para jogar'
-      : amigo.statusAmigo === 'jogando'
+      : statusAtual === 'jogando'
         ? `🟡 Jogando Truco${amigo.modoJogo ? ` ${amigo.modoJogo === 'paulista' ? 'Paulista' : 'Mineiro'}` : ''}${amigo.tempoJogandoMin ? ` • ${amigo.tempoJogandoMin}min` : ''}`
         : '⚫ Offline';
 
   const statusCor =
-    amigo.statusAmigo === 'disponivel' ? '#2dc653'
-    : amigo.statusAmigo === 'jogando' ? '#f5a623'
+    statusAtual === 'disponivel' ? '#2dc653'
+    : statusAtual === 'jogando' ? '#f5a623'
     : 'rgba(255,255,255,0.3)';
 
-  const disponivel = amigo.statusAmigo === 'disponivel';
-  const jogando    = amigo.statusAmigo === 'jogando';
+  const disponivel = statusAtual === 'disponivel';
+  const jogando = statusAtual === 'jogando';
 
   // Cooldown timer
   useEffect(() => {
@@ -99,76 +103,145 @@ export function FriendActionSheet({ amigo, onClose }: FriendActionSheetProps) {
     }
   };
 
-  // ── Montar botões conforme estado da amizade ──────────────
+  // ── Montar botões conforme estado ──────────────────────────
   const botoes: ActionBtn[] = [];
 
-  if (statusLoading) {
-    // Enquanto carrega, mostra botão genérico
-    botoes.push({ icon: '⏳', label: 'Carregando...', disabled: true, acao: () => {} });
-  } else if (status === 'aceita') {
-    // JÁ SÃO AMIGOS — todas as ações
-    botoes.push({
-      icon: '⚔️',
-      label: disponivel ? 'Jogar Agora' : jogando ? 'Aguardando partida acabar' : 'Jogador offline',
-      destaque: disponivel,
-      disabled: !disponivel,
-      acao: disponivel ? onClose : () => {},
-    });
-    botoes.push({
-      icon: jogando ? '👁️' : '💬',
-      label: jogando ? 'Assistir Partida' : 'Enviar Chat',
-      disabled: false,
-      acao: onClose,
-    });
-    botoes.push({
-      icon: '📬',
-      label: 'Deixar Recado',
-      disabled: false,
-      acao: () => {
-        onClose();
-        pushOverlay('deixar-recado', { amigoId: amigo.id, amigoNick: amigo.nick, amigoAvatar: amigo.avatar });
-      },
-    });
-    botoes.push({
-      icon: '❌',
-      label: 'Remover Amigo',
-      disabled: acaoLoading,
-      acao: handleRemover,
-    });
-  } else if (status === 'pendente' && euEnviei) {
-    // EU ENVIEI — aguardando resposta
-    botoes.push({
-      icon: '⏳',
-      label: 'Solicitação Enviada',
-      disabled: true,
-      acao: () => {},
-    });
-  } else if (status === 'pendente' && !euEnviei) {
-    // EU RECEBI — posso aceitar
-    botoes.push({
-      icon: '✅',
-      label: 'Aceitar Amizade',
-      destaque: true,
-      disabled: acaoLoading,
-      acao: handleAceitar,
-    });
-  } else if (status === 'rejeitada' && cooldownTexto) {
-    // FOI REJEITADO — cooldown ativo
-    botoes.push({
-      icon: '🚫',
-      label: `Aguarde ${cooldownTexto}`,
-      disabled: true,
-      acao: () => {},
-    });
+  // Se vem do AmigosOnlineOverlay (tem status prop), mostra ações contextuais
+  if (statusProp) {
+    // AÇÕES DO AMIGOS ONLINE OVERLAY
+    if (statusProp === 'disponivel') {
+      // Disponível: Recado | Perfil | Chat | Excluir
+      botoes.push({
+        icon: '💬',
+        label: 'Deixar Recado',
+        destaque: true,
+        disabled: false,
+        acao: () => {
+          onClose();
+          pushOverlay('deixar-recado', { amigoId: amigo.id, amigoNick: amigo.nick, amigoAvatar: amigo.avatar });
+        },
+      });
+      botoes.push({
+        icon: '💬',
+        label: 'Chamar Chat',
+        disabled: false,
+        acao: () => {
+          setToast('💬 Chat privado em breve!');
+          setTimeout(() => setToast(null), 2000);
+        },
+      });
+      botoes.push({
+        icon: '🗑️',
+        label: 'Excluir Amigo',
+        disabled: acaoLoading,
+        acao: handleRemover,
+      });
+    } else if (statusProp === 'jogando') {
+      // Jogando: Assistir | Recado | Perfil | Chat❌
+      botoes.push({
+        icon: '👁️',
+        label: 'Assistir Partida',
+        destaque: true,
+        disabled: false,
+        acao: () => {
+          setToast('👁️ Em breve você poderá assistir!');
+          setTimeout(() => setToast(null), 2000);
+        },
+      });
+      botoes.push({
+        icon: '💬',
+        label: 'Deixar Recado',
+        disabled: false,
+        acao: () => {
+          onClose();
+          pushOverlay('deixar-recado', { amigoId: amigo.id, amigoNick: amigo.nick, amigoAvatar: amigo.avatar });
+        },
+      });
+      botoes.push({
+        icon: '💬',
+        label: 'Chat (Indisponível)',
+        disabled: true,
+        acao: () => {},
+      });
+    } else if (statusProp === 'offline') {
+      // Offline: Recado | Perfil | Excluir
+      botoes.push({
+        icon: '💬',
+        label: 'Deixar Recado',
+        destaque: true,
+        disabled: false,
+        acao: () => {
+          onClose();
+          pushOverlay('deixar-recado', { amigoId: amigo.id, amigoNick: amigo.nick, amigoAvatar: amigo.avatar });
+        },
+      });
+      botoes.push({
+        icon: '🗑️',
+        label: 'Excluir Amigo',
+        disabled: acaoLoading,
+        acao: handleRemover,
+      });
+    }
   } else {
-    // NÃO SÃO AMIGOS — pode enviar
-    botoes.push({
-      icon: '➕',
-      label: 'Adicionar Amigo',
-      destaque: true,
-      disabled: acaoLoading,
-      acao: handleEnviarSolicitacao,
-    });
+    // AÇÕES DE AMIZADE (do ranking ou outros overlays)
+    if (statusLoading) {
+      botoes.push({ icon: '⏳', label: 'Carregando...', disabled: true, acao: () => {} });
+    } else if (status === 'aceita') {
+      // JÁ SÃO AMIGOS
+      botoes.push({
+        icon: '⚔️',
+        label: disponivel ? 'Jogar Agora' : jogando ? 'Aguardando partida acabar' : 'Jogador offline',
+        destaque: disponivel,
+        disabled: !disponivel,
+        acao: disponivel ? onClose : () => {},
+      });
+      botoes.push({
+        icon: jogando ? '👁️' : '💬',
+        label: jogando ? 'Assistir Partida' : 'Enviar Chat',
+        disabled: false,
+        acao: onClose,
+      });
+      botoes.push({
+        icon: '📬',
+        label: 'Deixar Recado',
+        disabled: false,
+        acao: () => {
+          onClose();
+          pushOverlay('deixar-recado', { amigoId: amigo.id, amigoNick: amigo.nick, amigoAvatar: amigo.avatar });
+        },
+      });
+      botoes.push({
+        icon: '❌',
+        label: 'Remover Amigo',
+        disabled: acaoLoading,
+        acao: handleRemover,
+      });
+    } else if (status === 'pendente' && euEnviei) {
+      botoes.push({ icon: '⏳', label: 'Solicitação Enviada', disabled: true, acao: () => {} });
+    } else if (status === 'pendente' && !euEnviei) {
+      botoes.push({
+        icon: '✅',
+        label: 'Aceitar Amizade',
+        destaque: true,
+        disabled: acaoLoading,
+        acao: handleAceitar,
+      });
+    } else if (status === 'rejeitada' && cooldownTexto) {
+      botoes.push({
+        icon: '🚫',
+        label: `Aguarde ${cooldownTexto}`,
+        disabled: true,
+        acao: () => {},
+      });
+    } else {
+      botoes.push({
+        icon: '➕',
+        label: 'Adicionar Amigo',
+        destaque: true,
+        disabled: acaoLoading,
+        acao: handleEnviarSolicitacao,
+      });
+    }
   }
 
   // Ver perfil sempre disponível

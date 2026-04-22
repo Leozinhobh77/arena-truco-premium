@@ -75,6 +75,22 @@ export interface Amizade {
   atualizado_em: string;
 }
 
+export interface Recado {
+  id: string;
+  remetente_id: string;
+  destinatario_id: string;
+  mensagem: string;
+  lido: boolean;
+  criado_em: string;
+}
+
+export interface Chat {
+  id: string;
+  usuario1_id: string;
+  usuario2_id: string;
+  criado_em: string;
+}
+
 export interface RankingRow {
   id: string;
   nick: string;
@@ -106,6 +122,15 @@ export type AmizadeInsert = Pick<Amizade, 'remetente_id' | 'destinatario_id'> &
   Partial<Pick<Amizade, 'status'>>;
 
 export type AmizadeUpdate = Partial<Pick<Amizade, 'status'>>;
+
+export type RecadoInsert = Pick<Recado, 'remetente_id' | 'destinatario_id' | 'mensagem'> &
+  Partial<Pick<Recado, 'lido'>>;
+
+export type RecadoUpdate = Partial<Pick<Recado, 'lido'>>;
+
+export type ChatInsert = Pick<Chat, 'usuario1_id' | 'usuario2_id'>;
+
+export type ChatUpdate = Partial<Chat>;
 
 // ── DATABASE SCHEMA ─────────────────────────────────────────
 
@@ -141,6 +166,16 @@ export interface Database {
         Row: Amizade;
         Insert: AmizadeInsert;
         Update: AmizadeUpdate;
+      };
+      recados: {
+        Row: Recado;
+        Insert: RecadoInsert;
+        Update: RecadoUpdate;
+      };
+      chats_privados: {
+        Row: Chat;
+        Insert: ChatInsert;
+        Update: ChatUpdate;
       };
     };
     Views: {

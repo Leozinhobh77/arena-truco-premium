@@ -193,6 +193,10 @@ export interface Amigo {
   modoJogo?: ModoJogo;
   /** Há quantos minutos está na partida atual */
   tempoJogandoMin?: number;
+  /** Descrição da última atividade (ex: "Jogando Paulista há 5min", "Offline há 2h") */
+  ultimaAtividade?: string;
+  /** Timestamp da última atividade para ordenação */
+  ultimaAtividadeEm?: string;
 }
 
 // ── RANKING SYSTEM (Sprint 4.2) ──
