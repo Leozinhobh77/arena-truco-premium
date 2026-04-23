@@ -146,13 +146,13 @@ export function useAmigosRealtime(meuId: string | undefined) {
           event: 'UPDATE',
           schema: 'public',
           table: 'profiles',
-          filter: `id=in.(${amigoIds.join(',')})`,
+          // Sem filter — filtra no callback para evitar bug do Supabase com in()
         },
         (payload: any) => {
-          console.log('🔍 [Realtime] UPDATE recebido:', payload);
-          // Quando status_atual muda, atualiza INSTANTANEAMENTE (<100ms)
-          if (payload.new?.status_atual) {
-            console.log('🔍 [Realtime] Chamando atualizarAmigoRealtime para:', payload.new.id, 'status:', payload.new.status_atual);
+          console.log('🔍 [Realtime] UPDATE recebido:', payload.new?.id, payload.new?.status_atual);
+          // Filtra só amigos da lista
+          if (payload.new?.id && amigoIds.includes(payload.new.id) && payload.new?.status_atual) {
+            console.log('🔍 [Realtime] É amigo! Atualizando:', payload.new.id, '->', payload.new.status_atual);
             atualizarAmigoRealtime(payload.new.id, payload.new.status_atual);
           }
         }
