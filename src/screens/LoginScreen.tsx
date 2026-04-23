@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useValidateAuth } from '../hooks/useValidateAuth';
 import { ValidationErrorModal } from '../components/ValidationErrorModal';
+import { NickSelectionModal } from '../components/NickSelectionModal';
 import type { ValidationError } from '../hooks/useValidateAuth';
 
 // ── Partículas de fundo ──────────────────────────────────────
@@ -157,6 +158,8 @@ export function LoginScreen() {
     dados: null,
   });
 
+  const [modalNickGoogle, setModalNickGoogle] = useState(false);
+
   const fecharModal = () => setModal({ aberto: false, dados: null });
 
   const abrirModal = (dados: ValidationError) => setModal({ aberto: true, dados });
@@ -198,6 +201,12 @@ export function LoginScreen() {
     if (emailErr) { abrirModal(emailErr); return; }
 
     await signUp(email.trim(), senha.trim(), nick.trim());
+  };
+
+  const { signUpWithGoogle } = useAuthStore();
+
+  const handleConfirmNickGoogle = async (nickSelecionado: string) => {
+    await signUpWithGoogle(nickSelecionado);
   };
 
   const formAnimation = erro ? { x: [-10, 10, -10, 10, 0] } : {};
@@ -428,6 +437,22 @@ export function LoginScreen() {
                 {validating ? 'VERIFICANDO...' : carregando ? 'CRIANDO...' : 'CRIAR CONTA 🚀'}
               </button>
 
+              <div className="separator" style={{ margin: '8px 0' }} />
+
+              <SocialButton
+                onClick={() => setModalNickGoogle(true)}
+                disabled={carregando}
+                label="Cadastrar com Google"
+                icon={(
+                  <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.273 0 3.19 2.7 1.24 6.636l4.026 3.129Z"/>
+                    <path fill="#FBBC05" d="M1.24 6.636a7.077 7.077 0 0 0 0 10.728l4.027-3.136a4.173 4.173 0 0 1 0-4.463L1.24 6.636Z"/>
+                    <path fill="#4285F4" d="M12 19.091a7.023 7.023 0 0 1-4.932-2.036L3.045 20.19a11.97 11.97 0 0 0 18.91-5.636h-9.954v4.537Z"/>
+                    <path fill="#34A853" d="M21.955 14.554c.036-.345.045-.71.045-1.091 0-.61-.045-1.2-.145-1.782h-9.855v3.91h5.81c-.5 1.5-1.645 2.6-3.01 3.49l3.864 3.01c2.254-2.082 3.827-5.145 4.318-8.537Z"/>
+                  </svg>
+                )}
+              />
+
               <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-muted)' }}>
                 Já tem conta?{' '}
                 <span
@@ -496,6 +521,14 @@ export function LoginScreen() {
           irPara('login');
         }}
         onTryAnother={fecharModal}
+      />
+
+      {/* Modal de seleção de nick para Google */}
+      <NickSelectionModal
+        isOpen={modalNickGoogle}
+        onClose={() => setModalNickGoogle(false)}
+        onConfirm={handleConfirmNickGoogle}
+        carregando={carregando}
       />
     </div>
   );

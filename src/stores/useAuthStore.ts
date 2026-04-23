@@ -45,6 +45,7 @@ interface AuthState {
   signUp: (email: string, senha: string, nick: string) => Promise<void>;
   signIn: (email: string, senha: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
+  signUpWithGoogle: (nick: string) => Promise<void>;
   logout: () => Promise<void>;
 
   // Ações de Perfil / Customização
@@ -185,6 +186,31 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      // ── CADASTRO COM GOOGLE ───────────────────────────────
+      signUpWithGoogle: async (nick: string) => {
+        set({ carregando: true, erro: null });
+        try {
+          // Armazena o nick desejado em sessionStorage para recuperar após OAuth
+          sessionStorage.setItem('desiredNick', nick.trim());
+
+          const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+              redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}`,
+              queryParams: {
+                access_type: 'offline',
+                prompt: 'consent',
+              },
+            },
+          });
+          if (error) throw error;
+          // O redirecionamento acontece via navegador
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : 'Erro desconhecido';
+          set({ carregando: false, erro: traduzirErro(msg) });
+        }
+      },
+
       // ── UPLOAD AVATAR ─────────────────────────────────────
       uploadAvatar: async (file: File) => {
         const user = get().usuario;
@@ -282,6 +308,20 @@ export const useAuthStore = create<AuthState>()(
             const retryRes = await (supabase.from('profiles').select('*').eq('id', session.user.id).single() as unknown as Promise<ProfileResult>);
             if (retryRes.data) {
               profileData = retryRes.data;
+
+              // Se é novo usuário do Google com nick customizado, atualizar
+              const desiredNick = sessionStorage.getItem('desiredNick');
+              if (desiredNick && profileData.nick !== desiredNick) {
+                try {
+                  await (supabase as any).from('profiles').update({
+                    nick: desiredNick.trim(),
+                  }).eq('id', session.user.id);
+                  profileData.nick = desiredNick.trim();
+                  sessionStorage.removeItem('desiredNick');
+                } catch (err) {
+                  // silenciar erro — nick já foi criado pelo trigger
+                }
+              }
             } else {
               set({ carregando: false, logado: false });
               return;
