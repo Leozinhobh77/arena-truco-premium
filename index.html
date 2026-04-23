@@ -20,6 +20,13 @@
         delete sessionStorage.redirect;
         window.history.replaceState(null, null, redirect);
       }
+
+      // Registrar service worker para SPA routing
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/arena-truco-premium/sw.js').catch(() => {
+          // falha silenciosa
+        });
+      }
     </script>
   </head>
   <body>
