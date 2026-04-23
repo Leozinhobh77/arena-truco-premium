@@ -15,9 +15,7 @@ export default defineConfig({
   build: {
     target: 'es2020',
     sourcemap: false,
-    minify: 'terser',
     rollupOptions: {
-      input: 'index.html',
       output: {
         manualChunks(id) {
           if (id.includes('node_modules/three'))           return 'vendor-three';
