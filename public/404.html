@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <title>Page Not Found</title>
     <script>
-      // Salvar a URL que o usuário tentou acessar
+      // Salvar a URL que o usuário tentou acessar (para restaurar depois)
       sessionStorage.redirect = location.href;
+      // Redirecionar para index.html imediatamente
+      location.replace('/arena-truco-premium/index.html');
     </script>
-    <!-- Redirecionar para index.html que será servido pelo GitHub Pages -->
-    <meta http-equiv="refresh" content="0;url=/arena-truco-premium/index.html">
   </head>
   <body>
   </body>
