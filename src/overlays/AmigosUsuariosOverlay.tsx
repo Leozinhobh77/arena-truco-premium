@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useAmigosRealtime } from '../hooks/useAmigosRealtime';
-import { useAmigosRanking } from '../hooks/useProfileData';
 import { useÚltimosJogadores } from '../hooks/useÚltimosJogadores';
 import { useBuscaUsuarios } from '../hooks/useBuscaUsuarios';
 import { useRecadosNaoLidosPorAmigo } from '../hooks/useRecadosNaoLidosPorAmigo';
@@ -254,8 +253,7 @@ function SecaoAmigos({ titulo, amigos, recadosPorAmigo, onClique, mostarVazio = 
 export function AmigosUsuariosOverlay() {
   const { popOverlay, pushOverlay } = useNavigationStore();
   const { usuario } = useAuthStore();
-  const { amigos: amigosRanking } = useAmigosRanking(usuario?.id || '');
-  const { amigos: amigosRealtime } = useAmigosRealtime(usuario?.id);
+  const { amigos: amigosComStatus } = useAmigosRealtime(usuario?.id);
   const { últimosJogadores } = useÚltimosJogadores();
   const { resultados, buscar, limpar } = useBuscaUsuarios('tudo');
   const { recadosPorAmigo } = useRecadosNaoLidosPorAmigo();
@@ -267,14 +265,6 @@ export function AmigosUsuariosOverlay() {
   const [favoritos] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<{ mensagem: string; tipo: 'info' | 'sucesso' } | null>(null);
   const [statusAnterior, setStatusAnterior] = useState<Record<string, string | undefined>>({});
-
-  // Merge de dados: amigos com status real
-  const amigosComStatus = useMemo(() => {
-    return amigosRanking.map(amigo => {
-      const comStatus = amigosRealtime.find(a => a.id === amigo.id);
-      return { ...amigo, ...comStatus };
-    });
-  }, [amigosRanking, amigosRealtime]);
 
   // Aplicar ordenação
   const amigosOrdenados = useMemo(() => {
