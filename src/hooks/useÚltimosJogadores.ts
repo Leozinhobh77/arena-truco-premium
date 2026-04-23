@@ -22,10 +22,10 @@ export function useÚltimosJogadores() {
       try {
         setLoading(true);
 
-        // Buscar últimas 20 partidas do usuário
+        // Buscar últimas 20 partidas do usuário (sem avatar_oponente que está bloqueado por RLS)
         const { data: partidas, error: erroPartidas } = await (supabase
           .from('partidas')
-          .select('oponente_id, oponente_nick, avatar_oponente, criado_em')
+          .select('oponente_id, oponente_nick, criado_em')
           .eq('perfil_id', usuario.id)
           .order('criado_em', { ascending: false })
           .limit(20) as any);
@@ -46,7 +46,7 @@ export function useÚltimosJogadores() {
           if (oponentesUnicos.size >= 4) break;
         }
 
-        // Buscar dados completos dos oponentes
+        // Buscar dados completos dos oponentes via profiles
         const oponenteIds = Array.from(oponentesUnicos.keys());
         if (oponenteIds.length === 0) {
           setÚltimosJogadores([]);
