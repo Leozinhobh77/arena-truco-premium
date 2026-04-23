@@ -25,8 +25,8 @@ export function useÚltimosJogadores() {
         // Buscar últimas 20 partidas do usuário
         const { data: partidas, error: erroPartidas } = await (supabase
           .from('partidas')
-          .select('oponente_id, oponente_nick, oponente_avatar, criado_em')
-          .eq('usuario_id', usuario.id) // Assumindo que existe campo usuario_id
+          .select('oponente_id, oponente_nick, avatar_oponente, criado_em')
+          .eq('perfil_id', usuario.id)
           .order('criado_em', { ascending: false })
           .limit(20) as any);
 
