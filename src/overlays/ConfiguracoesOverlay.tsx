@@ -13,18 +13,30 @@ export function ConfiguracoesOverlay() {
   const { popOverlay, pushOverlay } = useNavigationStore();
 
   const handleSair = async () => {
-    // 🟢 Atualizar status para 'offline' antes de desconectar
+    // Verificar se há outros devices antes de marcar offline
     if (usuario?.id) {
       try {
-        await (supabase as any)
-          .from('profiles')
-          .update({
-            status_atual: 'offline',
-            atualizado_status_em: new Date().toISOString(),
-          })
-          .eq('id', usuario.id);
+        const presenceChannel = supabase.channel(`presence-${usuario.id}`);
+        await presenceChannel.subscribe();
+
+        const presenceState = presenceChannel.presenceState();
+        const otherDevices = presenceState && Object.keys(presenceState).length > 1;
+
+        await supabase.removeChannel(presenceChannel);
+
+        // Só marcar offline se esse for o último device
+        if (!otherDevices) {
+          await (supabase as any)
+            .from('profiles')
+            .update({
+              status_atual: 'offline',
+              atualizado_status_em: new Date().toISOString(),
+            })
+            .eq('id', usuario.id);
+        }
       } catch (err) {
         // silenciar erro para não bloquear logout
+        console.error('Erro ao verificar presença:', err);
       }
     }
 
