@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import { useAuthStore } from './stores/useAuthStore';
 import { useNavigationStore } from './stores/useNavigationStore';
+import { AmigosRealtimeProvider } from './contexts/AmigosRealtimeContext';
 
 import { LoginScreen } from './screens/LoginScreen';
 import { ArenaScreen } from './screens/ArenaScreen';
@@ -135,7 +136,7 @@ function useSwipe(onLeft: () => void, onRight: () => void) {
 
 // ── Main Shell ──────────────────────────────────────────────
 export function App() {
-  const { logado, carregando, inicializarSessao } = useAuthStore();
+  const { logado, carregando, inicializarSessao, usuario } = useAuthStore();
   const { activeTab, setTab, getActiveOverlay, getActiveOverlayProps, popOverlay } = useNavigationStore();
 
   // Recupera sessão salva do Supabase ao iniciar o app
@@ -185,44 +186,46 @@ export function App() {
 
 
   return (
-    <div className="app-shell">
-      {/* Container de telas deslizantes */}
-      <div className="screens-container" {...swipe}>
-        <div
-          className="screens-track"
-          style={{ transform: `translateX(-${activeTab * 20}%)` }}
-        >
-          {SCREENS.map((Screen, i) => (
-            <div key={i} className="screen-panel">
-              <Screen />
-            </div>
-          ))}
+    <AmigosRealtimeProvider userId={usuario?.id}>
+      <div className="app-shell">
+        {/* Container de telas deslizantes */}
+        <div className="screens-container" {...swipe}>
+          <div
+            className="screens-track"
+            style={{ transform: `translateX(-${activeTab * 20}%)` }}
+          >
+            {SCREENS.map((Screen, i) => (
+              <div key={i} className="screen-panel">
+                <Screen />
+              </div>
+            ))}
+          </div>
         </div>
+
+        {/* Barra de navegação inferior */}
+        <BottomNav />
+
+        {/* Overlays (bottom sheets & telas cheias) */}
+        <AnimatePresence>
+          {activeOverlay === 'salas'         && <SalasOverlay         key="salas"         />}
+          {activeOverlay === 'jogo'          && <GameOverlay          key="jogo"          />}
+          {activeOverlay === 'amigos-online' && <AmigosUsuariosOverlay  key="amigos-online" />}
+          {activeOverlay === 'perfil'        && <ProfileOverlay       key="perfil"        />}
+          {activeOverlay === 'configuracoes' && <ConfiguracoesOverlay key="configuracoes" />}
+          {activeOverlay === 'deixar-recado' && <DeixarRecadoOverlay key="deixar-recado" />}
+          {activeOverlay === 'recados' && <RecadosOverlay key="recados" />}
+          {activeOverlay === 'arena-menu' && <ArenaMenuOverlay key="arena-menu" />}
+          {activeOverlay === 'solicitacoes-amizade' && <SolicitacoesOverlay key="solicitacoes-amizade" />}
+          {activeOverlay === 'friend-action' && (
+            <FriendActionSheet
+              key="friend-action"
+              amigo={getActiveOverlayProps().amigo as Amigo}
+              status={getActiveOverlayProps().status as 'disponivel' | 'jogando' | 'offline' | undefined}
+              onClose={popOverlay}
+            />
+          )}
+        </AnimatePresence>
       </div>
-
-      {/* Barra de navegação inferior */}
-      <BottomNav />
-
-      {/* Overlays (bottom sheets & telas cheias) */}
-      <AnimatePresence>
-        {activeOverlay === 'salas'         && <SalasOverlay         key="salas"         />}
-        {activeOverlay === 'jogo'          && <GameOverlay          key="jogo"          />}
-        {activeOverlay === 'amigos-online' && <AmigosUsuariosOverlay  key="amigos-online" />}
-        {activeOverlay === 'perfil'        && <ProfileOverlay       key="perfil"        />}
-        {activeOverlay === 'configuracoes' && <ConfiguracoesOverlay key="configuracoes" />}
-        {activeOverlay === 'deixar-recado' && <DeixarRecadoOverlay key="deixar-recado" />}
-        {activeOverlay === 'recados' && <RecadosOverlay key="recados" />}
-        {activeOverlay === 'arena-menu' && <ArenaMenuOverlay key="arena-menu" />}
-        {activeOverlay === 'solicitacoes-amizade' && <SolicitacoesOverlay key="solicitacoes-amizade" />}
-        {activeOverlay === 'friend-action' && (
-          <FriendActionSheet
-            key="friend-action"
-            amigo={getActiveOverlayProps().amigo as Amigo}
-            status={getActiveOverlayProps().status as 'disponivel' | 'jogando' | 'offline' | undefined}
-            onClose={popOverlay}
-          />
-        )}
-      </AnimatePresence>
-    </div>
+    </AmigosRealtimeProvider>
   );
 }

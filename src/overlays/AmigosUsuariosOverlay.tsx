@@ -6,8 +6,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
-import { useAuthStore } from '../stores/useAuthStore';
-import { useAmigosRealtime } from '../hooks/useAmigosRealtime';
+import { useAmigosRealtimeContext } from '../contexts/AmigosRealtimeContext';
 import { useÚltimosJogadores } from '../hooks/useÚltimosJogadores';
 import { useBuscaUsuarios } from '../hooks/useBuscaUsuarios';
 import { useRecadosNaoLidosPorAmigo } from '../hooks/useRecadosNaoLidosPorAmigo';
@@ -252,8 +251,7 @@ function SecaoAmigos({ titulo, amigos, recadosPorAmigo, onClique, mostarVazio = 
 // ── MAIN OVERLAY ───────────────────────────────────────────
 export function AmigosUsuariosOverlay() {
   const { popOverlay, pushOverlay } = useNavigationStore();
-  const { usuario } = useAuthStore();
-  const { amigos: amigosComStatus } = useAmigosRealtime(usuario?.id);
+  const { amigos: amigosComStatus } = useAmigosRealtimeContext();
   const { últimosJogadores } = useÚltimosJogadores();
   const { resultados, buscar, limpar } = useBuscaUsuarios('tudo');
   const { recadosPorAmigo } = useRecadosNaoLidosPorAmigo();

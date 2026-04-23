@@ -10,7 +10,7 @@ import { useNavigationStore } from '../stores/useNavigationStore';
 import { useContadorSolicitacoes } from '../hooks/useAmizade';
 import { useContadorRecados } from '../hooks/useRecados';
 import { useAmigosRanking } from '../hooks/useProfileData';
-import { useAmigosRealtime } from '../hooks/useAmigosRealtime';
+import { useAmigosRealtimeContext } from '../contexts/AmigosRealtimeContext';
 
 // Componente de barra XP circular em SVG
 function CircularXP({ xp, max, nivel }: { xp: number; max: number; nivel: number }) {
@@ -111,7 +111,7 @@ export function ArenaScreen() {
   const { pushOverlay } = useNavigationStore();
   const { total: solicitacoesTotal } = useContadorSolicitacoes();
   const { contador: recadosNaoLidos } = useContadorRecados();
-  const { totalOnline } = useAmigosRealtime(usuario?.id);
+  const { totalOnline } = useAmigosRealtimeContext();
 
   if (!usuario) return null;
 
