@@ -118,6 +118,22 @@ export function useAmigosRealtime(meuId: string | undefined) {
     }
   }, [idAtual]);
 
+  // Atualizar status de um amigo em tempo real (instantâneo)
+  const atualizarAmigoRealtime = useCallback((amigoId: string, novoStatus: string) => {
+    setAmigos((prev) =>
+      prev.map((a) => {
+        if (a.id !== amigoId) return a;
+        const statusValido = (novoStatus as 'disponivel' | 'jogando' | 'offline') || 'offline';
+        return {
+          ...a,
+          statusAmigo: statusValido,
+          ultimaAtividade: formatarUltimaAtividade(statusValido, 0),
+          ultimaAtividadeEm: new Date().toISOString(),
+        };
+      })
+    );
+  }, []);
+
   // Iniciar subscription Realtime (monitora mudanças em tempo real)
   const iniciarSubscription = useCallback((amigoIds: string[]) => {
     if (!idAtual || amigoIds.length === 0) return;
@@ -140,22 +156,6 @@ export function useAmigosRealtime(meuId: string | undefined) {
       )
       .subscribe();
   }, [idAtual, atualizarAmigoRealtime]);
-
-  // Atualizar status de um amigo em tempo real (instantâneo)
-  const atualizarAmigoRealtime = useCallback((amigoId: string, novoStatus: string) => {
-    setAmigos((prev) =>
-      prev.map((a) => {
-        if (a.id !== amigoId) return a;
-        const statusValido = (novoStatus as 'disponivel' | 'jogando' | 'offline') || 'offline';
-        return {
-          ...a,
-          statusAmigo: statusValido,
-          ultimaAtividade: formatarUltimaAtividade(statusValido, 0),
-          ultimaAtividadeEm: new Date().toISOString(),
-        };
-      })
-    );
-  }, []);
 
   // Limpar subscription ao desmontar
   useEffect(() => {
