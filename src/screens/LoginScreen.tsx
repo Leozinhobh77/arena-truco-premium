@@ -6,6 +6,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../stores/useAuthStore';
+import { useValidateAuth } from '../hooks/useValidateAuth';
+import { ValidationErrorModal } from '../components/ValidationErrorModal';
+import type { ValidationError } from '../hooks/useValidateAuth';
 
 // ── Partículas de fundo ──────────────────────────────────────
 function Particles() {
@@ -60,10 +63,10 @@ function OrbitRing({ radius, duration, children }: { radius: number; duration: n
 
 // ── Campo de Input ───────────────────────────────────────────
 function Campo({
-  icone, placeholder, value, onChange, type = 'text', autoFocus = false, error = false
+  icone, placeholder, value, onChange, onBlur, type = 'text', autoFocus = false, error = false
 }: {
   icone: string; placeholder: string; value: string;
-  onChange: (v: string) => void; type?: string; autoFocus?: boolean; error?: boolean;
+  onChange: (v: string) => void; onBlur?: () => void; type?: string; autoFocus?: boolean; error?: boolean;
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
@@ -84,6 +87,7 @@ function Campo({
         placeholder={placeholder}
         value={value}
         onChange={e => onChange(e.target.value)}
+        onBlur={onBlur}
         autoFocus={autoFocus}
         autoComplete={isPassword ? 'current-password' : 'off'}
       />
@@ -146,9 +150,19 @@ export function LoginScreen() {
   const [nick, setNick] = useState('');
 
   const { signIn, signInWithGoogle, signUp, carregando, erro, limparErro } = useAuthStore();
+  const { emailError, nickError, validating, validateEmail, validateNick, clearErrors } = useValidateAuth();
+
+  const [modal, setModal] = useState<{ aberto: boolean; dados: ValidationError | null }>({
+    aberto: false,
+    dados: null,
+  });
+
+  const fecharModal = () => setModal({ aberto: false, dados: null });
+
+  const abrirModal = (dados: ValidationError) => setModal({ aberto: true, dados });
 
   const resetForm = () => {
-    setEmail(''); setSenha(''); setNick(''); limparErro();
+    setEmail(''); setSenha(''); setNick(''); limparErro(); clearErrors();
   };
 
   const irPara = (m: Modo) => { resetForm(); setModo(m); };
@@ -156,15 +170,33 @@ export function LoginScreen() {
   const handleLogin = async () => {
     if (!email.trim() || !senha.trim()) return;
     await signIn(email.trim(), senha.trim());
-    // Se não logou (erro), o modo continua login para mostrar a msg
   };
 
   const handleGoogleLogin = async () => {
     await signInWithGoogle();
   };
 
+  const handleEmailBlur = async () => {
+    if (!email.trim() || modo !== 'cadastro') return;
+    const err = await validateEmail(email.trim());
+    if (err) abrirModal(err);
+  };
+
+  const handleNickBlur = async () => {
+    if (!nick.trim() || modo !== 'cadastro') return;
+    const err = await validateNick(nick.trim());
+    if (err) abrirModal(err);
+  };
+
   const handleCadastro = async () => {
     if (!email.trim() || !senha.trim() || !nick.trim()) return;
+
+    const nickErr = await validateNick(nick.trim());
+    if (nickErr) { abrirModal(nickErr); return; }
+
+    const emailErr = await validateEmail(email.trim());
+    if (emailErr) { abrirModal(emailErr); return; }
+
     await signUp(email.trim(), senha.trim(), nick.trim());
   };
 
@@ -334,8 +366,42 @@ export function LoginScreen() {
                 Criar Conta
               </div>
 
-              <Campo icone="🎮" placeholder="Nick de truqueiro" value={nick} onChange={setNick} autoFocus error={!!erro && !nick.trim()} />
-              <Campo icone="✉️" placeholder="Seu email" value={email} onChange={setEmail} type="email" error={!!erro && !email.trim()} />
+              <Campo
+                icone="🎮"
+                placeholder="Nick de truqueiro"
+                value={nick}
+                onChange={v => { setNick(v); }}
+                onBlur={handleNickBlur}
+                autoFocus
+                error={!!nickError || (!!erro && !nick.trim())}
+              />
+              {nickError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{ fontSize: 12, color: '#e63946', paddingLeft: 4, marginTop: -8 }}
+                >
+                  {nickError.message}
+                </motion.div>
+              )}
+              <Campo
+                icone="✉️"
+                placeholder="Seu email"
+                value={email}
+                onChange={v => { setEmail(v); }}
+                onBlur={handleEmailBlur}
+                type="email"
+                error={!!emailError || (!!erro && !email.trim())}
+              />
+              {emailError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{ fontSize: 12, color: '#e63946', paddingLeft: 4, marginTop: -8 }}
+                >
+                  {emailError.message}
+                </motion.div>
+              )}
               <Campo icone="🔒" placeholder="Senha (mín. 6 caracteres)" value={senha} onChange={setSenha} type="password" error={!!erro && !senha.trim()} />
 
               {erro && (
@@ -356,10 +422,10 @@ export function LoginScreen() {
                 id="btn-cadastro-submit"
                 className="btn-primary"
                 onClick={handleCadastro}
-                disabled={carregando}
-                style={{ opacity: email.trim() && senha.trim() && nick.trim() ? 1 : 0.6 }}
+                disabled={carregando || validating}
+                style={{ opacity: email.trim() && senha.trim() && nick.trim() && !validating ? 1 : 0.6 }}
               >
-                {carregando ? 'CRIANDO...' : 'CRIAR CONTA 🚀'}
+                {validating ? 'VERIFICANDO...' : carregando ? 'CRIANDO...' : 'CRIAR CONTA 🚀'}
               </button>
 
               <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-muted)' }}>
@@ -413,6 +479,24 @@ export function LoginScreen() {
           Agente Forge v5.2 · Supabase Auth
         </motion.p>
       </div>
+
+      {/* Modal de erro de validação */}
+      <ValidationErrorModal
+        isOpen={modal.aberto}
+        type={modal.dados?.type ?? 'nick_invalid'}
+        message={modal.dados?.message ?? ''}
+        suggestions={modal.dados?.suggestions}
+        onClose={fecharModal}
+        onSelectSuggestion={(sugestao) => {
+          setNick(sugestao);
+          fecharModal();
+        }}
+        onGoToLogin={() => {
+          fecharModal();
+          irPara('login');
+        }}
+        onTryAnother={fecharModal}
+      />
     </div>
   );
 }

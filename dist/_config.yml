@@ -1,0 +1,8 @@
+plugins:
+  - jemoji
+
+exclude:
+  - node_modules
+
+# Configurar 404 handling
+error_404: /arena-truco-premium/404.html

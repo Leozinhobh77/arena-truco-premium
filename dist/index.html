@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0a0f" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="description" content="Arena Truco Premium — O jogo de truco mais premium do Brasil. Estilo Obsidian & Gold nível Apple." />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com data:; img-src 'self' https: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' https: wss:;" />
+    <title>Arena Truco Premium</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script>
+      // GitHub Pages SPA redirect fix — restaura a URL original após 404.html redirect
+      if (sessionStorage.redirect) {
+        const redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        window.history.replaceState(null, null, redirect);
+      }
+
+      // Registrar service worker para SPA routing
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/arena-truco-premium/sw.js').catch(() => {
+          // falha silenciosa
+        });
+      }
+    </script>
+    <script type="module" crossorigin src="/arena-truco-premium/assets/index-C2Y2IWbU.js"></script>
+    <link rel="modulepreload" crossorigin href="/arena-truco-premium/assets/rolldown-runtime-COnpUsM8.js">
+    <link rel="modulepreload" crossorigin href="/arena-truco-premium/assets/vendor-supabase-BTnJVclF.js">
+    <link rel="modulepreload" crossorigin href="/arena-truco-premium/assets/vendor-motion-DLQ1ca55.js">
+    <link rel="modulepreload" crossorigin href="/arena-truco-premium/assets/vendor-react-Bm2ItzTj.js">
+    <link rel="modulepreload" crossorigin href="/arena-truco-premium/assets/vendor-zustand-CWT1Fg9b.js">
+    <link rel="stylesheet" crossorigin href="/arena-truco-premium/assets/index-2H6ydT_4.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
