@@ -252,6 +252,8 @@ function SecaoAmigos({ titulo, amigos, recadosPorAmigo, onClique, mostarVazio = 
 export function AmigosUsuariosOverlay() {
   const { popOverlay, pushOverlay } = useNavigationStore();
   const { amigos: amigosComStatus } = useAmigosRealtimeContext();
+
+  console.log('🟣 [Overlay] Render — amigos:', amigosComStatus.map(a => `${a.nick}:${a.statusAmigo}`).join(', '));
   const { últimosJogadores } = useÚltimosJogadores();
   const { resultados, buscar, limpar } = useBuscaUsuarios('tudo');
   const { recadosPorAmigo } = useRecadosNaoLidosPorAmigo();

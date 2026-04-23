@@ -120,8 +120,9 @@ export function useAmigosRealtime(meuId: string | undefined) {
 
   // Atualizar status de um amigo em tempo real (instantâneo)
   const atualizarAmigoRealtime = useCallback((amigoId: string, novoStatus: string) => {
-    setAmigos((prev) =>
-      prev.map((a) => {
+    console.log('🔄 [useAmigosRealtime] atualizarAmigoRealtime:', amigoId, '→', novoStatus);
+    setAmigos((prev) => {
+      const updated = prev.map((a) => {
         if (a.id !== amigoId) return a;
         const statusValido = (novoStatus as 'disponivel' | 'jogando' | 'offline') || 'offline';
         return {
@@ -130,8 +131,10 @@ export function useAmigosRealtime(meuId: string | undefined) {
           ultimaAtividade: formatarUltimaAtividade(statusValido, 0),
           ultimaAtividadeEm: new Date().toISOString(),
         };
-      })
-    );
+      });
+      console.log('🔄 [useAmigosRealtime] Nova lista amigos:', updated.map(a => `${a.nick}:${a.statusAmigo}`).join(', '));
+      return updated;
+    });
   }, []);
 
   // Iniciar subscription Realtime (monitora mudanças em tempo real)
