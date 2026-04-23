@@ -7,6 +7,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../stores/useAuthStore';
+import { usePresenceTracker } from './usePresenceTracker';
 import type { Amigo } from '../types';
 
 function formatarUltimaAtividade(statusAmigo: string, tempoJogandoMin?: number): string {
@@ -23,6 +24,9 @@ export function useAmigosRealtime(meuId: string | undefined) {
   const [loading, setLoading] = useState(true);
   const subscriptionRef = useRef<any>(null);
   const amigoIdsRef = useRef<string[]>([]);
+  const presenceChannelsRef = useRef<Map<string, any>>(new Map());
+
+  usePresenceTracker(idAtual);
 
   // Buscar amigos inicialmente
   const carregarAmigos = useCallback(async () => {
@@ -134,6 +138,36 @@ export function useAmigosRealtime(meuId: string | undefined) {
     );
   }, []);
 
+  // Monitorar presença de cada amigo (multi-device offline detection)
+  const monitorarPresencaAmigos = useCallback((amigoIds: string[]) => {
+    amigoIds.forEach(amigoId => {
+      if (presenceChannelsRef.current.has(amigoId)) return;
+
+      const presenceChannel = supabase.channel(`presence-${amigoId}`, {
+        config: { presence: { key: `monitor-${idAtual}-${amigoId}` } },
+      });
+
+      presenceChannel
+        .on('presence', { event: 'sync' }, () => {
+          const state = presenceChannel.presenceState();
+          if (!state || Object.keys(state).length === 0) {
+            atualizarAmigoRealtime(amigoId, 'offline');
+          }
+        })
+        .on('presence', { event: 'leave' }, () => {
+          setTimeout(() => {
+            const state = presenceChannel.presenceState();
+            if (!state || Object.keys(state).length === 0) {
+              atualizarAmigoRealtime(amigoId, 'offline');
+            }
+          }, 100);
+        })
+        .subscribe();
+
+      presenceChannelsRef.current.set(amigoId, presenceChannel);
+    });
+  }, [idAtual, atualizarAmigoRealtime]);
+
   // Iniciar subscription Realtime (monitora mudanças em tempo real)
   const iniciarSubscription = useCallback((amigoIds: string[]) => {
     if (!idAtual || amigoIds.length === 0) return;
@@ -155,7 +189,9 @@ export function useAmigosRealtime(meuId: string | undefined) {
         }
       )
       .subscribe();
-  }, [idAtual]);
+
+    monitorarPresencaAmigos(amigoIds);
+  }, [idAtual, monitorarPresencaAmigos]);
 
   // Limpar subscription ao desmontar
   useEffect(() => {
@@ -164,6 +200,10 @@ export function useAmigosRealtime(meuId: string | undefined) {
         supabase.removeChannel(subscriptionRef.current);
         subscriptionRef.current = null;
       }
+      presenceChannelsRef.current.forEach(channel => {
+        supabase.removeChannel(channel);
+      });
+      presenceChannelsRef.current.clear();
     };
   }, []);
 
