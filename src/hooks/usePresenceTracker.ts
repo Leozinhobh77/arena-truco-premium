@@ -1,5 +1,5 @@
 // ============================================================
-// usePresenceTracker — Rastreia presença multi-device via Supabase
+// usePresenceTracker — Rastreia presença multi-device (canal arena global)
 // ============================================================
 
 import { useEffect, useRef } from 'react';
@@ -11,33 +11,22 @@ export function usePresenceTracker(userId: string | undefined) {
   useEffect(() => {
     if (!userId) return;
 
-    const channelName = `presence-${userId}`;
-
-    presenceChannelRef.current = supabase.channel(channelName, {
+    presenceChannelRef.current = supabase.channel('presence-arena', {
       config: {
         presence: {
-          key: `${userId}-${Math.random()}`,
+          key: `user-${userId}`,
         },
       },
     });
 
-    presenceChannelRef.current
-      .on('presence', { event: 'sync' }, () => {
-        console.log(`✅ [Presence] ${userId}: presença sincronizada`);
-      })
-      .on('presence', { event: 'join' }, () => {
-        console.log(`✅ [Presence] ${userId}: novo dispositivo entrou`);
-      })
-      .on('presence', { event: 'leave' }, () => {
-        console.log(`⚫ [Presence] ${userId}: dispositivo saiu`);
-      })
-      .subscribe(async (status: string) => {
-        if (status === 'SUBSCRIBED') {
-          await presenceChannelRef.current.track({
-            online_at: new Date().toISOString(),
-          });
-        }
-      });
+    presenceChannelRef.current.subscribe(async (status: string) => {
+      if (status === 'SUBSCRIBED') {
+        await presenceChannelRef.current.track({
+          user_id: userId,
+          online_at: new Date().toISOString(),
+        });
+      }
+    });
 
     return () => {
       if (presenceChannelRef.current) {

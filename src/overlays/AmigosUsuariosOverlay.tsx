@@ -3,7 +3,7 @@
 // 2 abas: Amigos (com 3 seções) e Busca de Usuários
 // ============================================================
 
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
 import { useAmigosRealtimeContext } from '../contexts/AmigosRealtimeContext';
@@ -222,7 +222,7 @@ interface SecaoAmigosProps {
   mostarVazio?: boolean;
 }
 
-function SecaoAmigos({ titulo, amigos, recadosPorAmigo, onClique, mostarVazio = true }: SecaoAmigosProps) {
+const SecaoAmigos = React.memo(function SecaoAmigos({ titulo, amigos, recadosPorAmigo, onClique, mostarVazio = true }: SecaoAmigosProps) {
   if (amigos.length === 0) {
     return mostarVazio ? (
       <div style={{ textAlign: 'center', padding: '16px', color: 'var(--text-muted)', fontSize: 12 }}>
@@ -246,7 +246,7 @@ function SecaoAmigos({ titulo, amigos, recadosPorAmigo, onClique, mostarVazio = 
       ))}
     </div>
   );
-}
+});
 
 // ── MAIN OVERLAY ───────────────────────────────────────────
 export function AmigosUsuariosOverlay() {

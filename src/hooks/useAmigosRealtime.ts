@@ -138,34 +138,46 @@ export function useAmigosRealtime(meuId: string | undefined) {
     );
   }, []);
 
-  // Monitorar presença de cada amigo (multi-device offline detection)
+  // Monitorar presença global (1 canal para todos os amigos)
   const monitorarPresencaAmigos = useCallback((amigoIds: string[]) => {
-    amigoIds.forEach(amigoId => {
-      if (presenceChannelsRef.current.has(amigoId)) return;
+    if (presenceChannelsRef.current.has('arena')) return;
 
-      const presenceChannel = supabase.channel(`presence-${amigoId}`, {
-        config: { presence: { key: `monitor-${idAtual}-${amigoId}` } },
-      });
+    const arenaPresence = supabase.channel('presence-arena', {
+      config: { presence: { key: `user-${idAtual}` } },
+    });
 
-      presenceChannel
-        .on('presence', { event: 'sync' }, () => {
-          const state = presenceChannel.presenceState();
-          if (!state || Object.keys(state).length === 0) {
+    arenaPresence
+      .on('presence', { event: 'sync' }, () => {
+        const state = arenaPresence.presenceState();
+        const usuariosAtivos = new Set(
+          Object.keys(state).map(key => key.split('-')[1])
+        );
+
+        amigoIds.forEach(amigoId => {
+          const estaOnline = usuariosAtivos.has(amigoId);
+          if (!estaOnline) {
             atualizarAmigoRealtime(amigoId, 'offline');
           }
-        })
-        .on('presence', { event: 'leave' }, () => {
-          setTimeout(() => {
-            const state = presenceChannel.presenceState();
-            if (!state || Object.keys(state).length === 0) {
+        });
+      })
+      .on('presence', { event: 'leave' }, () => {
+        setTimeout(() => {
+          const state = arenaPresence.presenceState();
+          const usuariosAtivos = new Set(
+            Object.keys(state).map(key => key.split('-')[1])
+          );
+
+          amigoIds.forEach(amigoId => {
+            const estaOnline = usuariosAtivos.has(amigoId);
+            if (!estaOnline) {
               atualizarAmigoRealtime(amigoId, 'offline');
             }
-          }, 100);
-        })
-        .subscribe();
+          });
+        }, 100);
+      })
+      .subscribe();
 
-      presenceChannelsRef.current.set(amigoId, presenceChannel);
-    });
+    presenceChannelsRef.current.set('arena', arenaPresence);
   }, [idAtual, atualizarAmigoRealtime]);
 
   // Iniciar subscription Realtime (monitora mudanças em tempo real)
@@ -200,9 +212,10 @@ export function useAmigosRealtime(meuId: string | undefined) {
         supabase.removeChannel(subscriptionRef.current);
         subscriptionRef.current = null;
       }
-      presenceChannelsRef.current.forEach(channel => {
-        supabase.removeChannel(channel);
-      });
+      const arenaChannel = presenceChannelsRef.current.get('arena');
+      if (arenaChannel) {
+        supabase.removeChannel(arenaChannel);
+      }
       presenceChannelsRef.current.clear();
     };
   }, []);
