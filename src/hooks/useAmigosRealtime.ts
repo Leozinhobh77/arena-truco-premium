@@ -155,7 +155,7 @@ export function useAmigosRealtime(meuId: string | undefined) {
         }
       )
       .subscribe();
-  }, [idAtual, atualizarAmigoRealtime]);
+  }, [idAtual]);
 
   // Limpar subscription ao desmontar
   useEffect(() => {
