@@ -71,14 +71,15 @@ export function useStatusLikes(statusOwnerIdId: string | undefined, currentUserI
         setLikesCount((prev) => Math.max(0, prev - 1));
       } else {
         // Adicionar like
-        const { error } = await (supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { error } = await (supabase as any)
           .from('status_likes')
           .insert([
             {
               usuario_id: currentUserId,
               status_owner_id: statusOwnerIdId,
             },
-          ]) as Promise<{ data: unknown; error: unknown }>);
+          ]);
 
         if (error) {
           console.error('Erro ao adicionar like:', error);
