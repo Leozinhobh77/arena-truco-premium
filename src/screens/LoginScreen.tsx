@@ -222,15 +222,14 @@ export function LoginScreen() {
     if (nickErr) { abrirModal(nickErr); return; }
 
     const emailErr = await validateEmailExists(email.trim());
-    if (emailErr) return;
+    if (emailErr) {
+      // Se email existe, não bloqueia - deixa o servidor confirmar
+      // Mas mostra inline também
+    }
 
     if (senha.trim().length < 6) { return; }
 
-    limparErro();
     await signUp(email.trim(), senha.trim(), nick.trim());
-
-    // Se houver erro de conta já existente, mostra modal elegante
-    // O erro aparecerá no estado 'erro' do store
   };
 
   const { signUpWithGoogle } = useAuthStore();
