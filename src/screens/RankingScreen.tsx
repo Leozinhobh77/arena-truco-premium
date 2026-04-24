@@ -576,48 +576,6 @@ export function RankingScreen() {
         </div>
       </div>
 
-      {/* Seu card em destaque */}
-      {abaData.seu_ranking && (
-        <motion.div
-          initial={{ opacity: 0, y: -5 }}
-          animate={{ opacity: 1, y: 0 }}
-          style={{
-            margin: '0 16px 8px', padding: '10px 14px', borderRadius: 12,
-            background: 'rgba(212,160,23,0.08)', border: '1px solid var(--border-gold)',
-            display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0,
-          }}
-        >
-          <span style={{
-            fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 900,
-            color: 'var(--gold-400)', minWidth: 32,
-          }}>
-            #{abaData.seu_ranking.posicao}
-          </span>
-          <img
-            src={abaData.seu_ranking.usuario.avatar}
-            alt=""
-            style={{ width: 32, height: 32, borderRadius: '50%', border: '1.5px solid var(--border-gold)' }}
-          />
-          <div style={{ flex: 1 }}>
-            <div style={{
-              fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 700,
-              color: 'var(--gold-400)',
-            }}>
-              Você · {abaData.seu_ranking.usuario.nick}
-            </div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-              {getTier(abaData.seu_ranking.pontos).icone} {getTier(abaData.seu_ranking.pontos).nome}
-            </div>
-          </div>
-          <div style={{
-            fontFamily: 'var(--font-display)', fontWeight: 800,
-            color: 'var(--gold-400)', fontSize: 15,
-          }}>
-            {abaData.seu_ranking.pontos.toLocaleString()}
-          </div>
-        </motion.div>
-      )}
-
       {aba === 'status' ? (
         <StatusRankingContent
           jogadores={abaData.jogadores}
