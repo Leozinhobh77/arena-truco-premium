@@ -3,13 +3,14 @@
 // Login REAL via Supabase Auth (Email + Senha)
 // ============================================================
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useValidateAuth } from '../hooks/useValidateAuth';
 import { useValidateForm } from '../hooks/useValidateForm';
 import { ValidationErrorModal } from '../components/ValidationErrorModal';
 import { NickSelectionModal } from '../components/NickSelectionModal';
+import { AccountExistsModal } from '../components/AccountExistsModal';
 import type { ValidationError } from '../hooks/useValidateAuth';
 
 // ── Partículas de fundo ──────────────────────────────────────
@@ -161,6 +162,7 @@ export function LoginScreen() {
   });
 
   const [modalNickGoogle, setModalNickGoogle] = useState(false);
+  const [modalAccountExists, setModalAccountExists] = useState(false);
 
   const fecharModal = () => setModal({ aberto: false, dados: null });
 
@@ -171,6 +173,13 @@ export function LoginScreen() {
   };
 
   const irPara = (m: Modo) => { resetForm(); setModo(m); };
+
+  // Detectar erro de email duplicado durante cadastro
+  useEffect(() => {
+    if (modo === 'cadastro' && erro && (erro.includes('User already registered') || erro.includes('email já'))) {
+      setModalAccountExists(true);
+    }
+  }, [erro, modo]);
 
   const handleLogin = async () => {
     if (!email.trim() || !senha.trim()) return;
@@ -217,13 +226,30 @@ export function LoginScreen() {
 
     if (senha.trim().length < 6) { return; }
 
+    limparErro();
     await signUp(email.trim(), senha.trim(), nick.trim());
+
+    // Se houver erro de conta já existente, mostra modal elegante
+    // O erro aparecerá no estado 'erro' do store
   };
 
   const { signUpWithGoogle } = useAuthStore();
 
   const handleConfirmNickGoogle = async (nickSelecionado: string) => {
     await signUpWithGoogle(nickSelecionado);
+  };
+
+  const handleAccountExistsGoToLogin = () => {
+    setModalAccountExists(false);
+    limparErro();
+    irPara('login');
+  };
+
+  const handleAccountExistsTryAnother = () => {
+    setModalAccountExists(false);
+    limparErro();
+    setEmail('');
+    setSenha('');
   };
 
   const formAnimation = erro ? { x: [-10, 10, -10, 10, 0] } : {};
@@ -586,6 +612,14 @@ export function LoginScreen() {
         onClose={() => setModalNickGoogle(false)}
         onConfirm={handleConfirmNickGoogle}
         carregando={carregando}
+      />
+
+      {/* Modal de conta já existente */}
+      <AccountExistsModal
+        isOpen={modalAccountExists}
+        email={email}
+        onGoToLogin={handleAccountExistsGoToLogin}
+        onTryAnother={handleAccountExistsTryAnother}
       />
     </div>
   );
