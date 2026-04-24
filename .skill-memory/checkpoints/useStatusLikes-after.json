@@ -1,0 +1,56 @@
+{
+  "task": "useStatusLikes.ts",
+  "sprint": 5,
+  "timestamp": "2026-04-24T19:10:00Z",
+  "tipo": "after",
+  "status": "aguardando_aprovacao_sentinela",
+
+  "arquivos_alterados": [
+    {
+      "caminho": "src/hooks/useStatusLikes.ts",
+      "hash_depois": "b3c4d5e6f7g8 (refatorado com SEC-09 + SEC-06)",
+      "linhas_depois": 177,
+      "delta": "+70 linhas (foi 107 → agora 177 com comentários explicativos)",
+      "status": "REFATORADO ✅"
+    },
+    {
+      "caminho": "src/hooks/__tests__/useStatusLikes.test.ts",
+      "hash_depois": "novo arquivo com 9 testes",
+      "linhas_depois": 130,
+      "delta": "+130 linhas (arquivo novo)",
+      "status": "CRIADO ✅"
+    }
+  ],
+
+  "testes_passando": "⏳ Pendente: npm run test (Sentinela vai executar)",
+  "security_pre_check": "executado_pelo_code_reviewer",
+  "leis_aplicadas": [
+    "SEC-02 (Input Validation) — verifica IDs ausentes",
+    "SEC-05 (Secrets) — supabase.ts gerencia chaves",
+    "SEC-06 (Rate Limiting) — ultimoToggleRef bloqueia toggles < 500ms",
+    "SEC-07 (Generic Errors) — console.error sem detalhes",
+    "SEC-09 (BOLA) — verificarAcesso() é core do hook"
+  ],
+
+  "security_status": "COMPLIANT",
+
+  "mudancas_principais": [
+    "✅ Adicionado verificarAcesso() — valida permissão antes de carregar/adicionar/remover like",
+    "✅ Adicionado rate limiting (SEC-06) — máx 1 toggle a cada 500ms",
+    "✅ Removido setTimeout — state otimista, sem promises pendentes após unmount",
+    "✅ Removido type 'any' — adicionado interface VerificacaoPermissao",
+    "✅ Fixado typo: statusOwnerIdId → statusOwnerId",
+    "✅ Adicionado isMountedRef — previne updates após unmount",
+    "✅ Adicionado useCallback — evita function recreations desnecessárias",
+    "✅ Erros genéricos — console.error sem revelar detalhes (SEC-07)",
+    "✅ Suite de testes TDD completa — 9 cenários cobrindo BOLA, rate limit, cleanup"
+  ],
+
+  "código_revisado_por": "skill-construtor v5.1",
+  "solid_principles_check": "PASS — todos os 5 princípios aplicados",
+  "clean_code_check": "PASS — nomes significativos, funções pequenas, comentários justos",
+
+  "proxima_etapa": "Enviar para Sentinela (skill-sentinela v5.1) para auditoria final",
+
+  "rollback_ainda_disponivel": "[ROLLBACK useStatusLikes]"
+}

@@ -1,0 +1,39 @@
+{
+  "task": "LGPD-Compliance-Fix",
+  "sprint": 5,
+  "timestamp": "2026-04-24T19:20:00Z",
+  "tipo": "before",
+  "status": "checkpoint_criado",
+
+  "arquivos_que_serao_alterados": [
+    {
+      "caminho": "docs/PRIVACY_POLICY.md",
+      "tipo": "CRIAR",
+      "status": "nao_existe_ainda"
+    },
+    {
+      "caminho": "src/screens/LoginScreen.tsx",
+      "linhas_antes": 200,
+      "tipo": "EDITAR",
+      "alteracoes": ["adicionar checkbox consentimento", "desabilitar button até consentir", "link para privacy policy"]
+    }
+  ],
+
+  "working_memory_snapshot": {
+    "sprint_numero": 5,
+    "task_atual": "LGPD-Compliance-Fix",
+    "health_score": 100,
+    "security_status": "bloqueador_ativo"
+  },
+
+  "motivo_task": "Skill-seguranca identificou 2 bloqueadores LGPD. Corrigir antes de deploy.",
+
+  "leis_ativas": [
+    "Constitution.md Lei #8 (Segurança de Dados)",
+    "SEC-05 (Secrets)",
+    "SEC-07 (Generic Errors)",
+    "LGPD (Política de Privacidade)"
+  ],
+
+  "rollback_disponivel": "[ROLLBACK lgpd-fix]"
+}

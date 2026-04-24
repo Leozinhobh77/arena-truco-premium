@@ -3,7 +3,7 @@
 // Root do App: Navegação nativa, Swipe, Overlays
 // ============================================================
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState, Suspense, lazy } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { useAuthStore } from './stores/useAuthStore';
@@ -11,22 +11,23 @@ import { useNavigationStore } from './stores/useNavigationStore';
 import { AmigosRealtimeProvider } from './contexts/AmigosRealtimeContext';
 
 import { LoginScreen } from './screens/LoginScreen';
-import { ArenaScreen } from './screens/ArenaScreen';
-import { LojaScreen } from './screens/LojaScreen';
-import { ModosScreen } from './screens/ModosScreen';
-import { RankingScreen } from './screens/RankingScreen';
-import { ClansScreen } from './screens/ClansScreen';
-import { SalasOverlay } from './overlays/SalasOverlay';
-import { GameOverlay } from './overlays/GameOverlay';
-import { AmigosUsuariosOverlay } from './overlays/AmigosUsuariosOverlay';
-import { ProfileOverlay } from './overlays/ProfileOverlay';
-import { ConfiguracoesOverlay } from './overlays/ConfiguracoesOverlay';
-import { DeixarRecadoOverlay } from './overlays/DeixarRecadoOverlay';
-import { RecadosOverlay } from './overlays/RecadosOverlay';
-import { ArenaMenuOverlay } from './overlays/ArenaMenuOverlay';
-import { SolicitacoesOverlay } from './overlays/SolicitacoesOverlay';
-import { StatusEditorOverlay } from './overlays/StatusEditorOverlay';
 import { FriendActionSheet } from './components/FriendActionSheet';
+
+const ArenaScreen = lazy(() => import('./screens/ArenaScreen').then(m => ({ default: m.ArenaScreen })));
+const LojaScreen = lazy(() => import('./screens/LojaScreen').then(m => ({ default: m.LojaScreen })));
+const ModosScreen = lazy(() => import('./screens/ModosScreen').then(m => ({ default: m.ModosScreen })));
+const RankingScreen = lazy(() => import('./screens/RankingScreen').then(m => ({ default: m.RankingScreen })));
+const ClansScreen = lazy(() => import('./screens/ClansScreen').then(m => ({ default: m.ClansScreen })));
+const SalasOverlay = lazy(() => import('./overlays/SalasOverlay').then(m => ({ default: m.SalasOverlay })));
+const GameOverlay = lazy(() => import('./overlays/GameOverlay').then(m => ({ default: m.GameOverlay })));
+const AmigosUsuariosOverlay = lazy(() => import('./overlays/AmigosUsuariosOverlay').then(m => ({ default: m.AmigosUsuariosOverlay })));
+const ProfileOverlay = lazy(() => import('./overlays/ProfileOverlay').then(m => ({ default: m.ProfileOverlay })));
+const ConfiguracoesOverlay = lazy(() => import('./overlays/ConfiguracoesOverlay').then(m => ({ default: m.ConfiguracoesOverlay })));
+const DeixarRecadoOverlay = lazy(() => import('./overlays/DeixarRecadoOverlay').then(m => ({ default: m.DeixarRecadoOverlay })));
+const RecadosOverlay = lazy(() => import('./overlays/RecadosOverlay').then(m => ({ default: m.RecadosOverlay })));
+const ArenaMenuOverlay = lazy(() => import('./overlays/ArenaMenuOverlay').then(m => ({ default: m.ArenaMenuOverlay })));
+const SolicitacoesOverlay = lazy(() => import('./overlays/SolicitacoesOverlay').then(m => ({ default: m.SolicitacoesOverlay })));
+const StatusEditorOverlay = lazy(() => import('./overlays/StatusEditorOverlay').then(m => ({ default: m.StatusEditorOverlay })));
 import type { Amigo } from './types';
 
 // ── Ícones SVG Inline da Nav Bar ────────────────────────────
@@ -135,6 +136,38 @@ function useSwipe(onLeft: () => void, onRight: () => void) {
   return { onTouchStart, onTouchEnd };
 }
 
+// ── Lazy Screen Wrapper ──────────────────────────────────────
+function LazyScreenWrapper({ ScreenComponent, index, activeTab }: { ScreenComponent: React.ComponentType, index: number, activeTab: number }) {
+  const [visited, setVisited] = useState(activeTab === index);
+
+  useEffect(() => {
+    if (activeTab === index) setVisited(true);
+  }, [activeTab, index]);
+
+  return (
+    <div className="screen-panel">
+      {visited ? (
+        <Suspense fallback={
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              style={{
+                width: 40, height: 40, borderRadius: '50%',
+                border: '3px solid rgba(212,160,23,0.2)',
+                borderTop: '3px solid var(--gold-400)',
+                boxShadow: '0 0 20px rgba(212,160,23,0.3)'
+              }}
+            />
+          </div>
+        }>
+          <ScreenComponent />
+        </Suspense>
+      ) : null}
+    </div>
+  );
+}
+
 // ── Main Shell ──────────────────────────────────────────────
 export function App() {
   const { logado, carregando, inicializarSessao, usuario } = useAuthStore();
@@ -196,9 +229,7 @@ export function App() {
             style={{ transform: `translateX(-${activeTab * 20}%)` }}
           >
             {SCREENS.map((Screen, i) => (
-              <div key={i} className="screen-panel">
-                <Screen />
-              </div>
+              <LazyScreenWrapper key={i} ScreenComponent={Screen} index={i} activeTab={activeTab} />
             ))}
           </div>
         </div>
@@ -207,26 +238,28 @@ export function App() {
         <BottomNav />
 
         {/* Overlays (bottom sheets & telas cheias) */}
-        <AnimatePresence>
-          {activeOverlay === 'salas'         && <SalasOverlay         key="salas"         />}
-          {activeOverlay === 'jogo'          && <GameOverlay          key="jogo"          />}
-          {activeOverlay === 'amigos-online' && <AmigosUsuariosOverlay  key="amigos-online" />}
-          {activeOverlay === 'perfil'        && <ProfileOverlay       key="perfil"        />}
-          {activeOverlay === 'configuracoes' && <ConfiguracoesOverlay key="configuracoes" />}
-          {activeOverlay === 'deixar-recado' && <DeixarRecadoOverlay key="deixar-recado" />}
-          {activeOverlay === 'recados' && <RecadosOverlay key="recados" />}
-          {activeOverlay === 'arena-menu' && <ArenaMenuOverlay key="arena-menu" />}
-          {activeOverlay === 'solicitacoes-amizade' && <SolicitacoesOverlay key="solicitacoes-amizade" />}
-          {activeOverlay === 'status-editor' && <StatusEditorOverlay key="status-editor" />}
-          {activeOverlay === 'friend-action' && (
-            <FriendActionSheet
-              key="friend-action"
-              amigo={getActiveOverlayProps().amigo as Amigo}
-              status={getActiveOverlayProps().status as 'disponivel' | 'jogando' | 'offline' | undefined}
-              onClose={popOverlay}
-            />
-          )}
-        </AnimatePresence>
+        <Suspense fallback={null}>
+          <AnimatePresence>
+            {activeOverlay === 'salas'         && <SalasOverlay         key="salas"         />}
+            {activeOverlay === 'jogo'          && <GameOverlay          key="jogo"          />}
+            {activeOverlay === 'amigos-online' && <AmigosUsuariosOverlay  key="amigos-online" />}
+            {activeOverlay === 'perfil'        && <ProfileOverlay       key="perfil"        />}
+            {activeOverlay === 'configuracoes' && <ConfiguracoesOverlay key="configuracoes" />}
+            {activeOverlay === 'deixar-recado' && <DeixarRecadoOverlay key="deixar-recado" />}
+            {activeOverlay === 'recados' && <RecadosOverlay key="recados" />}
+            {activeOverlay === 'arena-menu' && <ArenaMenuOverlay key="arena-menu" />}
+            {activeOverlay === 'solicitacoes-amizade' && <SolicitacoesOverlay key="solicitacoes-amizade" />}
+            {activeOverlay === 'status-editor' && <StatusEditorOverlay key="status-editor" />}
+            {activeOverlay === 'friend-action' && (
+              <FriendActionSheet
+                key="friend-action"
+                amigo={getActiveOverlayProps().amigo as Amigo}
+                status={getActiveOverlayProps().status as 'disponivel' | 'jogando' | 'offline' | undefined}
+                onClose={popOverlay}
+              />
+            )}
+          </AnimatePresence>
+        </Suspense>
       </div>
     </AmigosRealtimeProvider>
   );

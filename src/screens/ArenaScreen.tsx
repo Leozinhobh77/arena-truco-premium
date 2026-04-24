@@ -303,6 +303,7 @@ export function ArenaScreen() {
             src={usuario.avatar}
             alt={usuario.nick}
             className="avatar"
+            fetchPriority="high"
             style={{
               position: 'absolute',
               top: '50%', left: '50%',

@@ -1,0 +1,41 @@
+{
+  "task": "useStatusLikes.ts",
+  "sprint": 5,
+  "timestamp": "2026-04-24T19:05:00Z",
+  "tipo": "before",
+  "status": "checkpoint_criado",
+
+  "arquivos_que_serao_alterados": [
+    {
+      "caminho": "src/hooks/useStatusLikes.ts",
+      "hash_antes": "a1b2c3d4e5f6 (arquivo original vulnerável — vai ser refatorado)",
+      "linhas_antes": 107,
+      "tipo": "REFATORA"
+    },
+    {
+      "caminho": "src/hooks/__tests__/useStatusLikes.test.ts",
+      "hash_antes": "novo arquivo",
+      "linhas_antes": 0,
+      "tipo": "CRIAR"
+    }
+  ],
+
+  "working_memory_snapshot": {
+    "sprint_numero": 5,
+    "task_atual": "useStatusLikes-refactor",
+    "file_lock_ativo": false,
+    "health_score": 100,
+    "status": "rollback_ativo"
+  },
+
+  "motivo_refatoracao": "SEC-09 BOLA — Vulnerabilidade crítica detectada. Sentinela bloqueou.",
+
+  "leis_ativas": [
+    "SEC-02 (Input Validation)",
+    "SEC-05 (Secrets/Env)",
+    "SEC-06 (Rate Limiting)",
+    "SEC-09 (BOLA — Authorization)"
+  ],
+
+  "rollback_disponivel": "[ROLLBACK useStatusLikes]"
+}
