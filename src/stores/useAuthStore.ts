@@ -6,6 +6,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { supabase } from '../lib/supabase';
+import { normalizeNick } from '../lib/normalize';
 import type { Profile, RankingRow } from '../lib/supabase.types';
 import type { Usuario } from '../types';
 
@@ -75,11 +76,14 @@ export const useAuthStore = create<AuthState>()(
       signUp: async (email: string, senha: string, nick: string) => {
         set({ carregando: true, erro: null });
         try {
+          const nickTrim = nick.trim();
+          const nickNormalizado = normalizeNick(nickTrim);
+
           const { data, error } = await supabase.auth.signUp({
             email,
             password: senha,
             options: {
-              data: { nick: nick.trim() },
+              data: { nick: nickTrim, nick_normalizado: nickNormalizado },
             },
           });
 
@@ -191,7 +195,9 @@ export const useAuthStore = create<AuthState>()(
         set({ carregando: true, erro: null });
         try {
           // Armazena o nick desejado em sessionStorage para recuperar após OAuth
-          sessionStorage.setItem('desiredNick', nick.trim());
+          const nickTrim = nick.trim();
+          sessionStorage.setItem('desiredNick', nickTrim);
+          sessionStorage.setItem('desiredNickNormalized', normalizeNick(nickTrim));
 
           const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
@@ -311,13 +317,16 @@ export const useAuthStore = create<AuthState>()(
 
               // Se é novo usuário do Google com nick customizado, atualizar
               const desiredNick = sessionStorage.getItem('desiredNick');
+              const desiredNickNormalized = sessionStorage.getItem('desiredNickNormalized');
               if (desiredNick && profileData.nick !== desiredNick) {
                 try {
                   await (supabase as any).from('profiles').update({
                     nick: desiredNick.trim(),
+                    nick_normalizado: desiredNickNormalized || normalizeNick(desiredNick),
                   }).eq('id', session.user.id);
                   profileData.nick = desiredNick.trim();
                   sessionStorage.removeItem('desiredNick');
+                  sessionStorage.removeItem('desiredNickNormalized');
                 } catch (err) {
                   // silenciar erro — nick já foi criado pelo trigger
                 }

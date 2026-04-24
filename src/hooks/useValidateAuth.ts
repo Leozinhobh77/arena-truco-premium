@@ -4,6 +4,7 @@
 
 import { useState, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { normalizeNick } from '../lib/normalize';
 
 export interface ValidationError {
   type: 'email_exists' | 'nick_exists' | 'nick_invalid';
@@ -68,10 +69,11 @@ export function useValidateAuth() {
 
     setValidating(true);
     try {
+      const normalizado = normalizeNick(nick);
       const { data } = await (supabase as any)
         .from('profiles')
         .select('nick')
-        .eq('nick', nick.trim())
+        .eq('nick_normalizado', normalizado)
         .single();
 
       if (data) {
