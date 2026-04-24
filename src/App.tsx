@@ -25,6 +25,7 @@ import { DeixarRecadoOverlay } from './overlays/DeixarRecadoOverlay';
 import { RecadosOverlay } from './overlays/RecadosOverlay';
 import { ArenaMenuOverlay } from './overlays/ArenaMenuOverlay';
 import { SolicitacoesOverlay } from './overlays/SolicitacoesOverlay';
+import { StatusEditorOverlay } from './overlays/StatusEditorOverlay';
 import { FriendActionSheet } from './components/FriendActionSheet';
 import type { Amigo } from './types';
 
@@ -216,6 +217,7 @@ export function App() {
           {activeOverlay === 'recados' && <RecadosOverlay key="recados" />}
           {activeOverlay === 'arena-menu' && <ArenaMenuOverlay key="arena-menu" />}
           {activeOverlay === 'solicitacoes-amizade' && <SolicitacoesOverlay key="solicitacoes-amizade" />}
+          {activeOverlay === 'status-editor' && <StatusEditorOverlay key="status-editor" />}
           {activeOverlay === 'friend-action' && (
             <FriendActionSheet
               key="friend-action"

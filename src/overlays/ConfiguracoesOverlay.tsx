@@ -49,6 +49,11 @@ export function ConfiguracoesOverlay() {
     pushOverlay('perfil', { editMode: true });
   };
 
+  const handleStatus = () => {
+    popOverlay();
+    pushOverlay('status-editor');
+  };
+
   const handleArenaMenu = () => {
     popOverlay();
     pushOverlay('arena-menu');
@@ -137,10 +142,10 @@ export function ConfiguracoesOverlay() {
           {/* Seção de Conta */}
           <div style={{ padding: '0 8px 8px', fontSize: 12, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Conta</div>
           
-          <button 
+          <button
             onClick={handleEditarPerfil}
-            style={{ 
-              width: '100%', padding: 16, textAlign: 'left', 
+            style={{
+              width: '100%', padding: 16, textAlign: 'left',
               background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)',
               borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: 12,
               color: 'var(--text-primary)', cursor: 'pointer'
@@ -150,7 +155,20 @@ export function ConfiguracoesOverlay() {
             <span style={{ fontSize: 15, fontWeight: 600 }}>Editar Perfil</span>
           </button>
 
-          <button 
+          <button
+            onClick={handleStatus}
+            style={{
+              width: '100%', padding: 16, textAlign: 'left',
+              background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)',
+              borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: 12,
+              color: 'var(--text-primary)', cursor: 'pointer', marginTop: 8
+            }}
+          >
+            <span style={{ fontSize: 20 }}>✨</span>
+            <span style={{ fontSize: 15, fontWeight: 600 }}>Status</span>
+          </button>
+
+          <button
             onClick={handleSair}
             style={{ 
               width: '100%', padding: 16, textAlign: 'left', 

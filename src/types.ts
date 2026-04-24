@@ -109,7 +109,8 @@ export type OverlayId =
   | 'deixar-recado'
   | 'recados'
   | 'arena-menu'
-  | 'solicitacoes-amizade';
+  | 'solicitacoes-amizade'
+  | 'status-editor';
 
 export type StatusAmizade = 'pendente' | 'aceita' | 'rejeitada' | 'nenhuma';
 
