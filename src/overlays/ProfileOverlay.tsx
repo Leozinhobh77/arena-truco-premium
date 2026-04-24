@@ -288,7 +288,7 @@ function PerfilTab() {
             {usuario.moedas?.toLocaleString('pt-BR') || '0'}
           </div>
           <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            🪙 Moedas
+            ⭐ Pontuação
           </div>
         </div>
         <div className="glass-card-gold" style={{ padding: 14, textAlign: 'center' }}>

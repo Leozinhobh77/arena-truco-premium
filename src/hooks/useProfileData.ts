@@ -212,7 +212,7 @@ export function usePerfilPublico(userId: string | undefined) {
             nivel: p.nivel,
             xp: p.xp,
             xpProximoNivel: p.xp_proximo,
-            moedas: p.moedas ?? 0,
+            moedas: r?.pontuacao_total ?? 0,
             gemas: p.gemas ?? 0,
             ranking: r?.posicao_ranking ?? 0,
             vitorias: r?.vitorias ?? 0,
