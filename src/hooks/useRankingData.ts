@@ -14,7 +14,8 @@ function mapToJogadorRanking(
   avatar_url: string | null,
   nivel: number,
   pontos: number,
-  posicao: number
+  posicao: number,
+  statusMsg?: string
 ): JogadorRanking {
   return {
     posicao,
@@ -33,6 +34,7 @@ function mapToJogadorRanking(
       vitorias: 0,
       derrotas: 0,
       partidas: 0,
+      statusMsg,
     },
     pontos,
   };
@@ -40,7 +42,7 @@ function mapToJogadorRanking(
 
 // ── HELPER: Ordenar por pontos DESC, nome ASC + Retornar com posições ──
 function ordenarERetornarRanking(
-  items: Array<{ perfil_id: string; nick: string; avatar_url: string | null; nivel: number; pontos: number }>,
+  items: Array<{ perfil_id: string; nick: string; avatar_url: string | null; nivel: number; pontos: number; statusMsg?: string }>,
   seu_id: string,
   limite: number = 100
 ): { jogadores: JogadorRanking[]; seu_ranking: JogadorRanking | null; total: number } {
@@ -61,7 +63,8 @@ function ordenarERetornarRanking(
       ordenado[seuIndex].avatar_url,
       ordenado[seuIndex].nivel,
       ordenado[seuIndex].pontos,
-      seuIndex + 1
+      seuIndex + 1,
+      ordenado[seuIndex].statusMsg
     );
   }
 
@@ -73,7 +76,8 @@ function ordenarERetornarRanking(
       item.avatar_url,
       item.nivel,
       item.pontos,
-      idx + 1
+      idx + 1,
+      item.statusMsg
     )
   );
 
@@ -118,16 +122,16 @@ export function useRankingDia(seu_id: string | undefined) {
         const [{ data: perfis, error: erro2 }] = await Promise.all([
           supabase
             .from('profiles')
-            .select('id, nick, avatar_url, nivel')
+            .select('id, nick, avatar_url, nivel, status_msg')
             .in('id', perfil_ids) as any,
         ]);
 
         if (erro2) throw erro2;
 
         // Agrupar pontos por perfil_id
-        const mapa: Record<string, { pontos: number; nick: string; avatar_url: string | null; nivel: number }> = {};
+        const mapa: Record<string, { pontos: number; nick: string; avatar_url: string | null; nivel: number; statusMsg?: string }> = {};
         (perfis as any[])?.forEach((p: any) => {
-          mapa[p.id] = { pontos: 0, nick: p.nick, avatar_url: p.avatar_url, nivel: p.nivel };
+          mapa[p.id] = { pontos: 0, nick: p.nick, avatar_url: p.avatar_url, nivel: p.nivel, statusMsg: p.status_msg ?? undefined };
         });
 
         (pontuacaoHoje || []).forEach((p: any) => {
@@ -136,12 +140,13 @@ export function useRankingDia(seu_id: string | undefined) {
           }
         });
 
-        const items = Object.entries(mapa).map(([perfil_id, { pontos, nick, avatar_url, nivel }]) => ({
+        const items = Object.entries(mapa).map(([perfil_id, { pontos, nick, avatar_url, nivel, statusMsg }]) => ({
           perfil_id,
           nick,
           avatar_url,
           nivel,
           pontos,
+          statusMsg,
         }));
 
         const { jogadores: ranking, seu_ranking: seuRank } = ordenarERetornarRanking(items, seu_id, 100);
@@ -207,16 +212,16 @@ export function useRankingSemana(seu_id: string | undefined) {
         const [{ data: perfis, error: erro2 }] = await Promise.all([
           supabase
             .from('profiles')
-            .select('id, nick, avatar_url, nivel')
+            .select('id, nick, avatar_url, nivel, status_msg')
             .in('id', perfil_ids) as any,
         ]);
 
         if (erro2) throw erro2;
 
         // Agrupar pontos por perfil_id (soma semanal)
-        const mapa: Record<string, { pontos: number; nick: string; avatar_url: string | null; nivel: number }> = {};
+        const mapa: Record<string, { pontos: number; nick: string; avatar_url: string | null; nivel: number; statusMsg?: string }> = {};
         (perfis as any[])?.forEach((p: any) => {
-          mapa[p.id] = { pontos: 0, nick: p.nick, avatar_url: p.avatar_url, nivel: p.nivel };
+          mapa[p.id] = { pontos: 0, nick: p.nick, avatar_url: p.avatar_url, nivel: p.nivel, statusMsg: p.status_msg ?? undefined };
         });
 
         (pontuacaoSemana || []).forEach((p: any) => {
@@ -225,12 +230,13 @@ export function useRankingSemana(seu_id: string | undefined) {
           }
         });
 
-        const items = Object.entries(mapa).map(([perfil_id, { pontos, nick, avatar_url, nivel }]) => ({
+        const items = Object.entries(mapa).map(([perfil_id, { pontos, nick, avatar_url, nivel, statusMsg }]) => ({
           perfil_id,
           nick,
           avatar_url,
           nivel,
           pontos,
+          statusMsg,
         }));
 
         const { jogadores: ranking, seu_ranking: seuRank } = ordenarERetornarRanking(items, seu_id, 100);
@@ -279,6 +285,18 @@ export function useRankingGeral(seu_id: string | undefined) {
           return;
         }
 
+        // Buscar status_msg dos profiles (view 'ranking' pode não expor)
+        const idsRanking = (ranking as any[]).map((r: any) => r.id);
+        const { data: perfisStatus } = await supabase
+          .from('profiles')
+          .select('id, status_msg')
+          .in('id', idsRanking) as any;
+
+        const statusMap: Record<string, string | undefined> = {};
+        (perfisStatus as any[] | null)?.forEach((p: any) => {
+          statusMap[p.id] = p.status_msg ?? undefined;
+        });
+
         // Usar posicao_ranking como ordem
         const ranked = (ranking as any[]).map((r: any) => ({
           perfil_id: r.id,
@@ -286,6 +304,7 @@ export function useRankingGeral(seu_id: string | undefined) {
           avatar_url: r.avatar_url,
           nivel: r.nivel,
           pontos: (100 - r.posicao_ranking) * 100, // Inverter para maior posição = mais "pontos"
+          statusMsg: statusMap[r.id],
         }));
 
         const { jogadores: jogs, seu_ranking: seuRank } = ordenarERetornarRanking(ranked, seu_id, 100);
@@ -361,6 +380,18 @@ export function useRankingAmigos(seu_id: string | undefined) {
           return;
         }
 
+        // Buscar status_msg dos profiles (view 'ranking' pode não expor)
+        const idsRanking = (ranking as any[]).map((r: any) => r.id);
+        const { data: perfisStatus } = await supabase
+          .from('profiles')
+          .select('id, status_msg')
+          .in('id', idsRanking) as any;
+
+        const statusMap: Record<string, string | undefined> = {};
+        (perfisStatus as any[] | null)?.forEach((p: any) => {
+          statusMap[p.id] = p.status_msg ?? undefined;
+        });
+
         // Converter para nosso formato (usar posição como proxy de pontos)
         const items = (ranking as any[]).map((r: any) => ({
           perfil_id: r.id,
@@ -368,6 +399,7 @@ export function useRankingAmigos(seu_id: string | undefined) {
           avatar_url: r.avatar_url,
           nivel: r.nivel,
           pontos: (100 - r.posicao_ranking) * 100, // Inverter para maior posição = mais "pontos"
+          statusMsg: statusMap[r.id],
         }));
 
         const { jogadores: jogs, seu_ranking: seuRank } = ordenarERetornarRanking(

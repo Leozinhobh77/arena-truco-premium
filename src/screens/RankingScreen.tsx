@@ -74,7 +74,7 @@ function usuarioToAmigo(usuario: Usuario): Amigo {
     partidas: usuario.partidas,
     ranking: usuario.ranking,
     clan: usuario.clan,
-    statusMsg: usuario.statusMsg ?? 'Jogador do ranking',
+    statusMsg: usuario.statusMsg ?? '',
     statusMsgAtualizada: new Date(),
     statusAmigo: 'offline',
     modoJogo: undefined,
