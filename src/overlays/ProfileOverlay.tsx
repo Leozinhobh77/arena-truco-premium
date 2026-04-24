@@ -281,9 +281,17 @@ function PerfilTab() {
         minHeight: 120,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
       }}>
-        <span style={{ fontSize: 15, color: 'var(--text-primary)', fontStyle: 'italic', textAlign: 'center', lineHeight: 1.5 }}>
+        <span style={{
+          fontSize: 15,
+          color: 'var(--text-primary)',
+          fontStyle: 'italic',
+          textAlign: 'left',
+          lineHeight: 1.5,
+          whiteSpace: 'pre-wrap',
+          wordWrap: 'break-word',
+          width: '100%',
+        }}>
           "{usuario.statusMsg || '—'}"
         </span>
       </div>
