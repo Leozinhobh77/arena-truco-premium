@@ -40,13 +40,15 @@ export function useValidateForm() {
 
     setValidating(true);
     try {
-      const { data } = await (supabase as any)
+      // Usa maybeSingle() em vez de single() para não lançar erro 406
+      const { data, error } = await (supabase as any)
         .from('profiles')
         .select('id')
         .eq('email', email.trim().toLowerCase())
-        .single();
+        .maybeSingle();
 
       if (data) {
+        // Email já existe
         const err: EmailValidationError = {
           type: 'already_exists',
           message: 'Este email já tem uma conta cadastrada',
@@ -56,11 +58,12 @@ export function useValidateForm() {
         return err;
       }
 
+      // Email não encontrado ou erro - considera disponível
       setEmailError(null);
       setValidating(false);
       return null;
     } catch {
-      // Erro 406 ou outro = email não existe (OK)
+      // Erro na query - considera disponível (deixa servidor validar)
       setEmailError(null);
       setValidating(false);
       return null;
