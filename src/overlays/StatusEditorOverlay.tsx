@@ -108,8 +108,7 @@ export function StatusEditorOverlay() {
             style={{
               width: '100%',
               boxSizing: 'border-box',
-              minHeight: '100px',
-              maxHeight: '150px',
+              height: '150px',
               padding: '12px',
               borderRadius: 12,
               background: 'rgba(10,8,30,0.7)',
