@@ -42,18 +42,18 @@ export function useStatusLikes(
 
     try {
       // Verificar se o perfil do dono é público OU se currentUser é o dono
-      const { data: profile, error } = await supabase
+      const { data: profile, error } = await (supabase
         .from('profiles')
         .select('id, privado')
         .eq('id', statusOwnerId)
-        .single();
+        .single() as any);
 
       if (error || !profile) {
         return { temAcesso: false, motivo: 'Perfil não encontrado' };
       }
 
       // Perfil privado: só o dono pode acessar
-      if (profile.privado && profile.id !== currentUserId) {
+      if ((profile as any).privado && (profile as any).id !== currentUserId) {
         return { temAcesso: false, motivo: 'Perfil privado' };
       }
 
@@ -169,7 +169,7 @@ export function useStatusLikes(
         }
       } else {
         // Adicionar like
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('status_likes')
           .insert([
             {
