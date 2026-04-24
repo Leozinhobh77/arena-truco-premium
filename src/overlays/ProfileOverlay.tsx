@@ -279,6 +279,8 @@ function PerfilTab() {
         padding: '24px 16px',
         marginBottom: 16,
         minHeight: 120,
+        maxHeight: 120,
+        overflowY: 'auto',
         display: 'flex',
         alignItems: 'center',
       }}>
