@@ -15,19 +15,17 @@
     "sentinela_janela": "Abrir /skill-sentinela em segundo terminal"
   },
   "__foco_atual": {
-    "sprint_numero": 4,
-    "sprint_nome": "Sprint 4.2: Ranking Refatorizado + FriendActionSheet Integration",
+    "sprint_numero": 5,
+    "sprint_nome": "Sprint 5: ProfileOverlay Refatorizado (Read-Only Universal)",
     "task_total": 4,
     "task_atual": 4,
     "arquivo_em_edicao": null,
-    "status": "sprint_4.2_completa_com_friend_action_integration",
+    "status": "sprint_5_completa_profile_read_only_universal",
     "file_lock_ativo": false,
     "lock_inicio": null,
     "aguardando_auditoria": false,
-    "checkpoint_before": ".skill-memory/checkpoints/sprint-4.2-before.json",
-    "checkpoint_after": ".skill-memory/checkpoints/sprint-4.2-after.json",
-    "task_4_3_checkpoint_before": ".skill-memory/checkpoints/ranking-friend-action-before.json",
-    "task_4_3_checkpoint_after": ".skill-memory/checkpoints/ranking-friend-action-after.json"
+    "checkpoint_before": ".skill-memory/checkpoints/sprint-5-before.json",
+    "checkpoint_after": ".skill-memory/checkpoints/sprint-5-after.json"
   },
   "__ponteiros": {
     "sprint_journal": ".skill-memory/sprint-journal.json",

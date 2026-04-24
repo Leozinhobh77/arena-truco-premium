@@ -212,8 +212,8 @@ export function usePerfilPublico(userId: string | undefined) {
             nivel: p.nivel,
             xp: p.xp,
             xpProximoNivel: p.xp_proximo,
-            moedas: r?.pontuacao_total ?? 0,  // ← Usar PONTUAÇÃO de ranking, não moedas
-            gemas: p.gemas,
+            moedas: p.moedas ?? 0,
+            gemas: p.gemas ?? 0,
             ranking: r?.posicao_ranking ?? 0,
             vitorias: r?.vitorias ?? 0,
             derrotas: r?.derrotas ?? 0,

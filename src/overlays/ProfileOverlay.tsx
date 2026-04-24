@@ -6,8 +6,8 @@
 
 import { useState, createContext, useContext, useMemo, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuthStore } from '../stores/useAuthStore';
 import { useNavigationStore } from '../stores/useNavigationStore';
+import { useAuthStore } from '../stores/useAuthStore';
 import {
   useMinhasPartidas,
   usePontuacaoSemanal,
@@ -196,79 +196,25 @@ const useProfileUser = () => {
 };
 
 // ── ABA: PERFIL ──────────────────────────────────────────────
-function PerfilTab({ editModeOriginal = false }: { editModeOriginal?: boolean }) {
+function PerfilTab() {
   const usuario = useProfileUser();
-  const { usuario: usuarioLogado, atualizarPerfil, uploadAvatar, carregando: authCarregando } = useAuthStore();
   const { amigos } = useAmigosRanking(usuario?.id);
 
-  const ehProprio = usuario?.id === usuarioLogado?.id;
-
-  const [editando, setEditando] = useState(editModeOriginal);
-  const [novoNick, setNovoNick] = useState(usuario?.nick || '');
-  const [statusMsg, setStatusMsg] = useState(usuario?.statusMsg || '');
-  const [statusTemp, setStatusTemp] = useState(statusMsg);
-  const [uploading, setUploading] = useState(false);
-
   if (!usuario) return null;
-
-  const handleFotoClick = () => {
-    if (!ehProprio) return;
-    document.getElementById('avatar-upload')?.click();
-  };
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    try {
-      const publicUrl = await uploadAvatar(file);
-      await atualizarPerfil({ avatar_url: publicUrl });
-    } catch (err) {
-      console.error('Erro no upload:', err);
-      alert('Falha ao subir foto. Verifique o Storage do Supabase.');
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleSalvarNick = async () => {
-    if (!novoNick.trim() || novoNick === usuario.nick) {
-      setEditando(false);
-      return;
-    }
-    try {
-      await atualizarPerfil({ nick: novoNick.trim() });
-      setEditando(false);
-    } catch (err) {
-      console.error('Erro ao mudar nick:', err);
-    }
-  };
 
   // Memoizar cálculos para evitar recalcular em cada render
   const { winRate, amigosTotal, abandonos } = useMemo(() => ({
     winRate: Math.round((usuario.vitorias / Math.max(usuario.partidas, 1)) * 100),
     amigosTotal: amigos.length,
-    abandonos: usuario.partidas - usuario.vitorias - usuario.derrotas, // partidas que não foram V ou D
+    abandonos: usuario.partidas - usuario.vitorias - usuario.derrotas,
   }), [usuario, amigos]);
 
   return (
     <div style={{ padding: '16px 16px 24px' }}>
-      <input 
-        type="file" id="avatar-upload" hidden accept="image/*" 
-        onChange={handleFileChange} 
-      />
-
       {/* Avatar + identidade */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 20 }}>
         {/* Avatar com anel de XP */}
-        <div 
-          onClick={handleFotoClick}
-          style={{ 
-            position: 'relative', marginBottom: 10, 
-            cursor: ehProprio ? 'pointer' : 'default' 
-          }}
-        >
+        <div style={{ position: 'relative', marginBottom: 10 }}>
           <svg width="88" height="88" viewBox="0 0 88 88" style={{ position: 'absolute', top: -4, left: -4, transform: 'rotate(-90deg)' }}>
             <circle cx="44" cy="44" r="40" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
             <circle
@@ -285,77 +231,27 @@ function PerfilTab({ editModeOriginal = false }: { editModeOriginal?: boolean })
               </linearGradient>
             </defs>
           </svg>
-          
-          <div style={{ position: 'relative' }}>
-            <img
-              src={usuario.avatar}
-              alt={usuario.nick}
-              style={{
-                width: 80, height: 80, borderRadius: '50%',
-                border: '3px solid var(--gold-400)',
-                display: 'block',
-                opacity: (uploading || authCarregando) ? 0.5 : 1,
-                transition: 'opacity 0.3s'
-              }}
-            />
-            {ehProprio && (
-              <div style={{
-                position: 'absolute', inset: 0, borderRadius: '50%',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: 'rgba(0,0,0,0.3)', opacity: 0, transition: 'opacity 0.2s',
-              }} className="hover-show">
-                <span style={{ fontSize: 24 }}>📷</span>
-              </div>
-            )}
-            {(uploading || authCarregando) && (
-              <div style={{
-                position: 'absolute', inset: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center'
-              }}>
-                <div className="animate-spin-slow" style={{ fontSize: 20 }}>⏳</div>
-              </div>
-            )}
-          </div>
+
+          <img
+            src={usuario.avatar}
+            alt={usuario.nick}
+            style={{
+              width: 80, height: 80, borderRadius: '50%',
+              border: '3px solid var(--gold-400)',
+              display: 'block'
+            }}
+          />
         </div>
 
-        {/* Estilo para hover do avatar */}
-        <style>{`
-          div:hover > .hover-show { opacity: 1 !important; }
-        `}</style>
-
         {/* Nick + Level */}
-        {editando ? (
-           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-              <input 
-                value={novoNick}
-                onChange={e => setNovoNick(e.target.value.slice(0, 15))}
-                placeholder="Seu Nick"
-                style={{
-                  background: 'rgba(255,255,255,0.08)', border: '1px solid var(--gold-500)',
-                  borderRadius: 8, padding: '6px 12px', color: 'white',
-                  fontFamily: 'var(--font-display)', fontSize: 18, textAlign: 'center',
-                  outline: 'none', width: 160
-                }}
-              />
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button className="btn-secondary" style={{ padding: '4px 12px', fontSize: 11 }} onClick={() => setEditando(false)}>Cancelar</button>
-                <button className="btn-primary" style={{ padding: '4px 12px', fontSize: 11 }} onClick={handleSalvarNick}>Salvar Nick</button>
-              </div>
-           </div>
-        ) : (
-          <div 
-            onClick={() => ehProprio && setEditando(true)}
-            style={{
-              fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900,
-              color: 'var(--text-primary)', marginBottom: 2, cursor: ehProprio ? 'pointer' : 'default',
-              display: 'flex', alignItems: 'center', gap: 6
-            }}
-          >
-            {usuario.nick} {ehProprio && <span style={{ fontSize: 14, opacity: 0.5 }}>✏️</span>}
-          </div>
-        )}
+        <div style={{
+          fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900,
+          color: 'var(--text-primary)', marginBottom: 2
+        }}>
+          {usuario.nick}
+        </div>
 
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8, marginTop: editando ? 12 : 0 }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
           <span style={{
             fontSize: 11, padding: '2px 10px', borderRadius: 20,
             background: 'rgba(212,160,23,0.15)', color: 'var(--gold-400)', fontWeight: 700,
@@ -378,69 +274,21 @@ function PerfilTab({ editModeOriginal = false }: { editModeOriginal?: boolean })
         </div>
       </div>
 
-      {/* Status editável */}
+      {/* Status */}
       <div className="glass-card-gold" style={{ padding: '10px 14px', marginBottom: 16 }}>
-        {editando ? (
-          <div>
-            <input
-              autoFocus
-              value={statusTemp}
-              onChange={e => setStatusTemp(e.target.value.slice(0, 120))}
-              style={{
-                width: '100%', boxSizing: 'border-box',
-                background: 'transparent', border: 'none',
-                color: 'var(--text-primary)', fontSize: 13,
-                fontFamily: 'inherit', outline: 'none',
-                marginBottom: 8,
-              }}
-            />
-            <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
-              <button
-                className="btn-secondary"
-                style={{ padding: '4px 12px', fontSize: 11 }}
-                onClick={() => { setStatusTemp(statusMsg); setEditando(false); }}
-              >
-                Cancelar
-              </button>
-              <button
-                className="btn-primary"
-                style={{ padding: '4px 12px', fontSize: 11 }}
-                onClick={() => {
-                  setStatusMsg(statusTemp);
-                  setEditando(false);
-                  if (ehProprio) atualizarPerfil({ status_msg: statusTemp });
-                }}
-              >
-                Salvar
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-            <span style={{ fontSize: 13, color: 'var(--text-primary)', fontStyle: 'italic', flex: 1 }}>
-              "{statusMsg}"
-            </span>
-            <button
-              onClick={() => { setStatusTemp(statusMsg); setEditando(true); }}
-              style={{
-                background: 'none', border: 'none', cursor: 'pointer',
-                fontSize: 14, opacity: 0.5, flexShrink: 0,
-              }}
-            >
-              ✏️
-            </button>
-          </div>
-        )}
+        <span style={{ fontSize: 13, color: 'var(--text-primary)', fontStyle: 'italic' }}>
+          "{usuario.statusMsg || '—'}"
+        </span>
       </div>
 
       {/* Pontos + Amigos */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
         <div className="glass-card-gold" style={{ padding: 14, textAlign: 'center' }}>
           <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900, color: 'var(--gold-400)' }}>
-            {usuario.moedas.toLocaleString('pt-BR')}
+            {usuario.moedas?.toLocaleString('pt-BR') || '0'}
           </div>
           <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            🪙 Pontos
+            🪙 Moedas
           </div>
         </div>
         <div className="glass-card-gold" style={{ padding: 14, textAlign: 'center' }}>
@@ -480,29 +328,17 @@ function PerfilTab({ editModeOriginal = false }: { editModeOriginal?: boolean })
 // ── ABA: STATS ───────────────────────────────────────────────
 function StatsTab() {
   const usuario = useProfileUser();
-  const { usuario: usuarioLogado } = useAuthStore();
-  const ehProprio = usuario?.id === usuarioLogado?.id;
 
-  // Dados reais para o próprio perfil, mock para outros
-  const { pontuacao: pontuacaoReal, loading } = usePontuacaoSemanal(
-    ehProprio ? usuario?.id : undefined
-  );
-  const pontuacaoData = ehProprio && !loading && pontuacaoReal.length > 0
-    ? pontuacaoReal
-    : [];
-
-  // Abandono: busca do histórico real (mock como fallback)
-  const { partidas: historicoReal } = useMinhasPartidas(
-    ehProprio ? usuario?.id : undefined
-  );
-  const historicoUsado = ehProprio && historicoReal.length > 0 ? historicoReal : [];
+  // Sempre carrega dados reais para o usuário sendo exibido
+  const { pontuacao: pontuacaoData } = usePontuacaoSemanal(usuario?.id);
+  const { partidas: historicoReal } = useMinhasPartidas(usuario?.id);
 
   if (!usuario) return null;
 
   // Memoizar cálculos de stats para evitar recalcular em cada render de tab switch
   const stats = useMemo(() => {
     const winRate = Math.round((usuario.vitorias / Math.max(usuario.partidas, 1)) * 100);
-    const abandonos = historicoUsado.filter(g => g.resultado === 'abandono').length;
+    const abandonos = historicoReal.filter(g => g.resultado === 'abandono').length;
     const taxaAbandono = Math.round((abandonos / Math.max(usuario.partidas, 1)) * 100);
     const totalSemana = pontuacaoData.reduce((s, d) => s + d.pontos, 0);
     const mediaDia = Math.round(totalSemana / Math.max(pontuacaoData.length, 1));
@@ -510,7 +346,7 @@ function StatsTab() {
     const kd = Math.round(usuario.vitorias / Math.max(usuario.derrotas, 1));
 
     return { winRate, abandonos, taxaAbandono, totalSemana, mediaDia, recordDia, kd };
-  }, [usuario, historicoUsado, pontuacaoData]);
+  }, [usuario, historicoReal, pontuacaoData]);
 
   const { winRate, abandonos, taxaAbandono: _taxaAbandono, totalSemana, mediaDia, recordDia, kd: _kd } = stats;
 
@@ -575,7 +411,7 @@ function StatsTab() {
             { icon: '❌', label: 'Derrotas', value: usuario.derrotas.toLocaleString('pt-BR') },
             { icon: '🚫', label: 'Abandonos', value: abandonos.toLocaleString('pt-BR') },
             { icon: '📅', label: 'Membro desde', value: usuario.createdAt ? new Date(usuario.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : '—' },
-            { icon: '⏰', label: 'Última partida', value: historicoUsado.length > 0 ? new Date(historicoUsado[0].data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : '—' },
+            { icon: '⏰', label: 'Última partida', value: historicoReal.length > 0 ? new Date(historicoReal[0].data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : '—' },
           ].map(d => (
             <div key={d.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
@@ -646,20 +482,13 @@ function BadgeCard({ badge }: { badge: Badge }) {
 
 function ConquistasTab() {
   const usuario = useProfileUser();
-  const { usuario: usuarioLogado } = useAuthStore();
-  const ehProprio = usuario?.id === usuarioLogado?.id;
 
-  const { badges: badgesReais, loading } = useMinhasConquistas(
-    ehProprio ? usuario?.id : undefined
-  );
+  const { badges: badgesReais, loading } = useMinhasConquistas(usuario?.id);
 
-  const badgesUsados: Badge[] = ehProprio && !loading && badgesReais.length > 0
-    ? badgesReais
-    : [];
-
+  const badgesUsados: Badge[] = badgesReais || [];
   const conquistadas = badgesUsados.filter(b => b.conquistado);
 
-  if (loading && ehProprio) {
+  if (loading) {
     return (
       <div style={{ padding: 24, textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
         Carregando conquistas...
@@ -768,20 +597,14 @@ function GameCard({ game }: { game: GameHistory }) {
 
 function MeusJogosTab() {
   const usuario = useProfileUser();
-  const { usuario: usuarioLogado } = useAuthStore();
-  const ehProprio = usuario?.id === usuarioLogado?.id;
 
-  // Dados reais para o próprio perfil, mock para outros
-  const { partidas: partidasReais, loading } = useMinhasPartidas(
-    ehProprio ? usuario?.id : undefined
-  );
-  const historicoUsado: GameHistory[] = ehProprio && !loading && partidasReais.length > 0
-    ? partidasReais
-    : [];
+  // Sempre carrega dados reais para o usuário sendo exibido
+  const { partidas: partidasReais, loading } = useMinhasPartidas(usuario?.id);
+  const historicoUsado: GameHistory[] = partidasReais || [];
 
   const totalVitorias = historicoUsado.filter(g => g.resultado === 'vitoria').length;
   const totalDerrotas = historicoUsado.filter(g => g.resultado === 'derrota').length;
-  const totalPontos   = historicoUsado.reduce((s, g) => s + g.pontosGanhos, 0);
+  const totalPontos = historicoUsado.reduce((s, g) => s + g.pontosGanhos, 0);
 
   return (
     <div style={{ padding: '16px 16px 24px' }}>
@@ -817,7 +640,7 @@ function MeusJogosTab() {
 
       {/* Lista de partidas */}
       <div>
-        {loading && ehProprio ? (
+        {loading ? (
           <div style={{ padding: 20, textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
             Carregando histórico...
           </div>
@@ -827,7 +650,7 @@ function MeusJogosTab() {
       </div>
 
       <div style={{ textAlign: 'center', padding: '16px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
-        {ehProprio ? `ÚItímas ${historicoUsado.length} partidas` : 'Exibindo as últimas 10 partidas'}
+        Últimas {historicoUsado.length} partidas
       </div>
     </div>
   );
@@ -838,27 +661,26 @@ const TAB_COMPONENTS = [PerfilTab, StatsTab, ConquistasTab, MeusJogosTab];
 
 export function ProfileOverlay() {
   const { popOverlay, getActiveOverlayProps } = useNavigationStore();
-  const { usuario } = useAuthStore();
+  const { usuario: usuarioLogado } = useAuthStore();
   const [activeTab, setActiveTab] = useState(0);
 
   // TODOS os hooks ANTES de qualquer return condicional
   const props = getActiveOverlayProps();
   const usuarioId = props.usuarioId as string | undefined;
   const usuarioDireto = props.usuarioDireto as Usuario | undefined;
-  const editMode = !!props.editMode;
 
   // Hook para buscar perfil público (se for terceiro) - SEMPRE chamado
   const { usuario: usuarioPublico } = usePerfilPublico(usuarioId && !usuarioDireto ? usuarioId : undefined);
 
   // AGORA faz os returns condicionais DEPOIS dos hooks
-  if (!usuario) return null;
+  if (!usuarioLogado) return null;
 
   // Prioridade: objeto direto > busca por ID/hook > usuario logado
   const usuarioExibido: Usuario | null =
-    usuarioDireto ?? usuarioPublico ?? usuario;
+    usuarioDireto ?? usuarioPublico ?? usuarioLogado;
 
   if (!usuarioExibido) {
-    console.warn('ProfileOverlay: usuarioExibido é null!', { usuarioDireto, usuarioPublico, usuario });
+    console.warn('ProfileOverlay: usuarioExibido é null!', { usuarioDireto, usuarioPublico, usuarioLogado });
     return null;
   }
 
@@ -947,7 +769,7 @@ export function ProfileOverlay() {
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.18 }}
             >
-              {activeTab === 0 ? <PerfilTab editModeOriginal={editMode} /> : <ActiveContent />}
+              {activeTab === 0 ? <PerfilTab /> : <ActiveContent />}
             </motion.div>
           </AnimatePresence>
         </div>

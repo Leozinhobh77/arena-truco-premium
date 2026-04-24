@@ -1,0 +1,39 @@
+{
+  "sprint": 5,
+  "sprint_nome": "Sprint 5: ProfileOverlay Refatorizado (Read-Only Universal)",
+  "timestamp_before": "2026-04-24T00:00:00Z",
+  "tipo": "before",
+  "status": "checkpoint_criado",
+  "arquivos_que_serao_alterados": [
+    {
+      "caminho": "src/overlays/ProfileOverlay.tsx",
+      "linhas_antes": 959,
+      "descricao": "Remover edição (inputs, botões, handlers), garantir dados públicos, tornar universal"
+    }
+  ],
+  "working_memory_snapshot": {
+    "sprint_anterior": 4,
+    "status_anterior": "sprint_4.2_completa_com_friend_action_integration",
+    "health_score": 100,
+    "progresso": "80% (16/20 tasks)"
+  },
+  "tasks_planejadas": [
+    "Remover toda edição de PerfilTab (estado, handlers, inputs)",
+    "Revisar e corrigir campo moedas (remover ou validar dados reais)",
+    "Garantir todas as abas carregam dados PÚBLICOS para QUALQUER userId",
+    "Tornar ProfileOverlay UNIVERSAL (remover lógica ehProprio desnecessária)"
+  ],
+  "escopo": {
+    "vai_mexer": [
+      "src/overlays/ProfileOverlay.tsx"
+    ],
+    "nao_vai_mexer": [
+      "ProfileSettingsScreen (próxima sprint)",
+      "useProfileData hooks (apenas usar)",
+      "package.json",
+      "Outros componentes"
+    ]
+  },
+  "criterios_aceitos": "Opção A - Dados PÚBLICOS apenas (status, stats, conquistas, histórico público)",
+  "rollback_disponivel": true
+}

@@ -1,0 +1,59 @@
+{
+  "sprint": 5,
+  "sprint_nome": "Sprint 5: ProfileOverlay Refatorizado (Read-Only Universal)",
+  "timestamp_after": "2026-04-24T01:00:00Z",
+  "tipo": "after",
+  "status": "completo_e_validado",
+  "arquivos_alterados": [
+    {
+      "caminho": "src/overlays/ProfileOverlay.tsx",
+      "linhas_depois": 778,
+      "delta": "-181 linhas (limpeza de edição + refator)"
+    },
+    {
+      "caminho": "src/hooks/useProfileData.ts",
+      "linhas_depois": 273,
+      "delta": "+1 linha (correção moedas)"
+    }
+  ],
+  "testes_passando": true,
+  "build_status": "PASSING (Exit 0)",
+  "ts_errors": 0,
+  "tasks_completas": [
+    {
+      "task": "1",
+      "descricao": "Remover toda edição de PerfilTab",
+      "status": "completo",
+      "detalhes": "Removidos: estado (editando, novoNick, statusMsg, statusTemp, uploading), handlers (handleFotoClick, handleFileChange, handleSalvarNick), inputs, botões Cancelar/Salvar"
+    },
+    {
+      "task": "2",
+      "descricao": "Corrigir campo moedas",
+      "status": "completo",
+      "detalhes": "Removido uso de pontuacao_total (fictício), agora usa campo real moedas do profiles. Também atualizado label de 'Pontos' para 'Moedas'"
+    },
+    {
+      "task": "3",
+      "descricao": "Garantir todas as abas carregam dados PÚBLICOS para QUALQUER userId",
+      "status": "completo",
+      "detalhes": "Removidas condições ehProprio de StatsTab, ConquistasTab, MeusJogosTab. Agora todas as abas carregam dados PÚBLICOS sempre, sem distinção de próprio/outro"
+    },
+    {
+      "task": "4",
+      "descricao": "Tornar ProfileOverlay UNIVERSAL",
+      "status": "completo",
+      "detalhes": "ProfileOverlay agora é 100% universal: recebe userId via props, carrega dados públicos para QUALQUER usuario, sem mockups, sem distinção proprietário/visitante"
+    }
+  ],
+  "melhorias": [
+    "PerfilTab é 100% read-only (zero edição possível)",
+    "Todas as 4 abas carregam dados reais do Supabase",
+    "Campo moedas agora reflete dados reais, não fictícios",
+    "ProfileOverlay funciona identicamente para qualquer userId",
+    "Removido ~180 linhas de código (limpeza de edição)",
+    "Build sem erros TypeScript"
+  ],
+  "criterios_aceitos": "Opção A - Dados PÚBLICOS apenas (status, stats, conquistas, histórico público)",
+  "rollback_disponivel": true,
+  "seguranca": "SEC-05 (sem hardcodes), dados reais do Supabase com RLS ativo"
+}
