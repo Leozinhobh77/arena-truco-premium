@@ -419,3 +419,79 @@ export function useRankingAmigos(seu_id: string | undefined) {
 
   return { jogadores, seu_ranking, loading };
 }
+
+// ════════════════════════════════════════════════════════════════
+// ── RANKING STATUS (ordenado por likes) ──
+// ════════════════════════════════════════════════════════════════
+export function useRankingStatus(seu_id: string | undefined) {
+  const [jogadores, setJogadores] = useState<JogadorRanking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [seu_ranking, setSeuRanking] = useState<JogadorRanking | null>(null);
+
+  useEffect(() => {
+    if (!seu_id) {
+      setLoading(false);
+      return;
+    }
+
+    (async () => {
+      try {
+        // 1. Buscar todos os likes (somente a coluna necessária)
+        const { data: likes } = await supabase
+          .from('status_likes')
+          .select('status_owner_id') as any;
+
+        if (!likes || likes.length === 0) {
+          setJogadores([]);
+          setSeuRanking(null);
+          setLoading(false);
+          return;
+        }
+
+        // 2. Agregar: contar likes por owner
+        const contagem: Record<string, number> = {};
+        (likes as any[]).forEach((l: any) => {
+          contagem[l.status_owner_id] = (contagem[l.status_owner_id] || 0) + 1;
+        });
+
+        // 3. Top 50 por likes DESC
+        const topIds = Object.entries(contagem)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 50)
+          .map(([id]) => id);
+
+        // 4. Buscar profiles dos top N
+        const { data: perfis } = await supabase
+          .from('profiles')
+          .select('id, nick, avatar_url, nivel, status_msg')
+          .in('id', topIds) as any;
+
+        // 5. Montar items (apenas quem tem status_msg)
+        const items = topIds
+          .map((id) => {
+            const p = (perfis as any[])?.find((x: any) => x.id === id);
+            if (!p || !p.status_msg) return null;
+            return {
+              perfil_id: id,
+              nick: p.nick,
+              avatar_url: p.avatar_url,
+              nivel: p.nivel,
+              pontos: contagem[id],
+              statusMsg: p.status_msg,
+            };
+          })
+          .filter(Boolean) as any[];
+
+        const { jogadores: jogs, seu_ranking: seuRank } = ordenarERetornarRanking(items, seu_id, 50);
+        setJogadores(jogs);
+        setSeuRanking(seuRank);
+      } catch (err) {
+        console.error('Erro ao carregar ranking status:', err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [seu_id]);
+
+  return { jogadores, seu_ranking, loading };
+}

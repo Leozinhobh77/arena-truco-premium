@@ -7,7 +7,7 @@ import { useState, useMemo, memo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useNavigationStore } from '../stores/useNavigationStore';
-import { useRankingDia, useRankingSemana, useRankingGeral, useRankingAmigos } from '../hooks/useRankingData';
+import { useRankingDia, useRankingSemana, useRankingGeral, useRankingAmigos, useRankingStatus } from '../hooks/useRankingData';
 import type { Usuario, JogadorRanking, Amigo } from '../types';
 
 const RANK_ICONS: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
@@ -288,10 +288,215 @@ const Podium = memo(function Podium({
 });
 
 // ════════════════════════════════════════════════════════════════
+// STATUS RANKING CONTENT — Componentes especiais pra aba Status
+// ════════════════════════════════════════════════════════════════
+
+const StatusRankingTop3 = memo(function({ top3, onAbrirPerfil, onAbrirAmigo }: {
+  top3: JogadorRanking[];
+  onAbrirPerfil: (u: Usuario) => void;
+  onAbrirAmigo: (u: Usuario) => void;
+}) {
+  const { usuario: usuarioLogado } = useAuthStore();
+  const medalhas = ['🥇', '🥈', '🥉'];
+  const cores = ['#f5c518', '#c0c0c0', '#cd7f32'];
+
+  return (
+    <div style={{ padding: '16px 16px 0', display: 'flex', flexDirection: 'column', gap: 10, flexShrink: 0 }}>
+      {top3.map((item, i) => {
+        const isMe = item.usuario.id === usuarioLogado?.id;
+        return (
+          <motion.div
+            key={item.usuario.id}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.1 }}
+            onClick={() => isMe ? onAbrirPerfil(item.usuario) : onAbrirAmigo(item.usuario)}
+            whileTap={{ scale: 0.97 }}
+            style={{
+              padding: '14px', borderRadius: 14,
+              background: `rgba(${cores[i] === '#f5c518' ? '245,197,24' : cores[i] === '#c0c0c0' ? '192,192,192' : '205,127,50'},0.08)`,
+              border: `1.5px solid ${cores[i]}`,
+              cursor: isMe ? 'default' : 'pointer',
+              display: 'flex', gap: 12, alignItems: 'stretch',
+            }}
+          >
+            {/* Badge de medalha */}
+            <div style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              minWidth: 44, fontFamily: 'var(--font-display)', fontWeight: 900,
+              fontSize: 24,
+            }}>
+              {medalhas[i]}
+            </div>
+
+            {/* Avatar + info */}
+            <div style={{ flex: 1, display: 'flex', gap: 10, alignItems: 'center', minWidth: 0 }}>
+              <img
+                src={item.usuario.avatar}
+                alt={item.usuario.nick}
+                style={{
+                  width: 52, height: 52, borderRadius: '50%',
+                  border: `2px solid ${cores[i]}`, flexShrink: 0,
+                }}
+              />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 700,
+                  color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                }}>
+                  {item.usuario.nick}
+                </div>
+                <div style={{
+                  fontSize: 12, color: 'var(--text-muted)', marginTop: 2,
+                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontStyle: 'italic',
+                }}>
+                  "{item.usuario.statusMsg || '—'}"
+                </div>
+              </div>
+            </div>
+
+            {/* Like count grande */}
+            <div style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              minWidth: 50, fontFamily: 'var(--font-display)',
+            }}>
+              <div style={{ fontSize: 20 }}>❤️</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#e63946', marginTop: 2 }}>
+                {item.pontos}
+              </div>
+            </div>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+});
+
+const StatusRankingList = memo(function({ jogadores, onAbrirPerfil, onAbrirAmigo }: {
+  jogadores: JogadorRanking[];
+  onAbrirPerfil: (u: Usuario) => void;
+  onAbrirAmigo: (u: Usuario) => void;
+}) {
+  const { usuario: usuarioLogado } = useAuthStore();
+
+  if (jogadores.length === 0) {
+    return (
+      <div style={{
+        flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        padding: '40px 16px', textAlign: 'center',
+      }}>
+        <div style={{ fontSize: 48, marginBottom: 12 }}>💭</div>
+        <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
+          Nenhum status curtido ainda
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+          Seja o primeiro a curtir um status!
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px 24px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+      {jogadores.slice(3).map((item, idx) => {
+        const posicao = idx + 4;
+        const isMe = item.usuario.id === usuarioLogado?.id;
+        return (
+          <motion.div
+            key={item.usuario.id}
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: (idx + 3) * 0.05 }}
+            onClick={() => isMe ? onAbrirPerfil(item.usuario) : onAbrirAmigo(item.usuario)}
+            whileTap={{ scale: 0.97 }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px',
+              borderRadius: 10, cursor: isMe ? 'default' : 'pointer',
+              background: isMe ? 'rgba(212,160,23,0.08)' : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${isMe ? 'var(--border-gold)' : 'var(--border-card)'}`,
+            }}
+          >
+            <span style={{
+              fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700,
+              minWidth: 24, textAlign: 'center', color: 'var(--text-muted)',
+            }}>
+              #{posicao}
+            </span>
+            <img
+              src={item.usuario.avatar}
+              alt={item.usuario.nick}
+              style={{ width: 32, height: 32, borderRadius: '50%', border: '1px solid var(--border-card)' }}
+            />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{
+                fontSize: 13, fontWeight: 600, color: isMe ? 'var(--gold-400)' : 'var(--text-primary)',
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              }}>
+                {item.usuario.nick}
+              </div>
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+              {item.usuario.statusMsg?.substring(0, 20)}...
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, minWidth: 45, justifyContent: 'flex-end' }}>
+              <span>❤️</span>
+              <span style={{ fontWeight: 700, color: '#e63946', fontSize: 12 }}>
+                {item.pontos}
+              </span>
+            </div>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+});
+
+const StatusRankingContent = function({ jogadores, loading, onAbrirPerfil, onAbrirAmigo }: {
+  jogadores: JogadorRanking[];
+  loading: boolean;
+  onAbrirPerfil: (u: Usuario) => void;
+  onAbrirAmigo: (u: Usuario) => void;
+}) {
+  const top3 = jogadores.slice(0, 3);
+
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      {/* Header especial */}
+      <div style={{
+        padding: '16px', flexShrink: 0, background: 'rgba(212,160,23,0.05)',
+        borderBottom: '1px solid rgba(212,160,23,0.2)',
+        textAlign: 'center',
+      }}>
+        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gold-400)' }}>
+          🏆 Os Status Mais Curtidos
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+          {jogadores.length} status no ranking
+        </div>
+      </div>
+
+      {/* Top 3 em destaque */}
+      {top3.length > 0 && (
+        <StatusRankingTop3 top3={top3} onAbrirPerfil={onAbrirPerfil} onAbrirAmigo={onAbrirAmigo} />
+      )}
+
+      {/* Resto da lista */}
+      <StatusRankingList jogadores={jogadores} onAbrirPerfil={onAbrirPerfil} onAbrirAmigo={onAbrirAmigo} />
+
+      {loading && (
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+          <div style={{ fontSize: 32 }}>⏳</div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ════════════════════════════════════════════════════════════════
 export function RankingScreen() {
-  const [aba, setAba] = useState<'dia' | 'semana' | 'geral' | 'amigos'>('dia');
+  const [aba, setAba] = useState<'dia' | 'semana' | 'geral' | 'amigos' | 'status'>('dia');
   const { usuario } = useAuthStore();
   const { pushOverlay } = useNavigationStore();
 
@@ -300,6 +505,7 @@ export function RankingScreen() {
   const semana = useRankingSemana(usuario?.id);
   const geral = useRankingGeral(usuario?.id);
   const amigos = useRankingAmigos(usuario?.id);
+  const status = useRankingStatus(usuario?.id);
 
   // Selecionar dados baseado na aba
   const abaData = useMemo(() => {
@@ -308,8 +514,9 @@ export function RankingScreen() {
       case 'semana': return semana;
       case 'geral': return geral;
       case 'amigos': return amigos;
+      case 'status': return status;
     }
-  }, [aba, dia, semana, geral, amigos]);
+  }, [aba, dia, semana, geral, amigos, status]);
 
   // Top 3 para podium (mostrar em todas as abas)
   const top3 = useMemo(() => abaData.jogadores.slice(0, 3), [abaData.jogadores]);
@@ -327,6 +534,7 @@ export function RankingScreen() {
     { id: 'semana' as const, label: '📆 Semana', icone: '📆' },
     { id: 'geral' as const, label: '🌎 Geral', icone: '🌎' },
     { id: 'amigos' as const, label: '👥 Amigos', icone: '👥' },
+    { id: 'status' as const, label: '❤️ Status', icone: '❤️' },
   ];
 
   return (
@@ -409,16 +617,27 @@ export function RankingScreen() {
         </motion.div>
       )}
 
-      {/* Podium (Top 3) */}
-      <Podium top3={top3} onAbrirPerfil={abrirPerfilMeu} onAbrirAmigo={abrirAmigoActions} />
+      {aba === 'status' ? (
+        <StatusRankingContent
+          jogadores={abaData.jogadores}
+          loading={abaData.loading}
+          onAbrirPerfil={abrirPerfilMeu}
+          onAbrirAmigo={abrirAmigoActions}
+        />
+      ) : (
+        <>
+          {/* Podium (Top 3) */}
+          <Podium top3={top3} onAbrirPerfil={abrirPerfilMeu} onAbrirAmigo={abrirAmigoActions} />
 
-      {/* Lista de ranking */}
-      <RankingTabContent
-        jogadores={abaData.jogadores}
-        loading={abaData.loading}
-        onAbrirPerfil={abrirPerfilMeu}
-        onAbrirAmigo={abrirAmigoActions}
-      />
+          {/* Lista de ranking */}
+          <RankingTabContent
+            jogadores={abaData.jogadores}
+            loading={abaData.loading}
+            onAbrirPerfil={abrirPerfilMeu}
+            onAbrirAmigo={abrirAmigoActions}
+          />
+        </>
+      )}
     </div>
   );
 }
