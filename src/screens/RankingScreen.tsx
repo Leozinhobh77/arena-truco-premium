@@ -552,46 +552,27 @@ export function RankingScreen() {
           🏆 Classificação
         </h1>
 
-        {/* Tabs com scroll horizontal */}
+        {/* Tabs — 5 abas compactadas */}
         <div style={{
-          position: 'relative', marginBottom: 12,
+          display: 'flex', gap: 6, background: 'rgba(255,255,255,0.05)',
+          borderRadius: 12, padding: 3, marginBottom: 12,
         }}>
-          <div style={{
-            display: 'flex', gap: 8, background: 'rgba(255,255,255,0.05)',
-            borderRadius: 12, padding: 4, overflowX: 'auto', scrollBehavior: 'smooth',
-          }}>
-            {abas.map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setAba(tab.id)}
-                style={{
-                  flex: '0 0 auto', minWidth: 70, padding: '9px 12px', borderRadius: 9, border: 'none',
-                  fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700,
-                  cursor: 'pointer', transition: 'all 0.2s ease', whiteSpace: 'nowrap',
-                  background: aba === tab.id ? 'var(--gold-gradient)' : 'transparent',
-                  color: aba === tab.id ? '#0a0a0f' : 'var(--text-muted)',
-                }}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Gradient fade-out + Chevron animado */}
-          <div style={{
-            position: 'absolute', right: 0, top: 0, bottom: 0, width: 60,
-            background: 'linear-gradient(90deg, transparent, rgba(10,8,30,0.95) 60%)',
-            borderRadius: '0 12px 12px 0', pointerEvents: 'none',
-            display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8,
-          }}>
-            <motion.div
-              animate={{ opacity: [0.6, 1, 0.6] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              style={{ fontSize: 18, color: 'var(--gold-400)' }}
+          {abas.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setAba(tab.id)}
+              style={{
+                flex: 1, padding: '6px 4px', borderRadius: 8, border: 'none',
+                fontFamily: 'var(--font-display)', fontSize: 10, fontWeight: 700,
+                cursor: 'pointer', transition: 'all 0.2s ease', whiteSpace: 'nowrap',
+                background: aba === tab.id ? 'var(--gold-gradient)' : 'transparent',
+                color: aba === tab.id ? '#0a0a0f' : 'var(--text-muted)',
+                overflow: 'hidden', textOverflow: 'ellipsis',
+              }}
             >
-              ›
-            </motion.div>
-          </div>
+              {tab.label}
+            </button>
+          ))}
         </div>
       </div>
 
