@@ -137,6 +137,8 @@ export function StatusEditorOverlay() {
               outline: 'none',
               resize: 'none',
               overflow: 'hidden',
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
               transition: 'border-color 0.2s',
             }}
             onFocus={(e) => {
