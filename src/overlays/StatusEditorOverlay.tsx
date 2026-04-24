@@ -7,6 +7,7 @@ import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
 import { useAuthStore } from '../stores/useAuthStore';
+import { supabase } from '../lib/supabase';
 
 const EMOJIS_POPULARES = ['😄', '😂', '🤣', '😊', '❤️', '🔥', '💯', '👏', '🎉', '⚔️', '🏆', '🎮', '💪', '🚀', '😎', '👍', '✨', '🌟', '⭐', '🎯', '💎', '🏅'];
 
@@ -41,7 +42,17 @@ export function StatusEditorOverlay() {
   const handleSalvar = async () => {
     setSalvando(true);
     try {
+      // Atualizar status
       await atualizarPerfil({ status_msg: novoStatus });
+
+      // Resetar likes do status (deletar todos)
+      if (usuario?.id) {
+        await supabase
+          .from('status_likes')
+          .delete()
+          .eq('status_owner_id', usuario.id);
+      }
+
       alert('Status atualizado com sucesso! ✨');
       popOverlay();
     } catch (err) {

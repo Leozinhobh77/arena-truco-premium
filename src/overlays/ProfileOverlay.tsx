@@ -15,7 +15,74 @@ import {
   usePerfilPublico,
   useAmigosRanking,
 } from '../hooks/useProfileData';
+import { useStatusLikes } from '../hooks/useStatusLikes';
 import type { Badge, GameHistory, Usuario } from '../types';
+
+// ── Componente: Status Card com Likes ─────────────────────────
+function StatusCard({ usuario, currentUserId }: { usuario: Usuario; currentUserId?: string }) {
+  const { likesCount, jaDeiLike, toggleLike } = useStatusLikes(usuario.id, currentUserId);
+
+  return (
+    <div style={{ marginBottom: 16 }}>
+      {/* Header: Status + Coração + Contador */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 8,
+        paddingLeft: 4,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Status</span>
+          <button
+            onClick={toggleLike}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: 18,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              padding: 0,
+              color: jaDeiLike ? '#e63946' : 'rgba(255,255,255,0.5)',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            {jaDeiLike ? '❤️' : '🤍'} <span style={{ fontSize: 12 }}>{likesCount}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Caixa de Status */}
+      <div className="glass-card-gold" style={{
+        padding: '12px',
+        height: 170,
+        display: 'flex',
+        alignItems: 'center',
+      }}>
+        <span style={{
+          fontSize: 15,
+          color: 'var(--text-primary)',
+          fontStyle: 'italic',
+          textAlign: 'left',
+          lineHeight: 1.4,
+          whiteSpace: 'pre-wrap',
+          wordWrap: 'break-word',
+          width: '100%',
+        }}>
+          "{usuario.statusMsg || '—'}"
+        </span>
+      </div>
+    </div>
+  );
+}
 
 // ── Helpers ──────────────────────────────────────────────────
 function dataFormatada(date: Date): string {
@@ -274,27 +341,8 @@ function PerfilTab() {
         </div>
       </div>
 
-      {/* Status */}
-      <div className="glass-card-gold" style={{
-        padding: '12px',
-        marginBottom: 16,
-        height: 170,
-        display: 'flex',
-        alignItems: 'center',
-      }}>
-        <span style={{
-          fontSize: 15,
-          color: 'var(--text-primary)',
-          fontStyle: 'italic',
-          textAlign: 'left',
-          lineHeight: 1.4,
-          whiteSpace: 'pre-wrap',
-          wordWrap: 'break-word',
-          width: '100%',
-        }}>
-          "{usuario.statusMsg || '—'}"
-        </span>
-      </div>
+      {/* Status com Likes */}
+      <StatusCard usuario={usuario} currentUserId={useAuthStore().usuario?.id} />
 
       {/* Pontos + Amigos */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
