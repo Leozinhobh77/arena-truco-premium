@@ -15,36 +15,26 @@ export function StatusEditorOverlay() {
   const { usuario, atualizarPerfil } = useAuthStore();
   const [novoStatus, setNovoStatus] = useState(usuario?.statusMsg || '');
   const [salvando, setSalvando] = useState(false);
-  const contentEditableRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const MAX_HEIGHT = 170;
 
-  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
-    const div = e.currentTarget;
-    const novoTexto = div.textContent?.slice(0, 250) || '';
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const novoTexto = e.currentTarget.value.slice(0, 250);
     setNovoStatus(novoTexto);
-
-    // Forçar scrollTop = 0 para manter no topo (última linha fixa)
-    div.scrollTop = 0;
 
     // Verificar se a altura ultrapassou o limite
     setTimeout(() => {
-      if (div.scrollHeight > MAX_HEIGHT) {
+      if (textareaRef.current && textareaRef.current.scrollHeight > MAX_HEIGHT) {
         // Se ultrapassou, remover o último caractere digitado
         const textoLimitado = novoTexto.slice(0, -1);
         setNovoStatus(textoLimitado);
-        div.textContent = textoLimitado;
       }
     }, 0);
   };
 
   const handleAdicionarEmoji = (emoji: string) => {
-    if (novoStatus.length < 250 && contentEditableRef.current && contentEditableRef.current.scrollHeight <= MAX_HEIGHT) {
-      const novoTexto = novoStatus + emoji;
-      setNovoStatus(novoTexto);
-      if (contentEditableRef.current) {
-        contentEditableRef.current.textContent = novoTexto;
-        contentEditableRef.current.scrollTop = 0;
-      }
+    if (novoStatus.length < 250) {
+      setNovoStatus(novoStatus + emoji);
     }
   };
 
@@ -126,18 +116,12 @@ export function StatusEditorOverlay() {
           flexDirection: 'column',
           gap: 12,
         }}>
-          {/* Campo de Texto — ContentEditable Div */}
-          <div
-            ref={contentEditableRef}
-            contentEditable
-            suppressContentEditableWarning
-            onInput={handleInput}
-            onFocus={(e) => {
-              e.currentTarget.style.borderColor = '#f5c518';
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.borderColor = 'var(--gold-400)';
-            }}
+          {/* Campo de Texto */}
+          <textarea
+            ref={textareaRef}
+            value={novoStatus}
+            onChange={handleChange}
+            placeholder="Escreva seu status aqui... (máx. 250 caracteres)"
             style={{
               width: '100%',
               boxSizing: 'border-box',
@@ -151,16 +135,19 @@ export function StatusEditorOverlay() {
               fontSize: 15,
               lineHeight: 1.4,
               outline: 'none',
+              resize: 'none',
               overflow: 'hidden',
               whiteSpace: 'pre-wrap',
               wordBreak: 'break-word',
               transition: 'border-color 0.2s',
-              cursor: 'text',
-              scrollBehavior: 'auto',
             }}
-          >
-            {novoStatus}
-          </div>
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = '#f5c518';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'var(--gold-400)';
+            }}
+          />
 
           {/* Contador de caracteres */}
           <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'right' }}>
@@ -185,7 +172,7 @@ export function StatusEditorOverlay() {
               gap: 6,
             }}>
               {EMOJIS_POPULARES.map((emoji, i) => {
-                const podeAdicionarEmoji = novoStatus.length < 250 && contentEditableRef.current && contentEditableRef.current.scrollHeight <= MAX_HEIGHT;
+                const podeAdicionarEmoji = novoStatus.length < 250 && textareaRef.current && textareaRef.current.scrollHeight <= MAX_HEIGHT;
                 return (
                 <button
                   key={i}
