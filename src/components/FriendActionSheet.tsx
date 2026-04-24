@@ -261,6 +261,7 @@ export function FriendActionSheet({ amigo, onClose, status: statusProp }: Friend
         xpProximoNivel: 1000,
         moedas: 0,
         gemas: 0,
+        pontos: 0,
         ranking: amigo.ranking,
         vitorias: amigo.vitorias,
         derrotas: 0,

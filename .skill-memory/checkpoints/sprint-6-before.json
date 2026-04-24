@@ -1,0 +1,28 @@
+{
+  "sprint": 6,
+  "sprint_nome": "Sprint 6: Adicionar Campo PONTOS — Acúmulo Real de Pontuação",
+  "timestamp_before": "2026-04-24T02:00:00Z",
+  "tipo": "before",
+  "status": "checkpoint_criado",
+  "tarefas": [
+    "Adicionar coluna pontos (INT DEFAULT 0) na tabela profiles",
+    "Criar TRIGGER que atualiza pontos ao registrar partida",
+    "Atualizar tipos TypeScript (Profile interface)",
+    "Atualizar usePerfilPublico para puxar profile.pontos",
+    "Atualizar ProfileOverlay para mostrar profile.pontos em vez de pontuacao_total",
+    "Validar Supabase + deploy"
+  ],
+  "scope": {
+    "vai_mexer": [
+      "Supabase: tabela profiles + trigger",
+      "src/lib/supabase.types.ts",
+      "src/hooks/useProfileData.ts",
+      "src/overlays/ProfileOverlay.tsx"
+    ],
+    "nao_vai_mexer": [
+      "partidas table",
+      "Outras telas"
+    ]
+  },
+  "rollback_disponivel": true
+}

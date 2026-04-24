@@ -22,6 +22,7 @@ export interface Profile {
   xp_proximo: number;
   moedas: number;
   gemas: number;
+  pontos: number;
   modo_favorito: 'mineiro' | 'paulista' | null;
   status_msg: string | null;
   criado_em: string;

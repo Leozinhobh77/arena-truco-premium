@@ -28,6 +28,7 @@ function mapToJogadorRanking(
       xpProximoNivel: 0,
       moedas: 0,
       gemas: 0,
+      pontos,
       ranking: posicao,
       vitorias: 0,
       derrotas: 0,

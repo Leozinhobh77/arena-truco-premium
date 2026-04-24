@@ -26,6 +26,7 @@ function profileParaUsuario(profile: Profile, email?: string): Usuario {
     xpProximoNivel: profile.xp_proximo,
     moedas: profile.moedas,
     gemas: profile.gemas,
+    pontos: profile.pontos ?? 0,
     ranking: 0,   // calculado pela VIEW ranking — buscado separado
     vitorias: 0,  // calculado pela VIEW ranking
     derrotas: 0,  // calculado pela VIEW ranking

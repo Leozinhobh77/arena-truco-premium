@@ -16,6 +16,7 @@ export const USUARIO_MOCK: Usuario = {
   xpProximoNivel: 10000,
   moedas: 12450,
   gemas: 88,
+  pontos: 8950,
   ranking: 312,
   vitorias: 487,
   derrotas: 214,

@@ -56,6 +56,7 @@ export interface Usuario {
   xpProximoNivel: number;
   moedas: number;
   gemas: number;
+  pontos: number;
   ranking: number;
   vitorias: number;
   derrotas: number;
