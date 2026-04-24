@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useValidateAuth } from '../hooks/useValidateAuth';
 import { ValidationErrorModal } from './ValidationErrorModal';
@@ -23,6 +23,14 @@ export function NickSelectionModal({
     aberto: false,
     dados: null,
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      clearErrors();
+      setNick('');
+      fecharModal();
+    }
+  }, [isOpen, clearErrors]);
 
   const fecharModal = () => setModal({ aberto: false, dados: null });
   const abrirModal = (dados: ValidationError) => setModal({ aberto: true, dados });

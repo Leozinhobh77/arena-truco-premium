@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useValidateAuth } from '../hooks/useValidateAuth';
+import { useValidateForm } from '../hooks/useValidateForm';
 import { ValidationErrorModal } from '../components/ValidationErrorModal';
 import { NickSelectionModal } from '../components/NickSelectionModal';
 import type { ValidationError } from '../hooks/useValidateAuth';
@@ -151,7 +152,8 @@ export function LoginScreen() {
   const [nick, setNick] = useState('');
 
   const { signIn, signInWithGoogle, signUp, carregando, erro, limparErro } = useAuthStore();
-  const { emailError, nickError, validating, validateEmail, validateNick, clearErrors } = useValidateAuth();
+  const { nickError, validating, validateNick, clearErrors } = useValidateAuth();
+  const { emailError: formEmailError, senhaError, validateEmailFormat, validateEmailExists, validateSenha, clearErrors: clearFormErrors } = useValidateForm();
 
   const [modal, setModal] = useState<{ aberto: boolean; dados: ValidationError | null }>({
     aberto: false,
@@ -165,7 +167,7 @@ export function LoginScreen() {
   const abrirModal = (dados: ValidationError) => setModal({ aberto: true, dados });
 
   const resetForm = () => {
-    setEmail(''); setSenha(''); setNick(''); limparErro(); clearErrors();
+    setEmail(''); setSenha(''); setNick(''); limparErro(); clearErrors(); clearFormErrors();
   };
 
   const irPara = (m: Modo) => { resetForm(); setModo(m); };
@@ -179,16 +181,29 @@ export function LoginScreen() {
     await signInWithGoogle();
   };
 
-  const handleEmailBlur = async () => {
-    if (!email.trim() || modo !== 'cadastro') return;
-    const err = await validateEmail(email.trim());
-    if (err) abrirModal(err);
-  };
-
   const handleNickBlur = async () => {
     if (!nick.trim() || modo !== 'cadastro') return;
     const err = await validateNick(nick.trim());
     if (err) abrirModal(err);
+  };
+
+  const handleLoginEmailBlur = () => {
+    validateEmailFormat(email.trim());
+  };
+
+  const handleLoginSenhaChange = (v: string) => {
+    setSenha(v);
+    if (v.trim()) validateSenha(v.trim());
+  };
+
+  const handleCadastroEmailBlur = async () => {
+    if (!email.trim()) return;
+    await validateEmailExists(email.trim());
+  };
+
+  const handleCadastroSenhaChange = (v: string) => {
+    setSenha(v);
+    if (v.trim()) validateSenha(v.trim());
   };
 
   const handleCadastro = async () => {
@@ -197,8 +212,10 @@ export function LoginScreen() {
     const nickErr = await validateNick(nick.trim());
     if (nickErr) { abrirModal(nickErr); return; }
 
-    const emailErr = await validateEmail(email.trim());
-    if (emailErr) { abrirModal(emailErr); return; }
+    const emailErr = await validateEmailExists(email.trim());
+    if (emailErr) return;
+
+    if (senha.trim().length < 6) { return; }
 
     await signUp(email.trim(), senha.trim(), nick.trim());
   };
@@ -302,8 +319,31 @@ export function LoginScreen() {
                 Entrar na Conta
               </div>
 
-              <Campo icone="✉️" placeholder="Seu email" value={email} onChange={setEmail} type="email" autoFocus error={!!erro && !email.trim()} />
-              <Campo icone="🔒" placeholder="Sua senha" value={senha} onChange={setSenha} type="password" error={!!erro && !senha.trim()} />
+              <div>
+                <Campo icone="✉️" placeholder="Seu email" value={email} onChange={setEmail} type="email" autoFocus onBlur={handleLoginEmailBlur} error={!!formEmailError || (!!erro && !email.trim())} />
+                {formEmailError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{ fontSize: 12, color: '#e63946', paddingLeft: 4, marginTop: 6 }}
+                  >
+                    {formEmailError.message}
+                  </motion.div>
+                )}
+              </div>
+
+              <div>
+                <Campo icone="🔒" placeholder="Sua senha" value={senha} onChange={handleLoginSenhaChange} type="password" error={!!senhaError || (!!erro && !senha.trim())} />
+                {senhaError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{ fontSize: 12, color: '#f97316', paddingLeft: 4, marginTop: 6 }}
+                  >
+                    {senhaError.message}
+                  </motion.div>
+                )}
+              </div>
 
               {erro && (
                 <motion.div
@@ -375,43 +415,60 @@ export function LoginScreen() {
                 Criar Conta
               </div>
 
-              <Campo
-                icone="🎮"
-                placeholder="Nick de truqueiro"
-                value={nick}
-                onChange={v => { setNick(v); }}
-                onBlur={handleNickBlur}
-                autoFocus
-                error={!!nickError || (!!erro && !nick.trim())}
-              />
-              {nickError && (
-                <motion.div
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  style={{ fontSize: 12, color: '#e63946', paddingLeft: 4, marginTop: -8 }}
-                >
-                  {nickError.message}
-                </motion.div>
-              )}
-              <Campo
-                icone="✉️"
-                placeholder="Seu email"
-                value={email}
-                onChange={v => { setEmail(v); }}
-                onBlur={handleEmailBlur}
-                type="email"
-                error={!!emailError || (!!erro && !email.trim())}
-              />
-              {emailError && (
-                <motion.div
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  style={{ fontSize: 12, color: '#e63946', paddingLeft: 4, marginTop: -8 }}
-                >
-                  {emailError.message}
-                </motion.div>
-              )}
-              <Campo icone="🔒" placeholder="Senha (mín. 6 caracteres)" value={senha} onChange={setSenha} type="password" error={!!erro && !senha.trim()} />
+              <div>
+                <Campo
+                  icone="🎮"
+                  placeholder="Nick de truqueiro"
+                  value={nick}
+                  onChange={v => { setNick(v); }}
+                  onBlur={handleNickBlur}
+                  autoFocus
+                  error={!!nickError || (!!erro && !nick.trim())}
+                />
+                {nickError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{ fontSize: 12, color: '#e63946', paddingLeft: 4, marginTop: 6 }}
+                  >
+                    {nickError.message}
+                  </motion.div>
+                )}
+              </div>
+
+              <div>
+                <Campo
+                  icone="✉️"
+                  placeholder="Seu email"
+                  value={email}
+                  onChange={v => { setEmail(v); }}
+                  onBlur={handleCadastroEmailBlur}
+                  type="email"
+                  error={!!formEmailError || (!!erro && !email.trim())}
+                />
+                {formEmailError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{ fontSize: 12, color: '#e63946', paddingLeft: 4, marginTop: 6 }}
+                  >
+                    {formEmailError.message}
+                  </motion.div>
+                )}
+              </div>
+
+              <div>
+                <Campo icone="🔒" placeholder="Senha (mín. 6 caracteres)" value={senha} onChange={handleCadastroSenhaChange} type="password" error={!!senhaError || (!!erro && !senha.trim())} />
+                {senhaError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{ fontSize: 12, color: '#f97316', paddingLeft: 4, marginTop: 6 }}
+                  >
+                    {senhaError.message}
+                  </motion.div>
+                )}
+              </div>
 
               {erro && (
                 <motion.div

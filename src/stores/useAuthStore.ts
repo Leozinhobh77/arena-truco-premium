@@ -314,26 +314,27 @@ export const useAuthStore = create<AuthState>()(
             const retryRes = await (supabase.from('profiles').select('*').eq('id', session.user.id).single() as unknown as Promise<ProfileResult>);
             if (retryRes.data) {
               profileData = retryRes.data;
-
-              // Se é novo usuário do Google com nick customizado, atualizar
-              const desiredNick = sessionStorage.getItem('desiredNick');
-              const desiredNickNormalized = sessionStorage.getItem('desiredNickNormalized');
-              if (desiredNick && profileData.nick !== desiredNick) {
-                try {
-                  await (supabase as any).from('profiles').update({
-                    nick: desiredNick.trim(),
-                    nick_normalizado: desiredNickNormalized || normalizeNick(desiredNick),
-                  }).eq('id', session.user.id);
-                  profileData.nick = desiredNick.trim();
-                  sessionStorage.removeItem('desiredNick');
-                  sessionStorage.removeItem('desiredNickNormalized');
-                } catch (err) {
-                  // silenciar erro — nick já foi criado pelo trigger
-                }
-              }
             } else {
               set({ carregando: false, logado: false });
               return;
+            }
+          }
+
+          // Se é novo usuário do Google com nick customizado, atualizar
+          // Isso roda sempre que temos profileData, independentemente de ter vindo do primeiro fetch ou do retry
+          const desiredNick = sessionStorage.getItem('desiredNick');
+          const desiredNickNormalized = sessionStorage.getItem('desiredNickNormalized');
+          if (desiredNick && profileData.nick !== desiredNick) {
+            try {
+              await (supabase as any).from('profiles').update({
+                nick: desiredNick.trim(),
+                nick_normalizado: desiredNickNormalized || normalizeNick(desiredNick),
+              }).eq('id', session.user.id);
+              profileData.nick = desiredNick.trim();
+              sessionStorage.removeItem('desiredNick');
+              sessionStorage.removeItem('desiredNickNormalized');
+            } catch (err) {
+              // silenciar erro — nick já foi criado pelo trigger
             }
           }
 
@@ -399,12 +400,25 @@ export const useAuthStore = create<AuthState>()(
 
 // ── Traduz erros do Supabase para português ─────────────────
 function traduzirErro(msg: string): string {
-  if (msg.includes('Invalid login credentials')) return 'Email ou senha incorretos.';
-  if (msg.includes('Email not confirmed')) return 'Este e-mail ainda não foi confirmado. Verifique sua caixa de entrada!';
-  if (msg.includes('User already registered')) return 'Este email já está cadastrado.';
+  // Erros de autenticação
+  if (msg.includes('Invalid login credentials')) return 'Email ou senha incorretos. Verifique e tente novamente.';
+  if (msg.includes('Email not confirmed')) return 'Verifique seu email para confirmar a conta. Procure o link de confirmação na sua caixa de entrada.';
+  if (msg.includes('User already registered')) return 'Este email já tem uma conta cadastrada. Faça login ou use outro email.';
+  if (msg.includes('User not found')) return 'Nenhuma conta encontrada com esse email.';
+
+  // Erros de validação
   if (msg.includes('Password should be at least')) return 'A senha deve ter pelo menos 6 caracteres.';
-  if (msg.includes('Unable to validate email')) return 'Email inválido.';
+  if (msg.includes('Unable to validate email')) return 'Formato de email inválido (ex: seu@email.com).';
   if (msg.includes('duplicate key') && msg.includes('nick')) return 'Este nick já está em uso. Escolha outro.';
-  if (msg.includes('Too many requests') || msg.includes('429')) return 'Muitas tentativas! Aguarde um momento para tentar novamente.';
-  return msg;
+  if (msg.includes('duplicate key') && msg.includes('nick_normalizado')) return 'Esse nick já existe (mesmo com formatação diferente). Escolha outro.';
+
+  // Erros de rede e rate limit
+  if (msg.includes('Too many requests') || msg.includes('429')) return 'Muitas tentativas! Aguarde alguns minutos antes de tentar novamente.';
+  if (msg.includes('ECONNREFUSED') || msg.includes('network')) return 'Erro de conexão. Verifique sua internet e tente novamente.';
+
+  // Erros genéricos do servidor
+  if (msg.includes('500') || msg.includes('Internal Server Error')) return 'Erro no servidor. Tente novamente em alguns momentos.';
+
+  // Fallback com mensagem genérica profissional
+  return 'Algo deu errado. Tente novamente ou entre em contato com o suporte.';
 }
