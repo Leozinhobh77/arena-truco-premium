@@ -267,6 +267,7 @@ export function FriendActionSheet({ amigo, onClose, status: statusProp }: Friend
         derrotas: 0,
         partidas: amigo.partidas,
         clan: amigo.clan,
+        statusMsg: amigo.statusMsg,
       };
       pushOverlay('perfil', { usuarioDireto: amigoComoUsuario });
     },

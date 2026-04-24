@@ -51,7 +51,10 @@ export function useStatusLikes(statusOwnerIdId: string | undefined, currentUserI
   };
 
   const toggleLike = async () => {
-    if (!statusOwnerIdId || !currentUserId) return;
+    if (!statusOwnerIdId || !currentUserId) {
+      console.warn('[useStatusLikes] toggleLike bloqueado — IDs ausentes:', { statusOwnerIdId, currentUserId });
+      return;
+    }
 
     try {
       if (jaDeiLike) {
