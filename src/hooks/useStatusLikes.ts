@@ -56,17 +56,22 @@ export function useStatusLikes(statusOwnerIdId: string | undefined, currentUserI
     try {
       if (jaDeiLike) {
         // Remover like
-        await supabase
+        const { error } = await supabase
           .from('status_likes')
           .delete()
           .eq('usuario_id', currentUserId)
           .eq('status_owner_id', statusOwnerIdId);
 
+        if (error) {
+          console.error('Erro ao remover like:', error);
+          return;
+        }
+
         setJaDeiLike(false);
         setLikesCount((prev) => Math.max(0, prev - 1));
       } else {
         // Adicionar like
-        await (supabase as any)
+        const { error } = await supabase
           .from('status_likes')
           .insert([
             {
@@ -75,9 +80,19 @@ export function useStatusLikes(statusOwnerIdId: string | undefined, currentUserI
             },
           ]);
 
+        if (error) {
+          console.error('Erro ao adicionar like:', error);
+          return;
+        }
+
         setJaDeiLike(true);
         setLikesCount((prev) => prev + 1);
       }
+
+      // Recarregar dados do servidor para garantir sincronização
+      setTimeout(() => {
+        carregarLikes();
+      }, 300);
     } catch (err) {
       console.error('Erro ao toggle like:', err);
     }

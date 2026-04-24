@@ -4,7 +4,10 @@
 // ============================================================
 
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import type { Amigo } from '../types';
+import { useStatusLikes } from '../hooks/useStatusLikes';
+import { useAuthStore } from '../stores/useAuthStore';
 
 /** Retorna string de tempo relativo humanizada */
 function tempoRelativo(date: Date): string {
@@ -50,6 +53,16 @@ interface PerfilCardProps {
  * Exibe: foto, nick, clan, nível, status-msg com timestamp e estatísticas.
  */
 export function PerfilCard({ amigo, onClose, onOpenFullProfile }: PerfilCardProps) {
+  const { usuario } = useAuthStore();
+  const { likesCount, jaDeiLike, loading, toggleLike } = useStatusLikes(amigo.id, usuario?.id);
+  const [isLoadingLike, setIsLoadingLike] = useState(false);
+
+  const handleLikeClick = async () => {
+    setIsLoadingLike(true);
+    await toggleLike();
+    setIsLoadingLike(false);
+  };
+
   const winRate = Math.round((amigo.vitorias / Math.max(amigo.partidas, 1)) * 100);
 
   const statusLabel =
@@ -170,8 +183,32 @@ export function PerfilCard({ amigo, onClose, onOpenFullProfile }: PerfilCardProp
         }}>
           "{amigo.statusMsg}"
         </div>
-        <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
-          atualizado {tempoRelativo(amigo.statusMsgAtualizada)}
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(212,160,23,0.2)',
+        }}>
+          <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+            atualizado {tempoRelativo(amigo.statusMsgAtualizada)}
+          </div>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={handleLikeClick}
+            disabled={loading || isLoadingLike}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '6px 12px', borderRadius: 20,
+              background: jaDeiLike ? 'rgba(212,160,23,0.3)' : 'rgba(255,255,255,0.05)',
+              border: `1px solid ${jaDeiLike ? 'rgba(212,160,23,0.5)' : 'rgba(212,160,23,0.2)'}`,
+              color: jaDeiLike ? 'var(--gold-400)' : 'var(--text-secondary)',
+              fontSize: 12, fontWeight: 600,
+              cursor: loading || isLoadingLike ? 'not-allowed' : 'pointer',
+              opacity: loading || isLoadingLike ? 0.6 : 1,
+              transition: 'all 0.2s',
+            }}
+          >
+            <span>{jaDeiLike ? '❤️' : '🤍'}</span>
+            <span>{likesCount}</span>
+          </motion.button>
         </div>
       </div>
 
