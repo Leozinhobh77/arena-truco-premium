@@ -2,7 +2,8 @@
 // IA DOS BOTS
 // ============================================
 
-import { Card, getCardValue } from './gameLogic';
+import type { Card } from './gameLogic';
+import { getCardValue } from './gameLogic';
 
 export type BotPersonality = 'aggressive' | 'defensive' | 'neutral';
 
@@ -180,12 +181,13 @@ export function executeBotTurn(
   bot: { id: string; name: string; personality: BotPersonality },
   playerHand: Card[],
   trump: Card,
-  trucoValue: number,
+  _trucoValue: number,
   trucoStatus: string
 ): BotAction {
   const handStrength = calculateHandStrength(playerHand, trump);
 
   // Se ninguém pediu truco ainda, verificar se pede
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   if (trucoStatus === 'none') {
     if (shouldCallTwelve(handStrength, bot.personality)) {
       return { action: 'truco', trucoLevel: 12 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Suit, Rank } from '../game/gameLogic';
+import type { Suit, Rank } from '../game/gameLogic';
 
 interface CardUIProps {
   suit?: Suit;
@@ -12,19 +12,12 @@ interface CardUIProps {
   featured?: boolean;
 }
 
-const suitColors: Record<Suit, string> = {
-  '♠': 'text-[#080808]',
-  '♣': 'text-[#080808]',
-  '♥': 'text-blood',
-  '♦': 'text-blood',
-};
-
 const CardUI: React.FC<CardUIProps> = ({ suit, rank, isHidden, onClick, className = '', delay = 0, featured = false }) => {
   // Animates card entry
   const entryAnimation = {
     initial: { opacity: 0, y: 100, scale: 0.5 },
     animate: { opacity: 1, y: 0, scale: 1 },
-    transition: { delay, duration: 0.4, type: 'spring', stiffness: 200, damping: 20 }
+    transition: { delay, duration: 0.4, type: 'spring' as const, stiffness: 200, damping: 20 }
   };
 
   if (isHidden) {

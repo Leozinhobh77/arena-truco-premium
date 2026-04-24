@@ -1,6 +1,8 @@
 import { create } from 'zustand';
-import { GameState, initializeGame, nextHand, nextRound, canPlayCard, resolveHand, resolveRound, applyRoundPoints, isGameOver, Card, getWinner } from '../game/gameLogic';
-import { executeBotTurn, BotPersonality, BotAction, generateBotMessage } from '../game/botAI';
+import type { GameState } from '../game/gameLogic';
+import { initializeGame, nextHand, nextRound, resolveHand, resolveRound, applyRoundPoints, isGameOver } from '../game/gameLogic';
+import { executeBotTurn, generateBotMessage } from '../game/botAI';
+import type { BotPersonality } from '../game/botAI';
 
 interface GameStore {
   game: GameState | null;
@@ -28,7 +30,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   botMessage: null,
   gameOver: { over: false, winner: null },
 
-  startGame: (playerName, botPersonality) => {
+  startGame: (_playerName, botPersonality) => {
     const game = initializeGame(['player-1', 'bot-1']);
     set({
       game,
@@ -66,7 +68,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const allPlayed = newGame.players.every(p => p.hand.playedCard !== undefined);
 
     if (allPlayed) {
-      const { winner, isDraw } = resolveHand(newGame);
+      const { winner } = resolveHand(newGame);
       if (winner === 1) newGame.handsWon.team1++;
       if (winner === 2) newGame.handsWon.team2++;
 
@@ -115,17 +117,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   respondTruco: (accept) => {
-    const { game, humanId, triggerBotTurn } = get();
+    const { game, triggerBotTurn } = get();
     if (!game) return;
-    
+
     if (accept) {
       set({ game: { ...game, trucoStatus: 'accepted' } });
       triggerBotTurn();
     } else {
       // Current team refused, other team wins round
       const callerTeam = game.players[game.trucoCaller!].team;
-      const refuserTeam = callerTeam === 1 ? 2 : 1;
-      
+
       const newGame = applyRoundPoints(game, callerTeam);
       const overCheck = isGameOver(newGame);
       if (overCheck.over) {
@@ -139,7 +140,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   triggerBotTurn: () => {
     const { game, bot, botId } = get();
-    if (!game || !bot || game.gameOver || game.status !== 'playing') return;
+    if (!game || !bot || game.status !== 'playing') return;
 
     const currentPlayer = game.players[game.currentPlayerIndex];
     if (currentPlayer.id !== botId) {
@@ -169,7 +170,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       if (action.action === 'truco') {
          set({ botMessage: generateBotMessage('truco', bot.personality) });
          set({
-           game: { ...g, trucoStatus: 'called', trucoValue: action.trucoLevel as any, trucoCaller: g.currentPlayerIndex }
+           game: { ...g, trucoStatus: 'called', trucoValue: action.trucoLevel as 3 | 6 | 9 | 12, trucoCaller: g.currentPlayerIndex }
          });
       } else if (action.action === 'play') {
          get().playCard(action.cardIndex!);

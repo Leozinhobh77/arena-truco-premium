@@ -1,12 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useGameStore } from './store/gameStore';
 import CardUI from './components/CardUI';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Swords, Zap, Crown, Skull } from 'lucide-react';
+import { Trophy, Zap, Crown, Skull } from 'lucide-react';
 
 function App() {
   const { game, bot, startGame, playCard, callTruco, respondTruco, humanId, isBotThinking, botMessage, gameOver, clearBotMessage } = useGameStore();
   const [showSplash, setShowSplash] = useState(true);
+
+  const cardRotations = useMemo(() => {
+    if (game?.tableCards && game.tableCards.length > 0) {
+      return {
+        // eslint-disable-next-line react-hooks/purity
+        initial: game.tableCards.map(() => Math.random() * 40 - 20),
+        // eslint-disable-next-line react-hooks/purity
+        final: game.tableCards.map(() => Math.random() * 20 - 10),
+      };
+    }
+    return { initial: [], final: [] };
+  }, [game?.tableCards]);
 
   useEffect(() => {
     // Esconder a splash screen estilizada
@@ -164,8 +176,8 @@ function App() {
             {game!.tableCards.map((c, i) => (
               <motion.div
                 key={`table-card-${i}`}
-                initial={{ scale: 2, opacity: 0, rotate: Math.random() * 40 - 20 }}
-                animate={{ scale: 1, opacity: 1, rotate: Math.random() * 20 - 10 }}
+                initial={{ scale: 2, opacity: 0, rotate: cardRotations.initial[i] ?? 0 }}
+                animate={{ scale: 1, opacity: 1, rotate: cardRotations.final[i] ?? 0 }}
                 className="z-20"
               >
                 <CardUI suit={c.suit} rank={c.rank} className="w-24 md:w-32 shadow-2xl" />
@@ -215,7 +227,7 @@ function App() {
                     <button onClick={() => respondTruco(false)} className="px-8 py-3 bg-white/5 hover:bg-white/10 rounded font-bold uppercase transition focus:ring-2">Fugir</button>
                     <button onClick={() => respondTruco(true)} className="px-8 py-3 bg-blood text-white rounded font-bold uppercase transition shadow-[0_0_15px_rgba(139,0,0,0.8)] hover:bg-red-700">Aceitar</button>
                     {game!.trucoValue < 12 && (
-                       <button onClick={() => callTruco((game!.trucoValue + 3) as any)} className="px-8 py-3 bg-gradient-to-r from-gold to-gold-dark text-obsidian rounded font-bold uppercase transition hover:scale-105">
+                       <button onClick={() => callTruco((game!.trucoValue + 3) as 6 | 9 | 12)} className="px-8 py-3 bg-gradient-to-r from-gold to-gold-dark text-obsidian rounded font-bold uppercase transition hover:scale-105">
                          Pedir {game!.trucoValue + 3}
                        </button>
                     )}
