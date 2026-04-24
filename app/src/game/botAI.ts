@@ -187,7 +187,6 @@ export function executeBotTurn(
   const handStrength = calculateHandStrength(playerHand, trump);
 
   // Se ninguém pediu truco ainda, verificar se pede
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   if (trucoStatus === 'none') {
     if (shouldCallTwelve(handStrength, bot.personality)) {
       return { action: 'truco', trucoLevel: 12 };
