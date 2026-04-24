@@ -3,7 +3,7 @@
 // Permite editar o status message do jogador
 // ============================================================
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
 import { useAuthStore } from '../stores/useAuthStore';
@@ -15,9 +15,25 @@ export function StatusEditorOverlay() {
   const { usuario, atualizarPerfil } = useAuthStore();
   const [novoStatus, setNovoStatus] = useState(usuario?.statusMsg || '');
   const [salvando, setSalvando] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const MAX_HEIGHT = 150;
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const novoTexto = e.currentTarget.value.slice(0, 250);
+    setNovoStatus(novoTexto);
+
+    // Verificar se a altura ultrapassou o limite
+    setTimeout(() => {
+      if (textareaRef.current && textareaRef.current.scrollHeight > MAX_HEIGHT) {
+        // Se ultrapassou, remover o último caractere digitado
+        const textoLimitado = novoTexto.slice(0, -1);
+        setNovoStatus(textoLimitado);
+      }
+    }, 0);
+  };
 
   const handleAdicionarEmoji = (emoji: string) => {
-    if (novoStatus.length < 250) {
+    if (novoStatus.length < 250 && textareaRef.current && textareaRef.current.scrollHeight <= MAX_HEIGHT) {
       setNovoStatus(novoStatus + emoji);
     }
   };
@@ -102,8 +118,9 @@ export function StatusEditorOverlay() {
         }}>
           {/* Campo de Texto */}
           <textarea
+            ref={textareaRef}
             value={novoStatus}
-            onChange={(e) => setNovoStatus(e.currentTarget.value.slice(0, 250))}
+            onChange={handleChange}
             placeholder="Escreva seu status aqui... (máx. 250 caracteres)"
             style={{
               width: '100%',
@@ -118,6 +135,7 @@ export function StatusEditorOverlay() {
               fontSize: 13,
               outline: 'none',
               resize: 'none',
+              overflow: 'hidden',
               transition: 'border-color 0.2s',
             }}
             onFocus={(e) => {
@@ -150,26 +168,28 @@ export function StatusEditorOverlay() {
               gridTemplateColumns: 'repeat(8, 1fr)',
               gap: 6,
             }}>
-              {EMOJIS_POPULARES.map((emoji, i) => (
+              {EMOJIS_POPULARES.map((emoji, i) => {
+                const podeAdicionarEmoji = novoStatus.length < 250 && textareaRef.current && textareaRef.current.scrollHeight <= MAX_HEIGHT;
+                return (
                 <button
                   key={i}
                   onClick={() => handleAdicionarEmoji(emoji)}
-                  disabled={novoStatus.length >= 250}
+                  disabled={!podeAdicionarEmoji}
                   style={{
                     aspectRatio: '1',
                     borderRadius: 8,
                     background: 'rgba(255,255,255,0.06)',
                     border: '1px solid rgba(255,255,255,0.1)',
                     fontSize: 20,
-                    cursor: novoStatus.length >= 250 ? 'not-allowed' : 'pointer',
+                    cursor: podeAdicionarEmoji ? 'pointer' : 'not-allowed',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     transition: 'all 0.2s',
-                    opacity: novoStatus.length >= 250 ? 0.5 : 1,
+                    opacity: podeAdicionarEmoji ? 1 : 0.5,
                   }}
                   onMouseEnter={(e) => {
-                    if (novoStatus.length < 250) {
+                    if (podeAdicionarEmoji) {
                       e.currentTarget.style.background = 'rgba(212,160,23,0.3)';
                       e.currentTarget.style.border = '1px solid var(--gold-400)';
                       e.currentTarget.style.transform = 'scale(1.1)';
@@ -183,7 +203,8 @@ export function StatusEditorOverlay() {
                 >
                   {emoji}
                 </button>
-              ))}
+              );
+              })}
             </div>
           </div>
         </div>
