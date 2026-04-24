@@ -283,11 +283,11 @@ function PerfilTab() {
         alignItems: 'center',
       }}>
         <span style={{
-          fontSize: 15,
+          fontSize: 13,
           color: 'var(--text-primary)',
           fontStyle: 'italic',
           textAlign: 'left',
-          lineHeight: 1.5,
+          lineHeight: 1.4,
           whiteSpace: 'pre-wrap',
           wordWrap: 'break-word',
           width: '100%',

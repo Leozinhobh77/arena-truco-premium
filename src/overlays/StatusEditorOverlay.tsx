@@ -133,6 +133,7 @@ export function StatusEditorOverlay() {
               color: 'white',
               fontFamily: 'inherit',
               fontSize: 13,
+              lineHeight: 1.4,
               outline: 'none',
               resize: 'none',
               overflow: 'hidden',
