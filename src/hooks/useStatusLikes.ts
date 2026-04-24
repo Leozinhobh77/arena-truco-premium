@@ -1,17 +1,11 @@
 // ============================================================
-// useStatusLikes — Gerencia likes em status com validação BOLA
+// useStatusLikes — Gerencia likes em status
 // ============================================================
-// SEC-09: Broken Object Level Authorization protection
 // SEC-06: Rate limiting (anti-spam)
 // ============================================================
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
-
-interface VerificacaoPermissao {
-  temAcesso: boolean;
-  motivo?: string;
-}
 
 export function useStatusLikes(
   statusOwnerId: string | undefined,
@@ -34,50 +28,11 @@ export function useStatusLikes(
     };
   }, []);
 
-  // ✅ SEC-09: Verificar permissão antes de qualquer operação
-  const verificarAcesso = useCallback(async (): Promise<VerificacaoPermissao> => {
-    if (!statusOwnerId || !currentUserId) {
-      return { temAcesso: false, motivo: 'IDs ausentes' };
-    }
-
-    try {
-      // Verificar se o perfil do dono é público OU se currentUser é o dono
-      const { data: profile, error } = await (supabase
-        .from('profiles')
-        .select('id, privado')
-        .eq('id', statusOwnerId)
-        .single() as any);
-
-      if (error || !profile) {
-        return { temAcesso: false, motivo: 'Perfil não encontrado' };
-      }
-
-      // Perfil privado: só o dono pode acessar
-      if ((profile as any).privado && (profile as any).id !== currentUserId) {
-        return { temAcesso: false, motivo: 'Perfil privado' };
-      }
-
-      return { temAcesso: true };
-    } catch (err) {
-      console.error('[useStatusLikes] Erro ao verificar permissão:', err);
-      return { temAcesso: false, motivo: 'Erro na validação' };
-    }
-  }, [statusOwnerId, currentUserId]);
-
   // Carregar likes do status
   const carregarLikes = useCallback(async () => {
     if (!statusOwnerId || !isMountedRef.current) return;
 
     try {
-      // ✅ SEC-09: Verificar permissão PRIMEIRO
-      const permissao = await verificarAcesso();
-      if (!permissao.temAcesso) {
-        if (isMountedRef.current) {
-          setLoading(false);
-        }
-        return;
-      }
-
       // Contar likes do status
       const { count } = await supabase
         .from('status_likes')
@@ -108,7 +63,7 @@ export function useStatusLikes(
         setLoading(false);
       }
     }
-  }, [statusOwnerId, currentUserId, verificarAcesso]);
+  }, [statusOwnerId, currentUserId]);
 
   // Load on mount ou mudança de IDs
   useEffect(() => {
@@ -139,16 +94,6 @@ export function useStatusLikes(
     ultimoToggleRef.current = agora;
 
     try {
-      // ✅ SEC-09: Verificar permissão ANTES de qualquer operação
-      const permissao = await verificarAcesso();
-      if (!permissao.temAcesso) {
-        console.warn(
-          '[useStatusLikes] Acesso negado:',
-          permissao.motivo
-        );
-        return; // ← Bloqueia silenciosamente, não revela motivo ao usuário
-      }
-
       if (jaDeiLike) {
         // Remover like
         const { error } = await supabase
@@ -159,7 +104,7 @@ export function useStatusLikes(
 
         if (error) {
           console.error('[useStatusLikes] Erro ao remover like:', error);
-          ultimoToggleRef.current = 0; // Reset rate limit em caso de erro
+          ultimoToggleRef.current = 0;
           return;
         }
 
@@ -180,7 +125,7 @@ export function useStatusLikes(
 
         if (error) {
           console.error('[useStatusLikes] Erro ao adicionar like:', error);
-          ultimoToggleRef.current = 0; // Reset rate limit em caso de erro
+          ultimoToggleRef.current = 0;
           return;
         }
 
@@ -189,14 +134,11 @@ export function useStatusLikes(
           setLikesCount((prev) => prev + 1);
         }
       }
-
-      // ✅ Sem setTimeout — state foi atualizado otimisticamente
-      // Se precisar sincronizar, carregarLikes() é chamado via dependências
     } catch (err) {
       console.error('[useStatusLikes] Erro ao toggle like:', err);
-      ultimoToggleRef.current = 0; // Reset rate limit em caso de erro
+      ultimoToggleRef.current = 0;
     }
-  }, [statusOwnerId, currentUserId, jaDeiLike, verificarAcesso]);
+  }, [statusOwnerId, currentUserId, jaDeiLike]);
 
   return {
     likesCount,
