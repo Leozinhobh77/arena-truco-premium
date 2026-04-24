@@ -283,7 +283,7 @@ export function ArenaScreen() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1, duration: 0.5 }}
         className="glass-card-gold"
-        onClick={() => pushOverlay('perfil', { editMode: true })}
+        onClick={() => pushOverlay('perfil')}
         style={{
           margin: '8px 16px',
           padding: '16px',
