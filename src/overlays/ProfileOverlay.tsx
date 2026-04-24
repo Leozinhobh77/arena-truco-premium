@@ -276,14 +276,14 @@ function PerfilTab() {
 
       {/* Status */}
       <div className="glass-card-gold" style={{
-        padding: '24px 16px',
+        padding: '12px',
         marginBottom: 16,
-        height: 150,
+        height: 170,
         display: 'flex',
         alignItems: 'center',
       }}>
         <span style={{
-          fontSize: 13,
+          fontSize: 15,
           color: 'var(--text-primary)',
           fontStyle: 'italic',
           textAlign: 'left',

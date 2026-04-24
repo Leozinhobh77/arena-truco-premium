@@ -16,7 +16,7 @@ export function StatusEditorOverlay() {
   const [novoStatus, setNovoStatus] = useState(usuario?.statusMsg || '');
   const [salvando, setSalvando] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const MAX_HEIGHT = 150;
+  const MAX_HEIGHT = 170;
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const novoTexto = e.currentTarget.value.slice(0, 250);
@@ -125,14 +125,14 @@ export function StatusEditorOverlay() {
             style={{
               width: '100%',
               boxSizing: 'border-box',
-              height: '150px',
+              height: '170px',
               padding: '12px',
               borderRadius: 12,
               background: 'rgba(10,8,30,0.7)',
               border: '1px solid var(--gold-400)',
               color: 'white',
               fontFamily: 'inherit',
-              fontSize: 13,
+              fontSize: 15,
               lineHeight: 1.4,
               outline: 'none',
               resize: 'none',
