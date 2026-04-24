@@ -372,16 +372,25 @@ export function FriendActionSheet({ amigo, onClose, status: statusProp }: Friend
           </div>
 
           {/* Mensagem de status */}
-          <div style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: 10,
-            padding: '8px 12px',
+          <div className="glass-card-gold" style={{
+            padding: '12px',
+            height: 120,
+            display: 'flex',
+            alignItems: 'center',
             marginBottom: 12,
           }}>
-            <div style={{ fontSize: 12, color: 'var(--text-primary)', fontStyle: 'italic', lineHeight: 1.4 }}>
-              "{amigo.statusMsg}"
-            </div>
+            <span style={{
+              fontSize: 15,
+              color: 'var(--text-primary)',
+              fontStyle: 'italic',
+              textAlign: 'left',
+              lineHeight: 1.4,
+              whiteSpace: 'pre-wrap',
+              wordWrap: 'break-word',
+              width: '100%',
+            }}>
+              "{amigo.statusMsg || '—'}"
+            </span>
           </div>
 
           {/* Stats */}
