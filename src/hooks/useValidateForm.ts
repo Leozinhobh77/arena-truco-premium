@@ -41,7 +41,7 @@ export function useValidateForm() {
     setValidating(true);
     try {
       // Usa maybeSingle() em vez de single() para não lançar erro 406
-      const { data, error } = await (supabase as any)
+      const { data } = await (supabase as any)
         .from('profiles')
         .select('id')
         .eq('email', email.trim().toLowerCase())
