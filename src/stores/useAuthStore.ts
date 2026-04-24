@@ -90,6 +90,12 @@ export const useAuthStore = create<AuthState>()(
           if (error) throw error;
           if (!data.user) throw new Error('Erro ao criar conta. Tente novamente.');
 
+          // Supabase com Email Enumeration Protection retorna user com identities[] vazio
+          // em vez de lançar erro quando o email já existe
+          if (data.user.identities && data.user.identities.length === 0) {
+            throw new Error('User already registered');
+          }
+
           // Busca o perfil criado pelo trigger
           const { data: profile } = await supabase
             .from('profiles')

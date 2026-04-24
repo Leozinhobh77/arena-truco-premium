@@ -4,7 +4,6 @@
 // ============================================================
 
 import { useState, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
 import { isValidEmailFormat, type EmailValidationError } from '../lib/validateEmail';
 
 export interface FormValidationState {
@@ -19,7 +18,6 @@ export interface FormValidationState {
 }
 
 export function useValidateForm() {
-  const [validating, setValidating] = useState(false);
   const [emailError, setEmailError] = useState<EmailValidationError | null>(null);
   const [senhaError, setSenhaError] = useState<{ message: string } | null>(null);
 
@@ -30,44 +28,15 @@ export function useValidateForm() {
     return err;
   }, []);
 
-  // Valida se EMAIL JÁ EXISTE no banco
+  // Valida formato do email (a detecção de email duplicado ocorre via erro do signUp)
   const validateEmailExists = useCallback(async (email: string): Promise<EmailValidationError | null> => {
     const formatErr = isValidEmailFormat(email);
     if (formatErr) {
       setEmailError(formatErr);
       return formatErr;
     }
-
-    setValidating(true);
-    try {
-      // Usa maybeSingle() em vez de single() para não lançar erro 406
-      const { data } = await (supabase as any)
-        .from('profiles')
-        .select('id')
-        .eq('email', email.trim().toLowerCase())
-        .maybeSingle();
-
-      if (data) {
-        // Email já existe
-        const err: EmailValidationError = {
-          type: 'already_exists',
-          message: 'Este email já tem uma conta cadastrada',
-        };
-        setEmailError(err);
-        setValidating(false);
-        return err;
-      }
-
-      // Email não encontrado ou erro - considera disponível
-      setEmailError(null);
-      setValidating(false);
-      return null;
-    } catch {
-      // Erro na query - considera disponível (deixa servidor validar)
-      setEmailError(null);
-      setValidating(false);
-      return null;
-    }
+    setEmailError(null);
+    return null;
   }, []);
 
   // Valida SENHA (apenas tamanho e feedback visual)
@@ -89,7 +58,6 @@ export function useValidateForm() {
   }, []);
 
   return {
-    validating,
     emailError,
     senhaError,
     validateEmailFormat,
