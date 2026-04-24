@@ -17,7 +17,7 @@ export function StatusEditorOverlay() {
   const [salvando, setSalvando] = useState(false);
 
   const handleAdicionarEmoji = (emoji: string) => {
-    if (novoStatus.length < 150) {
+    if (novoStatus.length < 250) {
       setNovoStatus(novoStatus + emoji);
     }
   };
@@ -103,8 +103,8 @@ export function StatusEditorOverlay() {
           {/* Campo de Texto */}
           <textarea
             value={novoStatus}
-            onChange={(e) => setNovoStatus(e.currentTarget.value.slice(0, 150))}
-            placeholder="Escreva seu status aqui... (máx. 150 caracteres)"
+            onChange={(e) => setNovoStatus(e.currentTarget.value.slice(0, 250))}
+            placeholder="Escreva seu status aqui... (máx. 250 caracteres)"
             style={{
               width: '100%',
               boxSizing: 'border-box',
@@ -131,7 +131,7 @@ export function StatusEditorOverlay() {
 
           {/* Contador de caracteres */}
           <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'right' }}>
-            {novoStatus.length}/150
+            {novoStatus.length}/250
           </div>
 
           {/* Emojis Populares */}
@@ -155,22 +155,22 @@ export function StatusEditorOverlay() {
                 <button
                   key={i}
                   onClick={() => handleAdicionarEmoji(emoji)}
-                  disabled={novoStatus.length >= 150}
+                  disabled={novoStatus.length >= 250}
                   style={{
                     aspectRatio: '1',
                     borderRadius: 8,
                     background: 'rgba(255,255,255,0.06)',
                     border: '1px solid rgba(255,255,255,0.1)',
                     fontSize: 20,
-                    cursor: novoStatus.length >= 150 ? 'not-allowed' : 'pointer',
+                    cursor: novoStatus.length >= 250 ? 'not-allowed' : 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     transition: 'all 0.2s',
-                    opacity: novoStatus.length >= 150 ? 0.5 : 1,
+                    opacity: novoStatus.length >= 250 ? 0.5 : 1,
                   }}
                   onMouseEnter={(e) => {
-                    if (novoStatus.length < 150) {
+                    if (novoStatus.length < 250) {
                       e.currentTarget.style.background = 'rgba(212,160,23,0.3)';
                       e.currentTarget.style.border = '1px solid var(--gold-400)';
                       e.currentTarget.style.transform = 'scale(1.1)';
