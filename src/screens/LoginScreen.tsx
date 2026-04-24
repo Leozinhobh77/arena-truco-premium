@@ -151,6 +151,7 @@ export function LoginScreen() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [nick, setNick] = useState('');
+  const [consentimentoPrivacidade, setConsentimentoPrivacidade] = useState(false);
 
   const { signIn, signInWithGoogle, signUp, carregando, erro, limparErro } = useAuthStore();
   const { nickError, validating, validateNick, clearErrors } = useValidateAuth();
@@ -169,7 +170,7 @@ export function LoginScreen() {
   const abrirModal = (dados: ValidationError) => setModal({ aberto: true, dados });
 
   const resetForm = () => {
-    setEmail(''); setSenha(''); setNick(''); limparErro(); clearErrors(); clearFormErrors();
+    setEmail(''); setSenha(''); setNick(''); setConsentimentoPrivacidade(false); limparErro(); clearErrors(); clearFormErrors();
   };
 
   const irPara = (m: Modo) => { resetForm(); setModo(m); };
@@ -217,6 +218,7 @@ export function LoginScreen() {
 
   const handleCadastro = async () => {
     if (!email.trim() || !senha.trim() || !nick.trim()) return;
+    if (!consentimentoPrivacidade) return;
 
     const nickErr = await validateNick(nick.trim());
     if (nickErr) { abrirModal(nickErr); return; }
@@ -509,12 +511,54 @@ export function LoginScreen() {
                 </motion.div>
               )}
 
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                style={{
+                  display: 'flex', alignItems: 'flex-start', gap: 10,
+                  background: 'rgba(212,160,23,0.08)',
+                  border: '1px solid rgba(212,160,23,0.2)',
+                  borderRadius: 8, padding: '10px 12px',
+                }}
+              >
+                <input
+                  type="checkbox"
+                  id="privacyConsent"
+                  checked={consentimentoPrivacidade}
+                  onChange={(e) => setConsentimentoPrivacidade(e.target.checked)}
+                  style={{
+                    width: 18, height: 18, cursor: 'pointer',
+                    accentColor: 'var(--gold-400)', marginTop: 2, flexShrink: 0,
+                  }}
+                />
+                <label
+                  htmlFor="privacyConsent"
+                  style={{
+                    fontSize: 12, color: 'var(--text-primary)', cursor: 'pointer',
+                    fontWeight: 500, lineHeight: 1.5,
+                  }}
+                >
+                  Concordo com a{' '}
+                  <a
+                    href="/docs/PRIVACY_POLICY.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: 'var(--gold-400)', textDecoration: 'none',
+                      fontWeight: 700, borderBottom: '1px solid var(--gold-400)',
+                    }}
+                  >
+                    Política de Privacidade
+                  </a>
+                </label>
+              </motion.div>
+
               <button
                 id="btn-cadastro-submit"
                 className="btn-primary"
                 onClick={handleCadastro}
-                disabled={carregando || validating}
-                style={{ opacity: email.trim() && senha.trim() && nick.trim() && !validating ? 1 : 0.6 }}
+                disabled={carregando || validating || !consentimentoPrivacidade}
+                style={{ opacity: email.trim() && senha.trim() && nick.trim() && !validating && consentimentoPrivacidade ? 1 : 0.6 }}
               >
                 {validating ? 'VERIFICANDO...' : carregando ? 'CRIANDO...' : 'CRIAR CONTA 🚀'}
               </button>
