@@ -275,8 +275,15 @@ function PerfilTab() {
       </div>
 
       {/* Status */}
-      <div className="glass-card-gold" style={{ padding: '10px 14px', marginBottom: 16 }}>
-        <span style={{ fontSize: 13, color: 'var(--text-primary)', fontStyle: 'italic' }}>
+      <div className="glass-card-gold" style={{
+        padding: '24px 16px',
+        marginBottom: 16,
+        minHeight: 120,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <span style={{ fontSize: 15, color: 'var(--text-primary)', fontStyle: 'italic', textAlign: 'center', lineHeight: 1.5 }}>
           "{usuario.statusMsg || '—'}"
         </span>
       </div>
