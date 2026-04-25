@@ -29,15 +29,26 @@ export function GameRoomOverlay() {
       >
         {/* Container do Placar */}
         <div
-          className="w-full rounded-lg overflow-hidden"
           style={{
+            width: '100%',
             backgroundColor: 'var(--obsidian-800)',
             border: '1px solid var(--border-subtle)',
             borderBottom: '2px solid var(--gold-400)',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column'
           }}
         >
           {/* LINHA 1: HEADERS */}
-          <div className="flex items-center justify-between px-4 py-3" style={{ minHeight: '44px' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            padding: '12px 16px',
+            minHeight: '44px'
+          }}>
             {/* TIME */}
             <div style={{ flex: '0.8', textAlign: 'center' }}>
               <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
@@ -96,7 +107,14 @@ export function GameRoomOverlay() {
           <div style={{ height: '1px', backgroundColor: 'var(--border-subtle)' }} />
 
           {/* LINHA 2: TIME 1 (VERMELHO) */}
-          <div className="flex items-center justify-between px-4 py-3" style={{ minHeight: '48px' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            padding: '12px 16px',
+            minHeight: '48px'
+          }}>
             {/* TIME 🔴 */}
             <div style={{ flex: '0.8', display: 'flex', justifyContent: 'center' }}>
               <div
@@ -144,7 +162,14 @@ export function GameRoomOverlay() {
           </div>
 
           {/* LINHA 3: TIME 2 (AZUL) + TENTOS GRANDE */}
-          <div className="flex items-center justify-between px-4 py-3" style={{ minHeight: '48px' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            padding: '12px 16px',
+            minHeight: '48px'
+          }}>
             {/* TIME 🟣 */}
             <div style={{ flex: '0.8', display: 'flex', justifyContent: 'center' }}>
               <div
