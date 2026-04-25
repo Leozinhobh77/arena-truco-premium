@@ -319,12 +319,14 @@ export function GameRoomOverlay() {
           position="top-right"
           team="vermelho"
           avatar=""
+          namePosition="top"
         />
         <PlayerSlot
           name="Leozinhobh"
           position="bottom-left"
           team="vermelho"
           avatar=""
+          namePosition="bottom"
         />
         <PlayerSlot
           name="Alex"

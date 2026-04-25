@@ -5,9 +5,10 @@ interface PlayerSlotProps {
   position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
   team: 'vermelho' | 'azul';
   avatar: string;
+  namePosition?: 'top' | 'bottom';
 }
 
-export function PlayerSlot({ name, position, team, avatar }: PlayerSlotProps) {
+export function PlayerSlot({ name, position, team, avatar, namePosition }: PlayerSlotProps) {
   const teamColor = team === 'vermelho' ? 'var(--ruby)' : 'var(--sapphire)';
   const isHorizontal = position.includes('top') || position.includes('bottom');
 
@@ -43,9 +44,13 @@ export function PlayerSlot({ name, position, team, avatar }: PlayerSlotProps) {
       fontWeight: 600,
       color: 'var(--text-primary)',
       whiteSpace: 'nowrap' as const,
-      ...(position === 'top-right' || position === 'top-left'
+      ...(namePosition === 'top'
+        ? { top: '-28px' }
+        : namePosition === 'bottom'
         ? { bottom: '-28px' }
-        : { top: '-28px' })
+        : (position === 'top-right' || position === 'top-left'
+          ? { bottom: '-28px' }
+          : { top: '-28px' }))
     },
     vertical: {
       position: 'absolute' as const,
