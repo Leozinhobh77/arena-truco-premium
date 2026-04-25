@@ -227,8 +227,30 @@ export function GameRoomOverlay() {
               <div style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--text-primary)' }}>0</div>
             </div>
 
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)', flexDirection: 'column', gap: '4px' }}>
               <div style={{ fontSize: '36px', fontWeight: 'bold', color: 'var(--gold-400)' }}>2</div>
+              <button
+                onClick={popOverlay}
+                style={{
+                  padding: '4px 12px',
+                  fontSize: '11px',
+                  fontWeight: 'bold',
+                  backgroundColor: 'transparent',
+                  border: '1px solid #D4D4D4',
+                  borderRadius: '4px',
+                  color: '#D4D4D4',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(212,212,212,0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                × SAIR
+              </button>
             </div>
 
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -251,7 +273,7 @@ export function GameRoomOverlay() {
         {/* Quadrado Verde Aveludado - Mesa de Jogo */}
         <div style={{
           width: '100%',
-          maxWidth: '432px',
+          maxWidth: '367px',
           aspectRatio: '1',
           backgroundColor: '#2d5a3d',
           border: '2px solid #1a3a28',
@@ -283,39 +305,6 @@ export function GameRoomOverlay() {
             Área de Jogo
           </div>
         </div>
-      </div>
-
-      {/* Botão SAIR - embaixo, quase colado no chat */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'flex-start',
-        padding: '0 16px 2px 16px',
-        width: '100%'
-      }}>
-        <motion.button
-          onClick={popOverlay}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.98 }}
-          style={{
-            padding: '12px 32px',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            backgroundColor: 'rgba(230,57,70,0.15)',
-            border: '1.5px solid var(--ruby)',
-            borderRadius: '12px',
-            color: 'var(--ruby)',
-            cursor: 'pointer',
-            transition: 'all 0.2s'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(230,57,70,0.25)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(230,57,70,0.15)';
-          }}
-        >
-          × SAIR
-        </motion.button>
       </div>
 
       {/* CHAT ROOM FOOTER */}
