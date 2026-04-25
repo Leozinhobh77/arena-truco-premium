@@ -1,37 +1,10 @@
 // ============================================================
 // ARENA MENU OVERLAY — Arena Truco Premium
-// Visualização de teste da Arena em perspectiva drone
+// Laboratório de testes — espaço vazio para experimentos
 // ============================================================
 
-import { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
-
-// Lazy import: Three.js (~350KB gzip) só carrega quando este overlay abre
-const Arena3D = lazy(() => import('../components/Arena3D').then(m => ({ default: m.Arena3D })));
-
-function Arena3DFallback() {
-  return (
-    <div style={{
-      width: '100%', height: '100%', minHeight: 300,
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      gap: 12, background: 'linear-gradient(135deg, #0a0a14 0%, #1a1a2e 100%)',
-      borderRadius: 12,
-    }}>
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-        style={{
-          width: 40, height: 40, borderRadius: '50%',
-          border: '3px solid rgba(212,160,23,0.2)',
-          borderTop: '3px solid var(--gold-400)',
-        }}
-      />
-      <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Carregando Arena 3D...</span>
-    </div>
-  );
-}
 
 // ── MAIN OVERLAY ─────────────────────────────────────────────
 export function ArenaMenuOverlay() {
@@ -86,7 +59,7 @@ export function ArenaMenuOverlay() {
           </h2>
         </div>
 
-        {/* Conteúdo — Renderização 3D */}
+        {/* Conteúdo — Laboratório de Testes (vazio) */}
         <div style={{
           flex: 1,
           overflow: 'hidden',
@@ -94,26 +67,15 @@ export function ArenaMenuOverlay() {
           display: 'flex',
           flexDirection: 'column',
           gap: 8,
+          justifyContent: 'center',
+          alignItems: 'center',
         }}>
           <div style={{
-            flex: 1,
-            borderRadius: 12,
-            border: '1px solid rgba(255,180,0,0.2)',
-            overflow: 'hidden',
-          }}>
-            <Suspense fallback={<Arena3DFallback />}>
-              <Arena3D />
-            </Suspense>
-          </div>
-
-          <div style={{
-            fontSize: 11,
+            fontSize: 13,
             color: 'var(--text-muted)',
             textAlign: 'center',
-            padding: '0 8px',
-            lineHeight: 1.5,
           }}>
-            Renderização 3D realista · Iluminação dramática · Marca Arena Truco
+            🧪 Laboratório de Testes
           </div>
         </div>
 
