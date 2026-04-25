@@ -47,41 +47,41 @@ export function GameRoomOverlay() {
             alignItems: 'center',
             justifyContent: 'space-around',
             width: '100%',
-            padding: '16px 12px',
-            minHeight: '50px',
-            gap: '24px'
+            padding: '10px 12px',
+            minHeight: '35px',
+            gap: '0'
           }}>
             {/* TIME */}
-            <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>
+            <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
+              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
                 TIME
               </div>
             </div>
 
             {/* RODADA */}
-            <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>
+            <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
+              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
                 RODADA
               </div>
             </div>
 
             {/* PONTOS */}
-            <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>
+            <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
+              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
                 PONTOS
               </div>
             </div>
 
             {/* TENTOS */}
-            <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>
+            <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
+              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
                 TENTOS
               </div>
             </div>
 
             {/* JOGOS */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>
+              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
                 JOGOS
               </div>
             </div>
@@ -96,7 +96,7 @@ export function GameRoomOverlay() {
             alignItems: 'stretch',
             justifyContent: 'space-around',
             width: '100%',
-            minHeight: '70px',
+            minHeight: '49px',
             gap: '0',
             position: 'relative'
           }}>
@@ -155,7 +155,7 @@ export function GameRoomOverlay() {
             alignItems: 'stretch',
             justifyContent: 'space-around',
             width: '100%',
-            minHeight: '70px',
+            minHeight: '49px',
             gap: '0'
           }}>
             {/* Container TIME 🟣 */}
