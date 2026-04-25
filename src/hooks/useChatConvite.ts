@@ -41,7 +41,7 @@ export function useChatConvite(meuId: string | undefined) {
     channelRef.current = channel;
 
     return () => {
-      supabase.removeChannel(channel);
+      channel.unsubscribe();
     };
   }, [meuId]);
 
