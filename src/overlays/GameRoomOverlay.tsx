@@ -103,8 +103,8 @@ export function GameRoomOverlay() {
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <div
                 style={{
-                  width: '20px',
-                  height: '20px',
+                  width: '16px',
+                  height: '16px',
                   borderRadius: '50%',
                   backgroundColor: 'var(--ruby)',
                   border: '1.5px solid rgba(255,255,255,0.3)',
@@ -119,8 +119,8 @@ export function GameRoomOverlay() {
                 <div
                   key={i}
                   style={{
-                    width: '20px',
-                    height: '20px',
+                    width: '16px',
+                    height: '16px',
                     borderRadius: '50%',
                     border: '1.5px solid rgba(255,255,255,0.5)',
                     backgroundColor: 'transparent',
@@ -162,8 +162,8 @@ export function GameRoomOverlay() {
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <div
                 style={{
-                  width: '20px',
-                  height: '20px',
+                  width: '16px',
+                  height: '16px',
                   borderRadius: '50%',
                   backgroundColor: 'var(--sapphire)',
                   border: '1.5px solid rgba(255,255,255,0.3)',
@@ -178,8 +178,8 @@ export function GameRoomOverlay() {
                 <div
                   key={i}
                   style={{
-                    width: '20px',
-                    height: '20px',
+                    width: '16px',
+                    height: '16px',
                     borderRadius: '50%',
                     border: '1.5px solid rgba(255,255,255,0.5)',
                     backgroundColor: 'transparent',
