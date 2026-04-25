@@ -270,8 +270,8 @@ export function GameRoomOverlay() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        padding: '24px 16px'
+        justifyContent: 'flex-start',
+        padding: '56px 16px 24px 16px'
       }}>
         {/* Quadrado Verde Aveludado - Mesa de Jogo */}
         <div style={{
