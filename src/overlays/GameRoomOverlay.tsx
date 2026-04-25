@@ -186,9 +186,7 @@ export function GameRoomOverlay() {
             </div>
 
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
-                <div style={{ fontSize: '44px', fontWeight: 'bold', color: 'var(--gold-400)', lineHeight: '1', zIndex: 10 }}>2</div>
-              </div>
+              <div style={{ fontSize: '36px', fontWeight: 'bold', color: 'var(--gold-400)' }}>2</div>
             </div>
 
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
