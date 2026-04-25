@@ -48,7 +48,7 @@ export function PlayerSlot({ name, position, team, avatar, namePosition, nameOri
       ...(namePosition === 'top'
         ? { top: '-20px' }
         : namePosition === 'bottom'
-        ? { bottom: '-28px' }
+        ? { bottom: '-25px' }
         : (position === 'top-right' || position === 'top-left'
           ? { bottom: '-28px' }
           : { top: '-28px' }))
@@ -62,9 +62,9 @@ export function PlayerSlot({ name, position, team, avatar, namePosition, nameOri
       transform: 'rotate(180deg)',
       whiteSpace: 'nowrap' as const,
       ...(position === 'top-left'
-        ? { top: '25px', left: '-15px' }
+        ? { top: '25px', left: '-18px' }
         : position === 'bottom-right'
-        ? { bottom: '20px', right: '-15px' }
+        ? { bottom: '20px', right: '-18px' }
         : { right: '-35px' })
     }
   };
