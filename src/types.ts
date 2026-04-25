@@ -99,6 +99,7 @@ export type TelaId =
 export type OverlayId =
   | 'salas'
   | 'jogo'
+  | 'game-room'
   | 'amigos-online'
   | 'clan-chat'
   | 'configuracoes'

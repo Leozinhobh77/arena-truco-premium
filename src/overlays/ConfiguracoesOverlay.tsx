@@ -56,6 +56,10 @@ export function ConfiguracoesOverlay() {
     pushOverlay('arena-menu');
   };
 
+  const handleGameRoom = () => {
+    pushOverlay('game-room');
+  };
+
   return (
     <div className="overlay">
       <div className="overlay-backdrop" onClick={popOverlay} />
@@ -132,6 +136,26 @@ export function ConfiguracoesOverlay() {
           >
             <span style={{ fontSize: 20 }}>🎮</span>
             <span style={{ fontSize: 15, fontWeight: 600 }}>Arena</span>
+          </button>
+
+          <button
+            onClick={handleGameRoom}
+            style={{
+              width: '100%', padding: 16, textAlign: 'left',
+              background: 'rgba(212,160,23,0.1)', border: '1px solid var(--gold-400)',
+              borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: 12,
+              color: 'var(--text-primary)', cursor: 'pointer', marginTop: 8,
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(212,160,23,0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(212,160,23,0.1)';
+            }}
+          >
+            <span style={{ fontSize: 20 }}>🎴</span>
+            <span style={{ fontSize: 15, fontWeight: 600 }}>Sala de Jogos</span>
           </button>
 
           <div className="separator" style={{ margin: '10px 0' }} />
