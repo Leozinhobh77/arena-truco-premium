@@ -1,9 +1,10 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
 import { useState } from 'react';
 
 export function GameRoomOverlay() {
   const { popOverlay } = useNavigationStore();
+  const [chatExpanded, setChatExpanded] = useState(false);
   const [messages, setMessages] = useState([
     { id: 1, author: '🤖 BOT SILVA', text: 'Vou colocar uma carta aí! 🎴', timestamp: '14:25' },
     { id: 2, author: '👤 VOCÊ', text: 'Bora! Dá uma boa carta aí! 😎🔥', timestamp: '14:26' },
@@ -306,20 +307,70 @@ export function GameRoomOverlay() {
         </div>
       </div>
 
-      {/* CHAT ROOM FOOTER */}
+      {/* CHAT ROOM FOOTER - COMPACTO */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="w-full px-4 py-3"
+        className="w-full px-4 py-2"
         style={{
           backgroundColor: 'var(--obsidian-900)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '8px'
+          gap: '6px'
         }}
       >
-        {/* Container Chat */}
+        {/* Botões de Controle */}
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          justifyContent: 'flex-start'
+        }}>
+          <button
+            onClick={() => setChatExpanded(true)}
+            style={{
+              padding: '4px 10px',
+              fontSize: '12px',
+              backgroundColor: 'transparent',
+              border: '1px solid var(--gold-400)',
+              borderRadius: '4px',
+              color: 'var(--gold-400)',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(212,160,23,0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
+          >
+            ⬆️ EXPANDIR
+          </button>
+          <button
+            onClick={() => {}}
+            style={{
+              padding: '4px 10px',
+              fontSize: '12px',
+              backgroundColor: 'transparent',
+              border: '1px solid rgba(230,57,70,0.5)',
+              borderRadius: '4px',
+              color: 'rgba(230,57,70,0.7)',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(230,57,70,0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
+          >
+            🔇 DESATIVAR
+          </button>
+        </div>
+
+        {/* Container Chat Compacto */}
         <div style={{
           width: '100%',
           backgroundColor: 'var(--obsidian-800)',
@@ -330,43 +381,11 @@ export function GameRoomOverlay() {
           display: 'flex',
           flexDirection: 'column'
         }}>
-          {/* Área de Mensagens */}
-          <div style={{
-            flex: 1,
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            padding: '8px 10px',
-            maxHeight: '80px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '4px'
-          }}>
-            {messages.map((msg) => (
-              <div key={msg.id} style={{
-                display: 'flex',
-                gap: '6px',
-                fontSize: '13px',
-                lineHeight: '1.3'
-              }}>
-                <span style={{ fontWeight: 'bold', color: 'var(--gold-400)', minWidth: '80px', whiteSpace: 'nowrap' }}>
-                  {msg.author}
-                </span>
-                <span style={{ color: 'var(--text-primary)', flex: 1, wordBreak: 'break-word' }}>
-                  {msg.text}
-                </span>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', minWidth: '35px', textAlign: 'right' }}>
-                  {msg.timestamp}
-                </span>
-              </div>
-            ))}
-          </div>
-
           {/* Input e Botões */}
           <div style={{
             display: 'flex',
             gap: '6px',
             padding: '6px 8px',
-            borderTop: '1px solid var(--border-subtle)',
             alignItems: 'center'
           }}>
             {/* Input */}
@@ -378,8 +397,8 @@ export function GameRoomOverlay() {
               placeholder="Escreva uma msg..."
               style={{
                 flex: 1,
-                padding: '6px 8px',
-                fontSize: '12px',
+                padding: '8px 10px',
+                fontSize: '16px',
                 backgroundColor: 'rgba(255,255,255,0.05)',
                 border: '1px solid var(--border-subtle)',
                 borderRadius: '6px',
@@ -392,8 +411,8 @@ export function GameRoomOverlay() {
             <button
               onClick={() => setInputValue(inputValue + '😊')}
               style={{
-                padding: '4px 6px',
-                fontSize: '12px',
+                padding: '6px 8px',
+                fontSize: '16px',
                 backgroundColor: 'transparent',
                 border: 'none',
                 color: 'var(--gold-400)',
@@ -407,8 +426,8 @@ export function GameRoomOverlay() {
             <button
               onClick={handleSendMessage}
               style={{
-                padding: '6px 12px',
-                fontSize: '12px',
+                padding: '8px 14px',
+                fontSize: '14px',
                 fontWeight: 'bold',
                 backgroundColor: 'var(--gold-400)',
                 border: 'none',
@@ -429,6 +448,182 @@ export function GameRoomOverlay() {
           </div>
         </div>
       </motion.div>
+
+      {/* CHAT EXPANDIDO - MODAL COM GLASSMORPHISM */}
+      <AnimatePresence>
+        {chatExpanded && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setChatExpanded(false)}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundColor: 'rgba(0,0,0,0.3)',
+                zIndex: 99
+              }}
+            />
+
+            {/* Chat Expandido */}
+            <motion.div
+              initial={{ y: '100%', opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: '100%', opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '70%',
+                backgroundColor: 'rgba(45, 45, 50, 0.85)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(212,160,23,0.3)',
+                borderTop: '2px solid var(--gold-400)',
+                borderBottomLeftRadius: 0,
+                borderBottomRightRadius: 0,
+                borderTopLeftRadius: '16px',
+                borderTopRightRadius: '16px',
+                display: 'flex',
+                flexDirection: 'column',
+                zIndex: 100,
+                overflow: 'hidden'
+              }}
+            >
+              {/* Header */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '12px 16px',
+                borderBottom: '1px solid rgba(212,160,23,0.2)'
+              }}>
+                <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--gold-400)' }}>
+                  💬 Histórico de Chat
+                </span>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={() => {}}
+                    style={{
+                      padding: '4px 10px',
+                      fontSize: '12px',
+                      backgroundColor: 'transparent',
+                      border: '1px solid rgba(230,57,70,0.5)',
+                      borderRadius: '4px',
+                      color: 'rgba(230,57,70,0.7)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    🔇 DESATIVAR
+                  </button>
+                  <button
+                    onClick={() => setChatExpanded(false)}
+                    style={{
+                      padding: '4px 10px',
+                      fontSize: '12px',
+                      backgroundColor: 'transparent',
+                      border: '1px solid var(--gold-400)',
+                      borderRadius: '4px',
+                      color: 'var(--gold-400)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    ✕ FECHAR
+                  </button>
+                </div>
+              </div>
+
+              {/* Área de Mensagens */}
+              <div style={{
+                flex: 1,
+                overflowY: 'auto',
+                padding: '12px 16px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px'
+              }}>
+                {messages.map((msg) => (
+                  <div key={msg.id} style={{
+                    display: 'flex',
+                    gap: '8px',
+                    fontSize: '16px',
+                    lineHeight: '1.4'
+                  }}>
+                    <span style={{ fontWeight: 'bold', color: 'var(--gold-400)', minWidth: '100px', whiteSpace: 'nowrap' }}>
+                      {msg.author}
+                    </span>
+                    <span style={{ color: 'var(--text-primary)', flex: 1 }}>
+                      {msg.text}
+                    </span>
+                    <span style={{ fontSize: '13px', color: 'var(--text-muted)', minWidth: '40px', textAlign: 'right' }}>
+                      {msg.timestamp}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Input e Botões */}
+              <div style={{
+                display: 'flex',
+                gap: '6px',
+                padding: '10px 16px',
+                borderTop: '1px solid rgba(212,160,23,0.2)',
+                alignItems: 'center'
+              }}>
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  placeholder="Escreva uma msg..."
+                  style={{
+                    flex: 1,
+                    padding: '10px 12px',
+                    fontSize: '16px',
+                    backgroundColor: 'rgba(255,255,255,0.08)',
+                    border: '1px solid rgba(212,160,23,0.3)',
+                    borderRadius: '6px',
+                    color: 'var(--text-primary)',
+                    outline: 'none'
+                  }}
+                />
+
+                <button
+                  onClick={() => setInputValue(inputValue + '😊')}
+                  style={{
+                    padding: '8px 10px',
+                    fontSize: '18px',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  😊
+                </button>
+
+                <button
+                  onClick={handleSendMessage}
+                  style={{
+                    padding: '10px 16px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    backgroundColor: 'var(--gold-400)',
+                    border: 'none',
+                    borderRadius: '6px',
+                    color: 'var(--obsidian-900)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  ➤
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
       </motion.div>
     </div>
   );
