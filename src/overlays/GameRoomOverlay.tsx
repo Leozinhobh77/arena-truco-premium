@@ -6,6 +6,7 @@ export function GameRoomOverlay() {
   const { popOverlay } = useNavigationStore();
   const [chatExpanded, setChatExpanded] = useState(false);
   const [chatDisabled, setChatDisabled] = useState(false);
+  const [soundDisabled, setSoundDisabled] = useState(false);
   const [messages, setMessages] = useState([
     { id: 1, author: '🤖 BOT SILVA', text: 'Vou colocar uma carta aí! 🎴', timestamp: '14:25' },
     { id: 2, author: '👤 VOCÊ', text: 'Bora! Dá uma boa carta aí! 😎🔥', timestamp: '14:26' },
@@ -375,6 +376,33 @@ export function GameRoomOverlay() {
           >
             💬
           </motion.button>
+
+          <motion.button
+            onClick={() => setSoundDisabled(!soundDisabled)}
+            animate={soundDisabled ? { scaleX: -1 } : { scaleX: 1 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              padding: '4px 8px',
+              fontSize: '16px',
+              backgroundColor: 'transparent',
+              border: '1px solid #D4D4D4',
+              borderRadius: '4px',
+              color: soundDisabled ? 'rgba(212,212,212,0.4)' : '#D4D4D4',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              textDecoration: soundDisabled ? 'line-through' : 'none'
+            }}
+            onMouseEnter={(e) => {
+              if (!soundDisabled) {
+                e.currentTarget.style.backgroundColor = 'rgba(212,212,212,0.1)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
+          >
+            {soundDisabled ? '🔇' : '🔊'}
+          </motion.button>
         </div>
 
         {/* Container Chat Compacto */}
@@ -536,6 +564,32 @@ export function GameRoomOverlay() {
                     }}
                   >
                     💬
+                  </motion.button>
+                  <motion.button
+                    onClick={() => setSoundDisabled(!soundDisabled)}
+                    animate={soundDisabled ? { scaleX: -1 } : { scaleX: 1 }}
+                    transition={{ duration: 0.3 }}
+                    style={{
+                      padding: '4px 8px',
+                      fontSize: '16px',
+                      backgroundColor: 'transparent',
+                      border: '1px solid #D4D4D4',
+                      borderRadius: '4px',
+                      color: soundDisabled ? 'rgba(212,212,212,0.4)' : '#D4D4D4',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      textDecoration: soundDisabled ? 'line-through' : 'none'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!soundDisabled) {
+                        e.currentTarget.style.backgroundColor = 'rgba(212,212,212,0.1)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                  >
+                    {soundDisabled ? '🔇' : '🔊'}
                   </motion.button>
                   <button
                     onClick={() => setChatExpanded(false)}
