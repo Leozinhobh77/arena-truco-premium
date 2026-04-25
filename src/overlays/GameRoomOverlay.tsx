@@ -53,35 +53,65 @@ export function GameRoomOverlay() {
           }}>
             {/* TIME */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
+              <div className="text-xs font-bold tracking-wider" style={{
+                color: 'var(--text-muted)',
+                border: '1px solid var(--border-subtle)',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                backgroundColor: 'rgba(255,255,255,0.02)'
+              }}>
                 TIME
               </div>
             </div>
 
             {/* RODADA */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
+              <div className="text-xs font-bold tracking-wider" style={{
+                color: 'var(--text-muted)',
+                border: '1px solid var(--border-subtle)',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                backgroundColor: 'rgba(255,255,255,0.02)'
+              }}>
                 RODADA
               </div>
             </div>
 
             {/* PONTOS */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
+              <div className="text-xs font-bold tracking-wider" style={{
+                color: 'var(--text-muted)',
+                border: '1px solid var(--border-subtle)',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                backgroundColor: 'rgba(255,255,255,0.02)'
+              }}>
                 PONTOS
               </div>
             </div>
 
             {/* TENTOS */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
+              <div className="text-xs font-bold tracking-wider" style={{
+                color: 'var(--text-muted)',
+                border: '1px solid var(--border-subtle)',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                backgroundColor: 'rgba(255,255,255,0.02)'
+              }}>
                 TENTOS
               </div>
             </div>
 
             {/* JOGOS */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
+              <div className="text-xs font-bold tracking-wider" style={{
+                color: 'var(--text-muted)',
+                border: '1px solid var(--border-subtle)',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                backgroundColor: 'rgba(255,255,255,0.02)'
+              }}>
                 JOGOS
               </div>
             </div>
