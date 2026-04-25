@@ -405,7 +405,7 @@ export function FriendActionSheet({ amigo, onClose, status: statusProp }: Friend
                 e.currentTarget.style.transform = 'scale(1)';
               }}
             >
-              {jaDeiLike ? '❤️' : '🤍'} <span style={{ fontSize: 12 }}>{likesCount}</span>
+              {jaDeiLike ? '❤️' : '🤍'} <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>{likesCount}</span>
             </button>
           </div>
 
