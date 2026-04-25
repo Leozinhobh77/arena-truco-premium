@@ -479,7 +479,7 @@ export function GameRoomOverlay() {
                 left: 0,
                 right: 0,
                 height: '70%',
-                backgroundColor: 'rgba(45, 45, 50, 0.60)',
+                backgroundColor: 'rgba(45, 45, 50, 0.50)',
                 backdropFilter: 'blur(10px)',
                 border: '1px solid rgba(212,160,23,0.3)',
                 borderTop: '2px solid var(--gold-400)',
