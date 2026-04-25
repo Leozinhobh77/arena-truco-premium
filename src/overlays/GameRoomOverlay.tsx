@@ -239,29 +239,33 @@ export function GameRoomOverlay() {
         </div>
       </motion.div>
 
-      {/* Mesa Central - Vazio por enquanto */}
+      {/* Mesa Central */}
       <div style={{
         flex: 1,
         display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center'
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyContent: 'flex-start',
+        padding: '16px'
       }}>
-        {/* Botão SAIR no meio */}
+        {/* Botão SAIR - lado esquerdo, acima do chat */}
         <motion.button
           onClick={popOverlay}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.98 }}
           style={{
-            padding: '14px 40px',
-            fontSize: '15px',
+            padding: '12px 32px',
+            fontSize: '14px',
             fontWeight: 'bold',
             backgroundColor: 'rgba(230,57,70,0.15)',
             border: '1.5px solid var(--ruby)',
             borderRadius: '12px',
             color: 'var(--ruby)',
             cursor: 'pointer',
-            transition: 'all 0.2s'
+            transition: 'all 0.2s',
+            marginBottom: '110px',
+            marginRight: '12px',
+            flexShrink: 0
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = 'rgba(230,57,70,0.25)';
@@ -272,6 +276,42 @@ export function GameRoomOverlay() {
         >
           × SAIR
         </motion.button>
+
+        {/* Quadrado Verde Aveludado - Mesa de Jogo */}
+        <div style={{
+          flex: 1,
+          aspectRatio: '1',
+          backgroundColor: '#2d5a3d',
+          border: '3px solid var(--gold-400)',
+          borderRadius: '8px',
+          boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.5), 0 8px 16px rgba(212,160,23,0.3)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '16px',
+          marginBottom: '110px',
+          position: 'relative'
+        }}>
+          {/* Efeito de textura aveludada */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: 'radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%)',
+            borderRadius: '6px',
+            pointerEvents: 'none'
+          }} />
+
+          {/* Conteúdo - Área de Jogo */}
+          <div style={{
+            position: 'relative',
+            zIndex: 1,
+            textAlign: 'center',
+            color: 'var(--text-muted)',
+            fontSize: '12px'
+          }}>
+            Área de Jogo
+          </div>
+        </div>
       </div>
 
       {/* CHAT ROOM FOOTER */}
