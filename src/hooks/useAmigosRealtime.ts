@@ -24,9 +24,34 @@ export function useAmigosRealtime(meuId: string | undefined) {
   const [loading, setLoading] = useState(true);
   const subscriptionRef = useRef<any>(null);
   const amigoIdsRef = useRef<string[]>([]);
-  const presenceChannelsRef = useRef<Map<string, any>>(new Map());
 
-  usePresenceTracker(idAtual);
+  // Atualizar status de um amigo em tempo real (instantâneo)
+  const atualizarAmigoRealtime = useCallback((amigoId: string, novoStatus: string) => {
+    setAmigos((prev) =>
+      prev.map((a) => {
+        if (a.id !== amigoId) return a;
+        const statusValido = (novoStatus as 'disponivel' | 'jogando' | 'offline') || 'offline';
+        return {
+          ...a,
+          statusAmigo: statusValido,
+          ultimaAtividade: formatarUltimaAtividade(statusValido, 0),
+          ultimaAtividadeEm: new Date().toISOString(),
+        };
+      })
+    );
+  }, []);
+
+  // Callback chamado quando presença muda — atualiza status dos amigos
+  const onPresenceSync = useCallback((usuariosAtivos: Set<string>) => {
+    amigoIdsRef.current.forEach(amigoId => {
+      const estaOnline = usuariosAtivos.has(amigoId);
+      if (!estaOnline) {
+        atualizarAmigoRealtime(amigoId, 'offline');
+      }
+    });
+  }, [atualizarAmigoRealtime]);
+
+  usePresenceTracker(idAtual, onPresenceSync);
 
   // Buscar amigos inicialmente
   const carregarAmigos = useCallback(async () => {
@@ -122,73 +147,6 @@ export function useAmigosRealtime(meuId: string | undefined) {
     }
   }, [idAtual]);
 
-  // Atualizar status de um amigo em tempo real (instantâneo)
-  const atualizarAmigoRealtime = useCallback((amigoId: string, novoStatus: string) => {
-    setAmigos((prev) =>
-      prev.map((a) => {
-        if (a.id !== amigoId) return a;
-        const statusValido = (novoStatus as 'disponivel' | 'jogando' | 'offline') || 'offline';
-        return {
-          ...a,
-          statusAmigo: statusValido,
-          ultimaAtividade: formatarUltimaAtividade(statusValido, 0),
-          ultimaAtividadeEm: new Date().toISOString(),
-        };
-      })
-    );
-  }, []);
-
-  // Monitorar presença global (1 canal para todos os amigos)
-  const monitorarPresencaAmigos = useCallback((amigoIds: string[]) => {
-    try {
-      // Limpar canal anterior se existir
-      const canalAnterior = presenceChannelsRef.current.get('arena');
-      if (canalAnterior) {
-        supabase.removeChannel(canalAnterior);
-        presenceChannelsRef.current.delete('arena');
-      }
-
-      // Criar novo canal com listeners configurados ANTES de subscribe
-      const arenaPresence = supabase
-        .channel(`presence-arena`, {
-          config: { presence: { key: `user-${idAtual}` } },
-        })
-        .on('presence', { event: 'sync' }, () => {
-          const state = arenaPresence.presenceState();
-          const usuariosAtivos = new Set(
-            Object.keys(state).map(key => key.split('-')[1])
-          );
-
-          amigoIds.forEach(amigoId => {
-            const estaOnline = usuariosAtivos.has(amigoId);
-            if (!estaOnline) {
-              atualizarAmigoRealtime(amigoId, 'offline');
-            }
-          });
-        })
-        .on('presence', { event: 'leave' }, () => {
-          setTimeout(() => {
-            const state = arenaPresence.presenceState();
-            const usuariosAtivos = new Set(
-              Object.keys(state).map(key => key.split('-')[1])
-            );
-
-            amigoIds.forEach(amigoId => {
-              const estaOnline = usuariosAtivos.has(amigoId);
-              if (!estaOnline) {
-                atualizarAmigoRealtime(amigoId, 'offline');
-              }
-            });
-          }, 100);
-        })
-        .subscribe();
-
-      presenceChannelsRef.current.set('arena', arenaPresence);
-    } catch (err) {
-      console.error('❌ Erro ao monitorar presença:', err);
-    }
-  }, [idAtual, atualizarAmigoRealtime]);
-
   // Iniciar subscription Realtime (monitora mudanças em tempo real)
   const iniciarSubscription = useCallback((amigoIds: string[]) => {
     if (!idAtual || amigoIds.length === 0) return;
@@ -210,9 +168,7 @@ export function useAmigosRealtime(meuId: string | undefined) {
         }
       )
       .subscribe();
-
-    monitorarPresencaAmigos(amigoIds);
-  }, [idAtual, monitorarPresencaAmigos]);
+  }, [idAtual, atualizarAmigoRealtime]);
 
   // Limpar subscription ao desmontar
   useEffect(() => {
@@ -221,11 +177,6 @@ export function useAmigosRealtime(meuId: string | undefined) {
         supabase.removeChannel(subscriptionRef.current);
         subscriptionRef.current = null;
       }
-      const arenaChannel = presenceChannelsRef.current.get('arena');
-      if (arenaChannel) {
-        supabase.removeChannel(arenaChannel);
-      }
-      presenceChannelsRef.current.clear();
     };
   }, []);
 
