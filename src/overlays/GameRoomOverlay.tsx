@@ -178,7 +178,7 @@ export function GameRoomOverlay() {
             alignItems: 'center',
             justifyContent: 'space-around',
             width: '100%',
-            minHeight: '33px',
+            minHeight: '26px',
             gap: '0',
             position: 'relative'
           }}>
@@ -209,7 +209,7 @@ export function GameRoomOverlay() {
             alignItems: 'center',
             justifyContent: 'space-around',
             width: '100%',
-            minHeight: '33px',
+            minHeight: '26px',
             gap: '0',
             position: 'relative'
           }}>
