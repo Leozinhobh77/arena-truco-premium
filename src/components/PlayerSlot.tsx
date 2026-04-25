@@ -14,8 +14,8 @@ export function PlayerSlot({ name, position, team, avatar }: PlayerSlotProps) {
   // Posições absolutas para cada slot
   const positionStyles = {
     'top-right': {
-      top: '20px',
-      right: '20px',
+      top: '30px',
+      right: '40px',
       transform: 'translate(50%, -50%)'
     },
     'top-left': {
