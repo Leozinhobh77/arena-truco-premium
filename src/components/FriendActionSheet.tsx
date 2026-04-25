@@ -217,30 +217,9 @@ export function FriendActionSheet({ amigo, onClose, status: statusProp }: Friend
       });
       botoes.push({
         icon: jogando ? '👁️' : '💬',
-        label: jogando ? 'Assistir Partida' : 'Chamar Chat',
-        disabled: jogando ? false : !disponivel,
-        acao: jogando ? () => {
-          setToast('👁️ Em breve você poderá assistir!');
-          setTimeout(() => setToast(null), 2000);
-        } : (disponivel ? async () => {
-          const ch = supabase.channel(`convite-${amigo.id}`);
-          await ch.send({
-            type: 'broadcast',
-            event: 'convite-chat',
-            payload: {
-              deId: currentUser?.id,
-              deNick: currentUser?.nick,
-              deAvatar: currentUser?.avatar,
-            },
-          });
-          supabase.removeChannel(ch);
-          pushOverlay('chat-privado', {
-            amigoId: amigo.id,
-            amigoNick: amigo.nick,
-            amigoAvatar: amigo.avatar,
-          });
-          onClose();
-        } : () => {}),
+        label: jogando ? 'Assistir Partida' : 'Enviar Chat',
+        disabled: false,
+        acao: onClose,
       });
       botoes.push({
         icon: '📬',
