@@ -5,6 +5,7 @@ import { useState } from 'react';
 export function GameRoomOverlay() {
   const { popOverlay } = useNavigationStore();
   const [chatExpanded, setChatExpanded] = useState(false);
+  const [chatDisabled, setChatDisabled] = useState(false);
   const [messages, setMessages] = useState([
     { id: 1, author: '🤖 BOT SILVA', text: 'Vou colocar uma carta aí! 🎴', timestamp: '14:25' },
     { id: 2, author: '👤 VOCÊ', text: 'Bora! Dá uma boa carta aí! 😎🔥', timestamp: '14:26' },
@@ -332,14 +333,14 @@ export function GameRoomOverlay() {
               padding: '4px 10px',
               fontSize: '12px',
               backgroundColor: 'transparent',
-              border: '1px solid var(--gold-400)',
+              border: '1px solid #D4D4D4',
               borderRadius: '4px',
-              color: 'var(--gold-400)',
+              color: '#D4D4D4',
               cursor: 'pointer',
               transition: 'all 0.2s'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(212,160,23,0.1)';
+              e.currentTarget.style.backgroundColor = 'rgba(212,212,212,0.1)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
@@ -347,27 +348,33 @@ export function GameRoomOverlay() {
           >
             ⬆️ EXPANDIR
           </button>
-          <button
-            onClick={() => {}}
+          <motion.button
+            onClick={() => setChatDisabled(!chatDisabled)}
+            animate={chatDisabled ? { scaleX: -1 } : { scaleX: 1 }}
+            transition={{ duration: 0.3 }}
             style={{
-              padding: '4px 10px',
-              fontSize: '12px',
+              padding: '4px 8px',
+              fontSize: '16px',
               backgroundColor: 'transparent',
-              border: '1px solid rgba(230,57,70,0.5)',
+              border: '1px solid #D4D4D4',
               borderRadius: '4px',
-              color: 'rgba(230,57,70,0.7)',
+              color: chatDisabled ? 'rgba(212,212,212,0.4)' : '#D4D4D4',
               cursor: 'pointer',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              position: 'relative',
+              textDecoration: chatDisabled ? 'line-through' : 'none'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(230,57,70,0.1)';
+              if (!chatDisabled) {
+                e.currentTarget.style.backgroundColor = 'rgba(212,212,212,0.1)';
+              }
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
             }}
           >
-            🔇 DESATIVAR
-          </button>
+            💬
+          </motion.button>
         </div>
 
         {/* Container Chat Compacto */}
@@ -499,36 +506,54 @@ export function GameRoomOverlay() {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '12px 16px',
-                borderBottom: '1px solid rgba(212,160,23,0.2)'
+                borderBottom: '1px solid rgba(212,212,212,0.2)'
               }}>
-                <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--gold-400)' }}>
+                <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#D4D4D4' }}>
                   💬 Histórico de Chat
                 </span>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button
-                    onClick={() => {}}
+                  <motion.button
+                    onClick={() => setChatDisabled(!chatDisabled)}
+                    animate={chatDisabled ? { scaleX: -1 } : { scaleX: 1 }}
+                    transition={{ duration: 0.3 }}
                     style={{
-                      padding: '4px 10px',
-                      fontSize: '12px',
+                      padding: '4px 8px',
+                      fontSize: '16px',
                       backgroundColor: 'transparent',
-                      border: '1px solid rgba(230,57,70,0.5)',
+                      border: '1px solid #D4D4D4',
                       borderRadius: '4px',
-                      color: 'rgba(230,57,70,0.7)',
-                      cursor: 'pointer'
+                      color: chatDisabled ? 'rgba(212,212,212,0.4)' : '#D4D4D4',
+                      cursor: 'pointer',
+                      textDecoration: chatDisabled ? 'line-through' : 'none'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!chatDisabled) {
+                        e.currentTarget.style.backgroundColor = 'rgba(212,212,212,0.1)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
                     }}
                   >
-                    🔇 DESATIVAR
-                  </button>
+                    💬
+                  </motion.button>
                   <button
                     onClick={() => setChatExpanded(false)}
                     style={{
                       padding: '4px 10px',
                       fontSize: '12px',
                       backgroundColor: 'transparent',
-                      border: '1px solid var(--gold-400)',
+                      border: '1px solid #D4D4D4',
                       borderRadius: '4px',
-                      color: 'var(--gold-400)',
-                      cursor: 'pointer'
+                      color: '#D4D4D4',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(212,212,212,0.1)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
                     }}
                   >
                     ✕ FECHAR
