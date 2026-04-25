@@ -140,30 +140,20 @@ export function useAmigosRealtime(meuId: string | undefined) {
 
   // Monitorar presença global (1 canal para todos os amigos)
   const monitorarPresencaAmigos = useCallback((amigoIds: string[]) => {
-    if (presenceChannelsRef.current.has('arena')) return;
-
     try {
-      const arenaPresence = supabase.channel(`presence-arena`, {
-        config: { presence: { key: `user-${idAtual}` } },
-      });
+      // Limpar canal anterior se existir
+      const canalAnterior = presenceChannelsRef.current.get('arena');
+      if (canalAnterior) {
+        supabase.removeChannel(canalAnterior);
+        presenceChannelsRef.current.delete('arena');
+      }
 
-      // ORDEM CORRETA: .on() ANTES de .subscribe()
-      arenaPresence.on('presence', { event: 'sync' }, () => {
-        const state = arenaPresence.presenceState();
-        const usuariosAtivos = new Set(
-          Object.keys(state).map(key => key.split('-')[1])
-        );
-
-        amigoIds.forEach(amigoId => {
-          const estaOnline = usuariosAtivos.has(amigoId);
-          if (!estaOnline) {
-            atualizarAmigoRealtime(amigoId, 'offline');
-          }
-        });
-      });
-
-      arenaPresence.on('presence', { event: 'leave' }, () => {
-        setTimeout(() => {
+      // Criar novo canal com listeners configurados ANTES de subscribe
+      const arenaPresence = supabase
+        .channel(`presence-arena`, {
+          config: { presence: { key: `user-${idAtual}` } },
+        })
+        .on('presence', { event: 'sync' }, () => {
           const state = arenaPresence.presenceState();
           const usuariosAtivos = new Set(
             Object.keys(state).map(key => key.split('-')[1])
@@ -175,15 +165,23 @@ export function useAmigosRealtime(meuId: string | undefined) {
               atualizarAmigoRealtime(amigoId, 'offline');
             }
           });
-        }, 100);
-      });
+        })
+        .on('presence', { event: 'leave' }, () => {
+          setTimeout(() => {
+            const state = arenaPresence.presenceState();
+            const usuariosAtivos = new Set(
+              Object.keys(state).map(key => key.split('-')[1])
+            );
 
-      // Subscribe apenas DEPOIS de adicionar todos os listeners
-      arenaPresence.subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          console.log('✅ Presence channel subscribed');
-        }
-      });
+            amigoIds.forEach(amigoId => {
+              const estaOnline = usuariosAtivos.has(amigoId);
+              if (!estaOnline) {
+                atualizarAmigoRealtime(amigoId, 'offline');
+              }
+            });
+          }, 100);
+        })
+        .subscribe();
 
       presenceChannelsRef.current.set('arena', arenaPresence);
     } catch (err) {
