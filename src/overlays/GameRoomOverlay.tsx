@@ -44,62 +44,45 @@ export function GameRoomOverlay() {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'space-around',
             width: '100%',
-            padding: '12px 16px',
-            minHeight: '44px'
+            padding: '16px 12px',
+            minHeight: '50px',
+            gap: '24px'
           }}>
             {/* TIME */}
-            <div style={{ flex: '0.8', textAlign: 'center' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
+            <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>
                 TIME
               </div>
             </div>
 
             {/* RODADA */}
-            <div style={{ flex: '1.2', textAlign: 'center' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
+            <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>
                 RODADA
               </div>
             </div>
 
             {/* PONTOS */}
-            <div style={{ flex: '0.8', textAlign: 'center' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
+            <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>
                 PONTOS
               </div>
             </div>
 
             {/* TENTOS */}
-            <div style={{ flex: '0.8', textAlign: 'center' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
+            <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>
                 TENTOS
               </div>
             </div>
 
             {/* JOGOS */}
-            <div style={{ flex: '0.8', textAlign: 'center' }}>
-              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>
+            <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>
                 JOGOS
               </div>
-            </div>
-
-            {/* EXIT BUTTON */}
-            <div style={{ flex: '0.6', display: 'flex', justifyContent: 'center' }}>
-              <motion.button
-                onClick={popOverlay}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  color: 'var(--text-secondary)',
-                  cursor: 'pointer',
-                }}
-              >
-                ×
-              </motion.button>
             </div>
           </div>
 
@@ -110,126 +93,167 @@ export function GameRoomOverlay() {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'space-around',
             width: '100%',
-            padding: '12px 16px',
-            minHeight: '48px'
+            padding: '20px 12px',
+            minHeight: '80px',
+            gap: '24px'
           }}>
             {/* TIME 🔴 */}
-            <div style={{ flex: '0.8', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <div
-                className="w-7 h-7 rounded-full flex items-center justify-center"
                 style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '50%',
                   backgroundColor: 'var(--ruby)',
                   border: '2px solid rgba(255,255,255,0.3)',
+                  flexShrink: 0
                 }}
               />
             </div>
 
-            {/* RODADA (3 bolinhas vazadas) */}
-            <div style={{ flex: '1.2', display: 'flex', justifyContent: 'center', gap: '6px' }}>
+            {/* RODADA (3 bolinhas vazadas grandes) */}
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px' }}>
               {[1, 2, 3].map(i => (
                 <div
                   key={i}
-                  className="w-4 h-4 rounded-full"
                   style={{
-                    border: '1.5px solid rgba(255,255,255,0.4)',
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    border: '2.5px solid rgba(255,255,255,0.5)',
                     backgroundColor: 'transparent',
+                    flexShrink: 0
                   }}
                 />
               ))}
             </div>
 
             {/* PONTOS */}
-            <div style={{ flex: '0.8', textAlign: 'center' }}>
-              <div className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
+            <div style={{ flex: 1, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
                 0
               </div>
             </div>
 
             {/* TENTOS (compartilhado, vazio aqui) */}
-            <div style={{ flex: '0.8' }} />
+            <div style={{ flex: 1 }} />
 
             {/* JOGOS */}
-            <div style={{ flex: '0.8', textAlign: 'center' }}>
-              <div className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
+            <div style={{ flex: 1, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
                 0
               </div>
             </div>
-
-            {/* EXIT SPACE */}
-            <div style={{ flex: '0.6' }} />
           </div>
 
           {/* LINHA 3: TIME 2 (AZUL) + TENTOS GRANDE */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'space-around',
             width: '100%',
-            padding: '12px 16px',
-            minHeight: '48px'
+            padding: '20px 12px',
+            minHeight: '80px',
+            gap: '24px'
           }}>
             {/* TIME 🟣 */}
-            <div style={{ flex: '0.8', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <div
-                className="w-7 h-7 rounded-full flex items-center justify-center"
                 style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '50%',
                   backgroundColor: 'var(--sapphire)',
                   border: '2px solid rgba(255,255,255,0.3)',
+                  flexShrink: 0
                 }}
               />
             </div>
 
-            {/* RODADA (3 bolinhas vazadas) */}
-            <div style={{ flex: '1.2', display: 'flex', justifyContent: 'center', gap: '6px' }}>
+            {/* RODADA (3 bolinhas vazadas grandes) */}
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px' }}>
               {[1, 2, 3].map(i => (
                 <div
                   key={i}
-                  className="w-4 h-4 rounded-full"
                   style={{
-                    border: '1.5px solid rgba(255,255,255,0.4)',
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    border: '2.5px solid rgba(255,255,255,0.5)',
                     backgroundColor: 'transparent',
+                    flexShrink: 0
                   }}
                 />
               ))}
             </div>
 
             {/* PONTOS */}
-            <div style={{ flex: '0.8', textAlign: 'center' }}>
-              <div className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
+            <div style={{ flex: 1, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
                 0
               </div>
             </div>
 
-            {/* TENTOS GRANDE (compartilhado entre times) */}
-            <div style={{ flex: '0.8', textAlign: 'center', position: 'relative', top: '-12px' }}>
-              <div className="text-2xl font-bold" style={{ color: 'var(--gold-400)' }}>
+            {/* TENTOS GRANDE (centralizado) */}
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <div style={{ fontSize: '56px', fontWeight: 'bold', color: 'var(--gold-400)', lineHeight: 1 }}>
                 2
               </div>
             </div>
 
             {/* JOGOS */}
-            <div style={{ flex: '0.8', textAlign: 'center' }}>
-              <div className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
+            <div style={{ flex: 1, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
                 0
               </div>
             </div>
-
-            {/* EXIT SPACE */}
-            <div style={{ flex: '0.6' }} />
           </div>
         </div>
       </motion.div>
 
-      {/* Conteúdo - Vazio por enquanto */}
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 opacity-20">🎴</div>
+      {/* Conteúdo - Mesa Central */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px'
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: 'auto' }}>
+          <div style={{ fontSize: '64px', marginBottom: '16px', opacity: 0.2 }}>🎴</div>
           <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
             Próximos componentes...
           </p>
         </div>
+
+        {/* Botão SAIR */}
+        <motion.button
+          onClick={popOverlay}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
+          style={{
+            padding: '16px 48px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            backgroundColor: 'rgba(230,57,70,0.15)',
+            border: '1.5px solid var(--ruby)',
+            borderRadius: '12px',
+            color: 'var(--ruby)',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(230,57,70,0.25)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(230,57,70,0.15)';
+          }}
+        >
+          SAIR
+        </motion.button>
       </div>
       </motion.div>
     </div>
