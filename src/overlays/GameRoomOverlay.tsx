@@ -333,12 +333,14 @@ export function GameRoomOverlay() {
           position="top-left"
           team="azul"
           avatar=""
+          nameOrientation="vertical"
         />
         <PlayerSlot
           name="Brunetts"
           position="bottom-right"
           team="azul"
           avatar=""
+          nameOrientation="vertical"
         />
       </div>
 

@@ -6,9 +6,10 @@ interface PlayerSlotProps {
   team: 'vermelho' | 'azul';
   avatar: string;
   namePosition?: 'top' | 'bottom';
+  nameOrientation?: 'horizontal' | 'vertical';
 }
 
-export function PlayerSlot({ name, position, team, avatar, namePosition }: PlayerSlotProps) {
+export function PlayerSlot({ name, position, team, avatar, namePosition, nameOrientation }: PlayerSlotProps) {
   const teamColor = team === 'vermelho' ? 'var(--ruby)' : 'var(--sapphire)';
   const isHorizontal = position.includes('top') || position.includes('bottom');
 
@@ -146,7 +147,7 @@ export function PlayerSlot({ name, position, team, avatar, namePosition }: Playe
       </div>
 
       {/* Nome do Jogador */}
-      <div style={isHorizontal ? nameStyles.horizontal : nameStyles.vertical}>
+      <div style={nameOrientation ? (nameOrientation === 'horizontal' ? nameStyles.horizontal : nameStyles.vertical) : (isHorizontal ? nameStyles.horizontal : nameStyles.vertical)}>
         {name}
       </div>
     </motion.div>
