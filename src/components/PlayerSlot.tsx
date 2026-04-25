@@ -16,13 +16,13 @@ export function PlayerSlot({ name, position, team, avatar, namePosition, nameOri
   // Posições absolutas para cada slot
   const positionStyles = {
     'top-right': {
-      top: '40px',
+      top: '30px',
       right: '80px',
       transform: 'translate(50%, -50%)'
     },
     'top-left': {
-      top: '60px',
-      left: '10px',
+      top: '100px',
+      left: '20px',
       transform: 'translate(-50%, -50%)'
     },
     'bottom-left': {
@@ -31,8 +31,8 @@ export function PlayerSlot({ name, position, team, avatar, namePosition, nameOri
       transform: 'translate(-50%, 50%)'
     },
     'bottom-right': {
-      bottom: '300px',
-      right: '10px',
+      bottom: '200px',
+      right: '20px',
       transform: 'translate(50%, 50%)'
     }
   };
