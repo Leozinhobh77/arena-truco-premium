@@ -56,7 +56,7 @@ export function GameRoomOverlay() {
                 fontSize: '11px',
                 fontWeight: 'bold',
                 letterSpacing: '0.08em',
-                color: 'var(--text-muted)',
+                color: '#D4D4D4',
                 border: '1px solid var(--border-subtle)',
                 padding: '4px 10px',
                 borderRadius: '6px',
@@ -71,7 +71,7 @@ export function GameRoomOverlay() {
                 fontSize: '11px',
                 fontWeight: 'bold',
                 letterSpacing: '0.08em',
-                color: 'var(--text-muted)',
+                color: '#D4D4D4',
                 border: '1px solid var(--border-subtle)',
                 padding: '4px 10px',
                 borderRadius: '6px',
@@ -86,7 +86,7 @@ export function GameRoomOverlay() {
                 fontSize: '11px',
                 fontWeight: 'bold',
                 letterSpacing: '0.08em',
-                color: 'var(--text-muted)',
+                color: '#D4D4D4',
                 border: '1px solid var(--border-subtle)',
                 padding: '4px 10px',
                 borderRadius: '6px',
@@ -101,7 +101,7 @@ export function GameRoomOverlay() {
                 fontSize: '11px',
                 fontWeight: 'bold',
                 letterSpacing: '0.08em',
-                color: 'var(--text-muted)',
+                color: '#D4D4D4',
                 border: '1px solid var(--border-subtle)',
                 padding: '4px 10px',
                 borderRadius: '6px',
@@ -116,7 +116,7 @@ export function GameRoomOverlay() {
                 fontSize: '11px',
                 fontWeight: 'bold',
                 letterSpacing: '0.08em',
-                color: 'var(--text-muted)',
+                color: '#D4D4D4',
                 border: '1px solid var(--border-subtle)',
                 padding: '4px 10px',
                 borderRadius: '6px',
@@ -185,8 +185,10 @@ export function GameRoomOverlay() {
               <div style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--text-primary)' }}>0</div>
             </div>
 
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)', position: 'relative' }}>
-              <div style={{ fontSize: '44px', fontWeight: 'bold', color: 'var(--gold-400)', lineHeight: '1.2', zIndex: 10, display: 'flex', alignItems: 'center' }}>2</div>
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
+                <div style={{ fontSize: '44px', fontWeight: 'bold', color: 'var(--gold-400)', lineHeight: '1', zIndex: 10 }}>2</div>
+              </div>
             </div>
 
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
