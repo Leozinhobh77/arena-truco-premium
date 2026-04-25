@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
 import { useState } from 'react';
+import { PlayerSlot } from '../components/PlayerSlot';
 
 export function GameRoomOverlay() {
   const { popOverlay } = useNavigationStore();
@@ -274,7 +275,8 @@ export function GameRoomOverlay() {
         paddingTop: '70px',
         paddingBottom: '24px',
         paddingLeft: '16px',
-        paddingRight: '16px'
+        paddingRight: '16px',
+        position: 'relative'
       }}>
         {/* Quadrado Verde Aveludado - Mesa de Jogo */}
         <div style={{
@@ -310,6 +312,32 @@ export function GameRoomOverlay() {
             Área de Jogo
           </div>
         </div>
+
+        {/* PlayerSlots - 4 Jogadores ao redor da Mesa */}
+        <PlayerSlot
+          name="Morena_40"
+          position="top-right"
+          team="vermelho"
+          avatar=""
+        />
+        <PlayerSlot
+          name="Leozinhobh"
+          position="bottom-left"
+          team="vermelho"
+          avatar=""
+        />
+        <PlayerSlot
+          name="Alex"
+          position="top-left"
+          team="azul"
+          avatar=""
+        />
+        <PlayerSlot
+          name="Brunetts"
+          position="bottom-right"
+          team="azul"
+          avatar=""
+        />
       </div>
 
       {/* CHAT ROOM FOOTER - COMPACTO */}
