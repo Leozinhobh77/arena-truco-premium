@@ -10,7 +10,6 @@ interface PlayerSlotProps {
 export function PlayerSlot({ name, position, team, avatar }: PlayerSlotProps) {
   const teamColor = team === 'vermelho' ? 'var(--ruby)' : 'var(--sapphire)';
   const isHorizontal = position.includes('top') || position.includes('bottom');
-  const isVertical = position.includes('left') || position.includes('right');
 
   // Posições absolutas para cada slot
   const positionStyles = {
