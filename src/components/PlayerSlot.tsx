@@ -15,11 +15,11 @@ export function PlayerSlot({ name, position, team, avatar }: PlayerSlotProps) {
   const positionStyles = {
     'top-right': {
       top: '30px',
-      right: '40px',
+      right: '80px',
       transform: 'translate(50%, -50%)'
     },
     'top-left': {
-      top: '20px',
+      top: '100px',
       left: '20px',
       transform: 'translate(-50%, -50%)'
     },
