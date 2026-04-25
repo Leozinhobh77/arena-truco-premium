@@ -7,7 +7,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
+import { useAuthStore } from '../stores/useAuthStore';
 import { useStatusAmizade, useAmizadeActions } from '../hooks/useAmizade';
+import { useStatusLikes } from '../hooks/useStatusLikes';
 import type { Amigo, Usuario } from '../types';
 
 interface FriendActionSheetProps {
@@ -26,8 +28,10 @@ interface ActionBtn {
 
 export function FriendActionSheet({ amigo, onClose, status: statusProp }: FriendActionSheetProps) {
   const { pushOverlay } = useNavigationStore();
+  const { usuario: currentUser } = useAuthStore();
   const { status, amizadeId, loading: statusLoading, cooldownAte, euEnviei } = useStatusAmizade(amigo.id);
   const { enviarSolicitacao, aceitarSolicitacao, removerAmigo, loading: acaoLoading } = useAmizadeActions();
+  const { likesCount, jaDeiLike, toggleLike } = useStatusLikes(amigo.id, currentUser?.id);
 
   const [toast, setToast] = useState<string | null>(null);
   const [cooldownTexto, setCooldownTexto] = useState('');
@@ -369,6 +373,40 @@ export function FriendActionSheet({ amigo, onClose, status: statusProp }: Friend
                 {statusLabel}
               </div>
             </div>
+          </div>
+
+          {/* Label: Status + Like Button */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 8,
+            paddingLeft: 4,
+          }}>
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Status</span>
+            <button
+              onClick={toggleLike}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: 16,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                padding: 0,
+                color: jaDeiLike ? '#e63946' : 'rgba(255,255,255,0.5)',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+              }}
+            >
+              {jaDeiLike ? '❤️' : '🤍'} <span style={{ fontSize: 12 }}>{likesCount}</span>
+            </button>
           </div>
 
           {/* Mensagem de status */}
