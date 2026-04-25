@@ -378,8 +378,8 @@ export function FriendActionSheet({ amigo, onClose, status: statusProp }: Friend
           {/* Label: Status + Like Button */}
           <div style={{
             display: 'flex',
-            justifyContent: 'space-between',
             alignItems: 'center',
+            gap: 8,
             marginBottom: 8,
             paddingLeft: 4,
           }}>
