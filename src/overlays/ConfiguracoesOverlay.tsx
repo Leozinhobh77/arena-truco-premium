@@ -45,17 +45,14 @@ export function ConfiguracoesOverlay() {
   };
 
   const handleEditarPerfil = () => {
-    popOverlay();
     pushOverlay('perfil', { editMode: true });
   };
 
   const handleStatus = () => {
-    popOverlay();
     pushOverlay('status-editor');
   };
 
   const handleArenaMenu = () => {
-    popOverlay();
     pushOverlay('arena-menu');
   };
 
