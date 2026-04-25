@@ -66,7 +66,9 @@ export function PlayerSlot({ name, position, team, avatar, namePosition, nameOri
       ...(position === 'top-left'
         ? { top: '25px', left: '-18px' }
         : position === 'bottom-right'
-        ? { bottom: '20px', right: '-18px' }
+        ? { bottom: '30px', right: '-18px' }
+        : position === 'bottom-left'
+        ? { right: '-20px' }
         : { right: '-35px' })
     }
   };
