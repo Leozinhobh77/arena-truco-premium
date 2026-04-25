@@ -45,7 +45,11 @@ export function useAmigosRealtime(meuId: string | undefined) {
   const onPresenceSync = useCallback((usuariosAtivos: Set<string>) => {
     amigoIdsRef.current.forEach(amigoId => {
       const estaOnline = usuariosAtivos.has(amigoId);
-      if (!estaOnline) {
+      if (estaOnline) {
+        // Se está no set, marcar como disponível
+        atualizarAmigoRealtime(amigoId, 'disponivel');
+      } else {
+        // Se não está, marcar como offline
         atualizarAmigoRealtime(amigoId, 'offline');
       }
     });
