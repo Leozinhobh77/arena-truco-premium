@@ -8,6 +8,7 @@ export function GameRoomOverlay() {
   const [chatExpanded, setChatExpanded] = useState(false);
   const [chatDisabled, setChatDisabled] = useState(false);
   const [soundDisabled, setSoundDisabled] = useState(false);
+  const [confirmExit, setConfirmExit] = useState(false);
   const [messages, setMessages] = useState([
     { id: 1, author: '🤖 BOT SILVA', text: 'Vou colocar uma carta aí! 🎴', timestamp: '14:25' },
     { id: 2, author: '👤 VOCÊ', text: 'Bora! Dá uma boa carta aí! 😎🔥', timestamp: '14:26' },
@@ -233,28 +234,6 @@ export function GameRoomOverlay() {
 
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)', flexDirection: 'column', gap: '4px' }}>
               <div style={{ fontSize: '36px', fontWeight: 'bold', color: 'var(--gold-400)' }}>2</div>
-              <button
-                onClick={popOverlay}
-                style={{
-                  padding: '4px 12px',
-                  fontSize: '11px',
-                  fontWeight: 'bold',
-                  backgroundColor: 'transparent',
-                  border: '1px solid #D4D4D4',
-                  borderRadius: '4px',
-                  color: '#D4D4D4',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(212,212,212,0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-              >
-                × SAIR
-              </button>
             </div>
 
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -361,7 +340,8 @@ export function GameRoomOverlay() {
         <div style={{
           display: 'flex',
           gap: '8px',
-          justifyContent: 'flex-start'
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}>
           <button
             onClick={() => setChatExpanded(true)}
@@ -438,6 +418,28 @@ export function GameRoomOverlay() {
           >
             {soundDisabled ? '🔇' : '🔊'}
           </motion.button>
+
+          <button
+            onClick={() => setConfirmExit(true)}
+            style={{
+              padding: '4px 10px',
+              fontSize: '12px',
+              backgroundColor: 'transparent',
+              border: '1px solid #D4D4D4',
+              borderRadius: '4px',
+              color: '#D4D4D4',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(212,212,212,0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
+          >
+            × SAIR
+          </button>
         </div>
 
         {/* Container Chat Compacto */}
@@ -732,6 +734,114 @@ export function GameRoomOverlay() {
                   }}
                 >
                   ➤
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Modal de Confirmação de Saída */}
+      <AnimatePresence>
+        {confirmExit && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setConfirmExit(false)}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                zIndex: 999
+              }}
+            />
+
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 10 }}
+              transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                backgroundColor: 'var(--obsidian-800)',
+                border: '2px solid var(--gold-400)',
+                borderRadius: '12px',
+                padding: '24px',
+                zIndex: 1000,
+                maxWidth: '90%',
+                width: '280px',
+                boxShadow: '0 16px 64px rgba(0,0,0,0.5)'
+              }}
+            >
+              <div style={{
+                fontSize: '16px',
+                fontWeight: 'bold',
+                color: 'var(--text-primary)',
+                marginBottom: '16px',
+                textAlign: 'center'
+              }}>
+                Tem certeza que deseja sair da sala?
+              </div>
+
+              <div style={{
+                display: 'flex',
+                gap: '10px',
+                justifyContent: 'center'
+              }}>
+                <button
+                  onClick={() => setConfirmExit(false)}
+                  style={{
+                    padding: '8px 16px',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    backgroundColor: 'transparent',
+                    border: '1px solid #D4D4D4',
+                    borderRadius: '4px',
+                    color: '#D4D4D4',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(212,212,212,0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  onClick={() => {
+                    setConfirmExit(false);
+                    popOverlay();
+                  }}
+                  style={{
+                    padding: '8px 16px',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    backgroundColor: 'rgba(230,57,70,0.2)',
+                    border: '1px solid rgba(230,57,70,0.4)',
+                    borderRadius: '4px',
+                    color: 'var(--ruby)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(230,57,70,0.3)';
+                    e.currentTarget.style.borderColor = 'var(--ruby)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(230,57,70,0.2)';
+                    e.currentTarget.style.borderColor = 'rgba(230,57,70,0.4)';
+                  }}
+                >
+                  Sair
                 </button>
               </div>
             </motion.div>

@@ -26,7 +26,7 @@ export function PlayerSlot({ name, position, team, avatar, namePosition, nameOri
       transform: 'translate(-50%, -50%)'
     },
     'bottom-left': {
-      bottom: '135px',
+      bottom: '100px',
       left: '80px',
       transform: 'translate(-50%, 50%)'
     },
