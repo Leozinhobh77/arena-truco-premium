@@ -110,7 +110,8 @@ export type OverlayId =
   | 'recados'
   | 'arena-menu'
   | 'solicitacoes-amizade'
-  | 'status-editor';
+  | 'status-editor'
+  | 'chat-privado';
 
 export type StatusAmizade = 'pendente' | 'aceita' | 'rejeitada' | 'nenhuma';
 

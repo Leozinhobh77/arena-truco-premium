@@ -130,8 +130,12 @@ export function FriendActionSheet({ amigo, onClose, status: statusProp }: Friend
         label: 'Chamar Chat',
         disabled: false,
         acao: () => {
-          setToast('💬 Chat privado em breve!');
-          setTimeout(() => setToast(null), 2000);
+          pushOverlay('chat-privado', {
+            amigoId: amigo.id,
+            amigoNick: amigo.nick,
+            amigoAvatar: amigo.avatar,
+          });
+          onClose();
         },
       });
       botoes.push({

@@ -28,6 +28,9 @@ const RecadosOverlay = lazy(() => import('./overlays/RecadosOverlay').then(m => 
 const ArenaMenuOverlay = lazy(() => import('./overlays/ArenaMenuOverlay').then(m => ({ default: m.ArenaMenuOverlay })));
 const SolicitacoesOverlay = lazy(() => import('./overlays/SolicitacoesOverlay').then(m => ({ default: m.SolicitacoesOverlay })));
 const StatusEditorOverlay = lazy(() => import('./overlays/StatusEditorOverlay').then(m => ({ default: m.StatusEditorOverlay })));
+const ChatPrivadoOverlay = lazy(() => import('./overlays/ChatPrivadoOverlay').then(m => ({ default: m.ChatPrivadoOverlay })));
+import { ChatConviteBanner } from './components/ChatConviteBanner';
+import { useChatConvite } from './hooks/useChatConvite';
 import type { Amigo } from './types';
 
 // ── Ícones SVG Inline da Nav Bar ────────────────────────────
@@ -171,7 +174,8 @@ function LazyScreenWrapper({ ScreenComponent, index, activeTab }: { ScreenCompon
 // ── Main Shell ──────────────────────────────────────────────
 export function App() {
   const { logado, carregando, inicializarSessao, usuario } = useAuthStore();
-  const { activeTab, setTab, getActiveOverlay, getActiveOverlayProps, popOverlay } = useNavigationStore();
+  const { activeTab, setTab, getActiveOverlay, getActiveOverlayProps, popOverlay, pushOverlay } = useNavigationStore();
+  const { convitePendente, limparConvite } = useChatConvite(usuario?.id);
 
   // Recupera sessão salva do Supabase ao iniciar o app
   useEffect(() => {
@@ -184,6 +188,23 @@ export function App() {
     () => setTab(Math.min(activeTab + 1, 4)),
     () => setTab(Math.max(activeTab - 1, 0)),
   );
+
+  // Handlers para convites
+  const handleAceitarConvite = () => {
+    const convite = convitePendente;
+    if (convite) {
+      pushOverlay('chat-privado', {
+        amigoId: convite.deId,
+        amigoNick: convite.deNick,
+        amigoAvatar: convite.deAvatar,
+      });
+      limparConvite();
+    }
+  };
+
+  const handleRecusarConvite = () => {
+    limparConvite();
+  };
 
   // Splash de carregamento enquanto verifica sessão
   if (carregando && !logado) {
@@ -250,6 +271,14 @@ export function App() {
             {activeOverlay === 'arena-menu' && <ArenaMenuOverlay key="arena-menu" />}
             {activeOverlay === 'solicitacoes-amizade' && <SolicitacoesOverlay key="solicitacoes-amizade" />}
             {activeOverlay === 'status-editor' && <StatusEditorOverlay key="status-editor" />}
+            {activeOverlay === 'chat-privado' && (
+              <ChatPrivadoOverlay
+                key="chat-privado"
+                amigoId={getActiveOverlayProps().amigoId as string}
+                amigoNick={getActiveOverlayProps().amigoNick as string}
+                amigoAvatar={getActiveOverlayProps().amigoAvatar as string}
+              />
+            )}
             {activeOverlay === 'friend-action' && (
               <FriendActionSheet
                 key="friend-action"
@@ -260,6 +289,14 @@ export function App() {
             )}
           </AnimatePresence>
         </Suspense>
+
+        {/* Chat Convite Banner — sempre ativo, flutuante */}
+        <ChatConviteBanner
+          convite={convitePendente}
+          onAceitar={handleAceitarConvite}
+          onRecusar={handleRecusarConvite}
+          onDismiss={limparConvite}
+        />
       </div>
     </AmigosRealtimeProvider>
   );
