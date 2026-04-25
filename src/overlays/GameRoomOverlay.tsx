@@ -272,9 +272,8 @@ export function GameRoomOverlay() {
       }}>
         {/* Quadrado Verde Aveludado - Mesa de Jogo */}
         <div style={{
-          width: '100%',
-          maxWidth: '294px',
-          aspectRatio: '1',
+          width: '300px',
+          height: '310px',
           backgroundColor: '#2d5a3d',
           border: '2px solid #1a3a28',
           borderRadius: '8px',
