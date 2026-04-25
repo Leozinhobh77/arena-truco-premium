@@ -89,8 +89,8 @@ export function GameRoomOverlay() {
             alignItems: 'center',
             justifyContent: 'space-around',
             width: '100%',
-            padding: '7px 12px',
-            minHeight: '29px',
+            padding: '5px 12px',
+            minHeight: '23px',
             gap: '0'
           }}>
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
@@ -178,7 +178,7 @@ export function GameRoomOverlay() {
             alignItems: 'center',
             justifyContent: 'space-around',
             width: '100%',
-            minHeight: '26px',
+            minHeight: '21px',
             gap: '0',
             position: 'relative'
           }}>
@@ -209,7 +209,7 @@ export function GameRoomOverlay() {
             alignItems: 'center',
             justifyContent: 'space-around',
             width: '100%',
-            minHeight: '26px',
+            minHeight: '21px',
             gap: '0',
             position: 'relative'
           }}>
