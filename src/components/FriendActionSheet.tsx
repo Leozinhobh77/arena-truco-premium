@@ -10,6 +10,7 @@ import { useNavigationStore } from '../stores/useNavigationStore';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useStatusAmizade, useAmizadeActions } from '../hooks/useAmizade';
 import { useStatusLikes } from '../hooks/useStatusLikes';
+import { supabase } from '../lib/supabase';
 import type { Amigo, Usuario } from '../types';
 
 interface FriendActionSheetProps {
@@ -129,7 +130,18 @@ export function FriendActionSheet({ amigo, onClose, status: statusProp }: Friend
         icon: '💬',
         label: 'Chamar Chat',
         disabled: false,
-        acao: () => {
+        acao: async () => {
+          const ch = supabase.channel(`convite-${amigo.id}`);
+          await ch.send({
+            type: 'broadcast',
+            event: 'convite-chat',
+            payload: {
+              deId: currentUser?.id,
+              deNick: currentUser?.nick,
+              deAvatar: currentUser?.avatar,
+            },
+          });
+          supabase.removeChannel(ch);
           pushOverlay('chat-privado', {
             amigoId: amigo.id,
             amigoNick: amigo.nick,

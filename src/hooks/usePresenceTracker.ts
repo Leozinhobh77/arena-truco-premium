@@ -32,7 +32,12 @@ export function usePresenceTracker(
     channel.on('presence', { event: 'sync' }, () => {
       if (onPresenceSync) {
         const state = channel.presenceState();
-        const ativos = new Set(Object.keys(state).map(k => k.split('-')[1]));
+        const ativos = new Set(
+          Object.values(state)
+            .flat()
+            .map((p: any) => p.user_id)
+            .filter(Boolean)
+        );
         onPresenceSync(ativos);
       }
     });
@@ -42,7 +47,12 @@ export function usePresenceTracker(
       setTimeout(() => {
         if (onPresenceSync) {
           const state = channel.presenceState();
-          const ativos = new Set(Object.keys(state).map(k => k.split('-')[1]));
+          const ativos = new Set(
+            Object.values(state)
+              .flat()
+              .map((p: any) => p.user_id)
+              .filter(Boolean)
+          );
           onPresenceSync(ativos);
         }
       }, 100);
