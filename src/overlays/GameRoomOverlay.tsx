@@ -47,16 +47,15 @@ export function GameRoomOverlay() {
             alignItems: 'center',
             justifyContent: 'space-around',
             width: '100%',
-            padding: '10px 12px',
-            minHeight: '35px',
+            padding: '8px 12px',
+            minHeight: '32px',
             gap: '0'
           }}>
-            {/* TIME */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
               <div className="text-xs font-bold tracking-wider" style={{
                 color: 'var(--text-muted)',
                 border: '1px solid var(--border-subtle)',
-                padding: '6px 12px',
+                padding: '4px 10px',
                 borderRadius: '6px',
                 backgroundColor: 'rgba(255,255,255,0.02)'
               }}>
@@ -64,12 +63,11 @@ export function GameRoomOverlay() {
               </div>
             </div>
 
-            {/* RODADA */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
               <div className="text-xs font-bold tracking-wider" style={{
                 color: 'var(--text-muted)',
                 border: '1px solid var(--border-subtle)',
-                padding: '6px 12px',
+                padding: '4px 10px',
                 borderRadius: '6px',
                 backgroundColor: 'rgba(255,255,255,0.02)'
               }}>
@@ -77,12 +75,11 @@ export function GameRoomOverlay() {
               </div>
             </div>
 
-            {/* PONTOS */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
               <div className="text-xs font-bold tracking-wider" style={{
                 color: 'var(--text-muted)',
                 border: '1px solid var(--border-subtle)',
-                padding: '6px 12px',
+                padding: '4px 10px',
                 borderRadius: '6px',
                 backgroundColor: 'rgba(255,255,255,0.02)'
               }}>
@@ -90,12 +87,11 @@ export function GameRoomOverlay() {
               </div>
             </div>
 
-            {/* TENTOS */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
               <div className="text-xs font-bold tracking-wider" style={{
                 color: 'var(--text-muted)',
                 border: '1px solid var(--border-subtle)',
-                padding: '6px 12px',
+                padding: '4px 10px',
                 borderRadius: '6px',
                 backgroundColor: 'rgba(255,255,255,0.02)'
               }}>
@@ -103,12 +99,11 @@ export function GameRoomOverlay() {
               </div>
             </div>
 
-            {/* JOGOS */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <div className="text-xs font-bold tracking-wider" style={{
                 color: 'var(--text-muted)',
                 border: '1px solid var(--border-subtle)',
-                padding: '6px 12px',
+                padding: '4px 10px',
                 borderRadius: '6px',
                 backgroundColor: 'rgba(255,255,255,0.02)'
               }}>
@@ -123,131 +118,67 @@ export function GameRoomOverlay() {
           {/* LINHA 2: TIME 1 (VERMELHO) */}
           <div style={{
             display: 'flex',
-            alignItems: 'stretch',
+            alignItems: 'center',
             justifyContent: 'space-around',
             width: '100%',
-            minHeight: '49px',
+            minHeight: '46px',
             gap: '0',
             position: 'relative'
           }}>
-            {/* Container TIME 🔴 */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
-              <div
-                style={{
-                  width: '16px',
-                  height: '16px',
-                  borderRadius: '50%',
-                  backgroundColor: 'var(--ruby)',
-                  border: '1.5px solid rgba(255,255,255,0.3)',
-                  flexShrink: 0
-                }}
-              />
+              <div style={{ width: '16px', height: '16px', borderRadius: '50%', backgroundColor: 'var(--ruby)', border: '1.5px solid rgba(255,255,255,0.3)', flexShrink: 0 }} />
             </div>
 
-            {/* Container RODADA (3 bolinhas vazadas) */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', borderRight: '1px solid var(--border-subtle)' }}>
               {[1, 2, 3].map(i => (
-                <div
-                  key={i}
-                  style={{
-                    width: '16px',
-                    height: '16px',
-                    borderRadius: '50%',
-                    border: '1.5px solid rgba(255,255,255,0.5)',
-                    backgroundColor: 'transparent',
-                    flexShrink: 0
-                  }}
-                />
+                <div key={i} style={{ width: '14px', height: '14px', borderRadius: '50%', border: '1.5px solid rgba(255,255,255,0.5)', backgroundColor: 'transparent', flexShrink: 0 }} />
               ))}
             </div>
 
-            {/* Container PONTOS */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-                0
-              </div>
+              <div style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--text-primary)' }}>0</div>
             </div>
 
-            {/* Container TENTOS (vazio nesta linha) */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }} />
 
-            {/* Container JOGOS */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-                0
-              </div>
+              <div style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--text-primary)' }}>0</div>
             </div>
           </div>
+
+          {/* DIVISOR */}
+          <div style={{ height: '1px', backgroundColor: 'var(--border-subtle)' }} />
 
           {/* LINHA 3: TIME 2 (AZUL) + TENTOS GRANDE */}
           <div style={{
             display: 'flex',
-            alignItems: 'stretch',
+            alignItems: 'center',
             justifyContent: 'space-around',
             width: '100%',
-            minHeight: '49px',
-            gap: '0'
+            minHeight: '46px',
+            gap: '0',
+            position: 'relative'
           }}>
-            {/* Container TIME 🟣 */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
-              <div
-                style={{
-                  width: '16px',
-                  height: '16px',
-                  borderRadius: '50%',
-                  backgroundColor: 'var(--sapphire)',
-                  border: '1.5px solid rgba(255,255,255,0.3)',
-                  flexShrink: 0
-                }}
-              />
+              <div style={{ width: '16px', height: '16px', borderRadius: '50%', backgroundColor: 'var(--sapphire)', border: '1.5px solid rgba(255,255,255,0.3)', flexShrink: 0 }} />
             </div>
 
-            {/* Container RODADA (3 bolinhas vazadas) */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', borderRight: '1px solid var(--border-subtle)' }}>
               {[1, 2, 3].map(i => (
-                <div
-                  key={i}
-                  style={{
-                    width: '16px',
-                    height: '16px',
-                    borderRadius: '50%',
-                    border: '1.5px solid rgba(255,255,255,0.5)',
-                    backgroundColor: 'transparent',
-                    flexShrink: 0
-                  }}
-                />
+                <div key={i} style={{ width: '14px', height: '14px', borderRadius: '50%', border: '1.5px solid rgba(255,255,255,0.5)', backgroundColor: 'transparent', flexShrink: 0 }} />
               ))}
             </div>
 
-            {/* Container PONTOS */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-                0
-              </div>
+              <div style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--text-primary)' }}>0</div>
             </div>
 
-            {/* Container TENTOS com número 2 centralizado */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)', position: 'relative' }}>
-              <div style={{
-                position: 'absolute',
-                top: '-50%',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                fontSize: '56px',
-                fontWeight: 'bold',
-                color: 'var(--gold-400)',
-                lineHeight: 1,
-                zIndex: 10
-              }}>
-                2
-              </div>
+              <div style={{ position: 'absolute', top: '-45%', left: '50%', transform: 'translateX(-50%)', fontSize: '52px', fontWeight: 'bold', color: 'var(--gold-400)', lineHeight: 1, zIndex: 10 }}>2</div>
             </div>
 
-            {/* Container JOGOS */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-                0
-              </div>
+              <div style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--text-primary)' }}>0</div>
             </div>
           </div>
 
