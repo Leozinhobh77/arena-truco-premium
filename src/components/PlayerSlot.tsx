@@ -62,9 +62,9 @@ export function PlayerSlot({ name, position, team, avatar, namePosition, nameOri
       transform: 'rotate(180deg)',
       whiteSpace: 'nowrap' as const,
       ...(position === 'top-left'
-        ? { top: '50px', left: '5px' }
+        ? { top: '40px', left: '2px' }
         : position === 'bottom-right'
-        ? { bottom: '150px', right: '5px' }
+        ? { bottom: '100px', right: '2px' }
         : { right: '-35px' })
     }
   };
