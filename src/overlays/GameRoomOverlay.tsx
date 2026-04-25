@@ -243,43 +243,15 @@ export function GameRoomOverlay() {
       <div style={{
         flex: 1,
         display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        justifyContent: 'flex-start',
-        padding: '16px'
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px 16px'
       }}>
-        {/* Botão SAIR - lado esquerdo, acima do chat */}
-        <motion.button
-          onClick={popOverlay}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.98 }}
-          style={{
-            padding: '12px 32px',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            backgroundColor: 'rgba(230,57,70,0.15)',
-            border: '1.5px solid var(--ruby)',
-            borderRadius: '12px',
-            color: 'var(--ruby)',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            marginBottom: '110px',
-            marginRight: '12px',
-            flexShrink: 0
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(230,57,70,0.25)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(230,57,70,0.15)';
-          }}
-        >
-          × SAIR
-        </motion.button>
-
         {/* Quadrado Verde Aveludado - Mesa de Jogo */}
         <div style={{
-          flex: 1,
+          width: '100%',
+          maxWidth: '480px',
           aspectRatio: '1',
           backgroundColor: '#2d5a3d',
           border: '3px solid var(--gold-400)',
@@ -288,9 +260,8 @@ export function GameRoomOverlay() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: '16px',
-          marginBottom: '110px',
-          position: 'relative'
+          position: 'relative',
+          marginBottom: '16px'
         }}>
           {/* Efeito de textura aveludada */}
           <div style={{
@@ -312,6 +283,39 @@ export function GameRoomOverlay() {
             Área de Jogo
           </div>
         </div>
+      </div>
+
+      {/* Botão SAIR - embaixo, quase colado no chat */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'flex-start',
+        padding: '0 16px 2px 16px',
+        width: '100%'
+      }}>
+        <motion.button
+          onClick={popOverlay}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
+          style={{
+            padding: '12px 32px',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            backgroundColor: 'rgba(230,57,70,0.15)',
+            border: '1.5px solid var(--ruby)',
+            borderRadius: '12px',
+            color: 'var(--ruby)',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(230,57,70,0.25)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(230,57,70,0.15)';
+          }}
+        >
+          × SAIR
+        </motion.button>
       </div>
 
       {/* CHAT ROOM FOOTER */}
