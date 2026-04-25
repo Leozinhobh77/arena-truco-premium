@@ -35,9 +35,10 @@ export function GameRoomOverlay() {
             border: '1px solid var(--border-subtle)',
             borderBottom: '2px solid var(--gold-400)',
             borderRadius: '8px',
-            overflow: 'hidden',
+            overflow: 'visible',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            position: 'relative'
           }}
         >
           {/* LINHA 1: HEADERS */}
@@ -194,12 +195,8 @@ export function GameRoomOverlay() {
               </div>
             </div>
 
-            {/* Container TENTOS (sem linha horizontal do meio) */}
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '56px', fontWeight: 'bold', color: 'var(--gold-400)', lineHeight: 1 }}>
-                2
-              </div>
-            </div>
+            {/* Container TENTOS (vazio - número 2 fica em posição absoluta) */}
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)', position: 'relative' }} />
 
             {/* Container JOGOS */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -207,6 +204,21 @@ export function GameRoomOverlay() {
                 0
               </div>
             </div>
+          </div>
+
+          {/* Número 2 (TENTOS) centralizado no meio das duas linhas */}
+          <div style={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            fontSize: '56px',
+            fontWeight: 'bold',
+            color: 'var(--gold-400)',
+            lineHeight: 1,
+            pointerEvents: 'none'
+          }}>
+            2
           </div>
         </div>
       </motion.div>
