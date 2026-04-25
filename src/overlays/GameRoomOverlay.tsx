@@ -313,7 +313,7 @@ export function GameRoomOverlay() {
               <div key={msg.id} style={{
                 display: 'flex',
                 gap: '6px',
-                fontSize: '12px',
+                fontSize: '13px',
                 lineHeight: '1.3'
               }}>
                 <span style={{ fontWeight: 'bold', color: 'var(--gold-400)', minWidth: '80px', whiteSpace: 'nowrap' }}>
@@ -322,7 +322,7 @@ export function GameRoomOverlay() {
                 <span style={{ color: 'var(--text-primary)', flex: 1, wordBreak: 'break-word' }}>
                   {msg.text}
                 </span>
-                <span style={{ fontSize: '10px', color: 'var(--text-muted)', minWidth: '35px', textAlign: 'right' }}>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', minWidth: '35px', textAlign: 'right' }}>
                   {msg.timestamp}
                 </span>
               </div>
