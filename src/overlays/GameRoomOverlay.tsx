@@ -271,7 +271,7 @@ export function GameRoomOverlay() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingTop: '32px',
+        paddingTop: '28px',
         paddingBottom: '24px',
         paddingLeft: '16px',
         paddingRight: '16px'
