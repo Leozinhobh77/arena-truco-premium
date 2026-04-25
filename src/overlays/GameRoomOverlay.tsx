@@ -97,7 +97,8 @@ export function GameRoomOverlay() {
             justifyContent: 'space-around',
             width: '100%',
             minHeight: '70px',
-            gap: '0'
+            gap: '0',
+            position: 'relative'
           }}>
             {/* Container TIME 🔴 */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
@@ -195,8 +196,22 @@ export function GameRoomOverlay() {
               </div>
             </div>
 
-            {/* Container TENTOS (vazio - número 2 fica em posição absoluta) */}
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)', position: 'relative' }} />
+            {/* Container TENTOS com número 2 centralizado */}
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid var(--border-subtle)', position: 'relative' }}>
+              <div style={{
+                position: 'absolute',
+                top: '-50%',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                fontSize: '56px',
+                fontWeight: 'bold',
+                color: 'var(--gold-400)',
+                lineHeight: 1,
+                zIndex: 10
+              }}>
+                2
+              </div>
+            </div>
 
             {/* Container JOGOS */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -206,20 +221,6 @@ export function GameRoomOverlay() {
             </div>
           </div>
 
-          {/* Número 2 (TENTOS) centralizado no meio das duas linhas */}
-          <div style={{
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
-            fontSize: '56px',
-            fontWeight: 'bold',
-            color: 'var(--gold-400)',
-            lineHeight: 1,
-            pointerEvents: 'none'
-          }}>
-            2
-          </div>
         </div>
       </motion.div>
 
