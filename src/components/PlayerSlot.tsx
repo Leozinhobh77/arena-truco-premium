@@ -75,8 +75,8 @@ export function PlayerSlot({ name, position, team, avatar }: PlayerSlotProps) {
       <div
         style={{
           position: 'relative',
-          width: '80px',
-          height: '80px',
+          width: '72px',
+          height: '72px',
           borderRadius: '50%',
           border: `4px solid ${teamColor}`,
           backgroundColor: 'var(--obsidian-800)',
