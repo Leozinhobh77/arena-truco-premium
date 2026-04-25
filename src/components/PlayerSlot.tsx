@@ -24,12 +24,12 @@ export function PlayerSlot({ name, position, team, avatar }: PlayerSlotProps) {
       transform: 'translate(-50%, -50%)'
     },
     'bottom-left': {
-      bottom: '20px',
-      left: '20px',
+      bottom: '100px',
+      left: '80px',
       transform: 'translate(-50%, 50%)'
     },
     'bottom-right': {
-      bottom: '20px',
+      bottom: '120px',
       right: '20px',
       transform: 'translate(50%, 50%)'
     }
