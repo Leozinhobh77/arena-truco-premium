@@ -5,15 +5,18 @@ export function GameRoomOverlay() {
   const { popOverlay } = useNavigationStore();
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="w-full h-screen flex flex-col"
-      style={{
-        backgroundColor: 'var(--obsidian-900)',
-      }}
-    >
+    <div className="overlay" style={{ alignItems: 'stretch' }}>
+      <div className="overlay-backdrop" />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        style={{
+          position: 'relative', width: '100%', height: '100dvh',
+          backgroundColor: 'var(--obsidian-900)', display: 'flex', flexDirection: 'column',
+          overflow: 'hidden', margin: '0 auto', zIndex: 1
+        }}
+      >
       {/* PLACAR HEADER */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -203,6 +206,7 @@ export function GameRoomOverlay() {
           </p>
         </div>
       </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
