@@ -95,34 +95,34 @@ export function GameRoomOverlay() {
             alignItems: 'center',
             justifyContent: 'space-around',
             width: '100%',
-            padding: '20px 12px',
-            minHeight: '80px',
+            padding: '16px 12px',
+            minHeight: '70px',
             gap: '24px'
           }}>
             {/* TIME 🔴 */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <div
                 style={{
-                  width: '48px',
-                  height: '48px',
+                  width: '20px',
+                  height: '20px',
                   borderRadius: '50%',
                   backgroundColor: 'var(--ruby)',
-                  border: '2px solid rgba(255,255,255,0.3)',
+                  border: '1.5px solid rgba(255,255,255,0.3)',
                   flexShrink: 0
                 }}
               />
             </div>
 
-            {/* RODADA (3 bolinhas vazadas grandes) */}
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px' }}>
+            {/* RODADA (3 bolinhas vazadas) */}
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
               {[1, 2, 3].map(i => (
                 <div
                   key={i}
                   style={{
-                    width: '48px',
-                    height: '48px',
+                    width: '20px',
+                    height: '20px',
                     borderRadius: '50%',
-                    border: '2.5px solid rgba(255,255,255,0.5)',
+                    border: '1.5px solid rgba(255,255,255,0.5)',
                     backgroundColor: 'transparent',
                     flexShrink: 0
                   }}
@@ -132,7 +132,7 @@ export function GameRoomOverlay() {
 
             {/* PONTOS */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+              <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
                 0
               </div>
             </div>
@@ -142,7 +142,7 @@ export function GameRoomOverlay() {
 
             {/* JOGOS */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+              <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
                 0
               </div>
             </div>
@@ -154,34 +154,34 @@ export function GameRoomOverlay() {
             alignItems: 'center',
             justifyContent: 'space-around',
             width: '100%',
-            padding: '20px 12px',
-            minHeight: '80px',
+            padding: '16px 12px',
+            minHeight: '70px',
             gap: '24px'
           }}>
             {/* TIME 🟣 */}
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <div
                 style={{
-                  width: '48px',
-                  height: '48px',
+                  width: '20px',
+                  height: '20px',
                   borderRadius: '50%',
                   backgroundColor: 'var(--sapphire)',
-                  border: '2px solid rgba(255,255,255,0.3)',
+                  border: '1.5px solid rgba(255,255,255,0.3)',
                   flexShrink: 0
                 }}
               />
             </div>
 
-            {/* RODADA (3 bolinhas vazadas grandes) */}
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px' }}>
+            {/* RODADA (3 bolinhas vazadas) */}
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
               {[1, 2, 3].map(i => (
                 <div
                   key={i}
                   style={{
-                    width: '48px',
-                    height: '48px',
+                    width: '20px',
+                    height: '20px',
                     borderRadius: '50%',
-                    border: '2.5px solid rgba(255,255,255,0.5)',
+                    border: '1.5px solid rgba(255,255,255,0.5)',
                     backgroundColor: 'transparent',
                     flexShrink: 0
                   }}
@@ -191,13 +191,13 @@ export function GameRoomOverlay() {
 
             {/* PONTOS */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+              <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
                 0
               </div>
             </div>
 
-            {/* TENTOS GRANDE (centralizado) */}
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {/* TENTOS GRANDE (centralizado verticalmente no meio) */}
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
               <div style={{ fontSize: '56px', fontWeight: 'bold', color: 'var(--gold-400)', lineHeight: 1 }}>
                 2
               </div>
@@ -205,7 +205,7 @@ export function GameRoomOverlay() {
 
             {/* JOGOS */}
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+              <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
                 0
               </div>
             </div>
