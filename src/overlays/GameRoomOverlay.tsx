@@ -1,8 +1,50 @@
 import { motion } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
+import { useState } from 'react';
 
 export function GameRoomOverlay() {
   const { popOverlay } = useNavigationStore();
+  const [messages, setMessages] = useState([
+    { id: 1, author: '🤖 BOT SILVA', text: 'Vou colocar uma carta aí! 🎴', timestamp: '14:25' },
+    { id: 2, author: '👤 VOCÊ', text: 'Bora! Dá uma boa carta aí! 😎🔥', timestamp: '14:26' },
+    { id: 3, author: '🤖 BOT ZEH', text: 'Boa jogada! 👏👏', timestamp: '14:26' },
+    { id: 4, author: '🤖 BOT JAUM', text: 'Eita, essa foi pesada! 💪🎯', timestamp: '14:27' },
+  ]);
+  const [inputValue, setInputValue] = useState('');
+
+  const handleSendMessage = () => {
+    if (inputValue.trim()) {
+      const newMessage = {
+        id: messages.length + 1,
+        author: '👤 VOCÊ',
+        text: inputValue,
+        timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+      };
+      setMessages([...messages, newMessage]);
+      setInputValue('');
+
+      // Auto resposta de bot
+      setTimeout(() => {
+        const bots = ['🤖 BOT SILVA', '🤖 BOT ZEH', '🤖 BOT JAUM'];
+        const botResponses = [
+          'Boa! 🎯',
+          'Topado! 💪',
+          'Vamos nessa! 🔥',
+          'Que legal! 😎',
+          'Bora continuar! 🎴'
+        ];
+        const randomBot = bots[Math.floor(Math.random() * bots.length)];
+        const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
+
+        setMessages(prev => [...prev, {
+          id: prev.length + 1,
+          author: randomBot,
+          text: randomResponse,
+          timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+        }]);
+      }, 800);
+    }
+  };
 
   return (
     <div className="overlay" style={{ alignItems: 'stretch' }}>
@@ -197,30 +239,22 @@ export function GameRoomOverlay() {
         </div>
       </motion.div>
 
-      {/* Conteúdo - Mesa Central */}
+      {/* Mesa Central - Vazio por enquanto */}
       <div style={{
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        padding: '24px'
+        justifyContent: 'center'
       }}>
-        <div style={{ textAlign: 'center', marginBottom: 'auto' }}>
-          <div style={{ fontSize: '64px', marginBottom: '16px', opacity: 0.2 }}>🎴</div>
-          <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
-            Próximos componentes...
-          </p>
-        </div>
-
-        {/* Botão SAIR */}
+        {/* Botão SAIR no meio */}
         <motion.button
           onClick={popOverlay}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.98 }}
           style={{
-            padding: '16px 48px',
-            fontSize: '16px',
+            padding: '14px 40px',
+            fontSize: '15px',
             fontWeight: 'bold',
             backgroundColor: 'rgba(230,57,70,0.15)',
             border: '1.5px solid var(--ruby)',
@@ -236,9 +270,133 @@ export function GameRoomOverlay() {
             e.currentTarget.style.backgroundColor = 'rgba(230,57,70,0.15)';
           }}
         >
-          SAIR
+          × SAIR
         </motion.button>
       </div>
+
+      {/* CHAT ROOM FOOTER */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="w-full px-4 py-3"
+        style={{
+          backgroundColor: 'var(--obsidian-900)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px'
+        }}
+      >
+        {/* Container Chat */}
+        <div style={{
+          width: '100%',
+          backgroundColor: 'var(--obsidian-800)',
+          border: '1px solid var(--border-subtle)',
+          borderBottom: '2px solid var(--gold-400)',
+          borderRadius: '8px',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          {/* Área de Mensagens */}
+          <div style={{
+            flex: 1,
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            padding: '8px 10px',
+            maxHeight: '80px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '4px'
+          }}>
+            {messages.map((msg) => (
+              <div key={msg.id} style={{
+                display: 'flex',
+                gap: '6px',
+                fontSize: '12px',
+                lineHeight: '1.3'
+              }}>
+                <span style={{ fontWeight: 'bold', color: 'var(--gold-400)', minWidth: '80px', whiteSpace: 'nowrap' }}>
+                  {msg.author}
+                </span>
+                <span style={{ color: 'var(--text-primary)', flex: 1, wordBreak: 'break-word' }}>
+                  {msg.text}
+                </span>
+                <span style={{ fontSize: '10px', color: 'var(--text-muted)', minWidth: '35px', textAlign: 'right' }}>
+                  {msg.timestamp}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Input e Botões */}
+          <div style={{
+            display: 'flex',
+            gap: '6px',
+            padding: '6px 8px',
+            borderTop: '1px solid var(--border-subtle)',
+            alignItems: 'center'
+          }}>
+            {/* Input */}
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              placeholder="Escreva uma msg..."
+              style={{
+                flex: 1,
+                padding: '6px 8px',
+                fontSize: '12px',
+                backgroundColor: 'rgba(255,255,255,0.05)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: '6px',
+                color: 'var(--text-primary)',
+                outline: 'none'
+              }}
+            />
+
+            {/* Botão Emoji */}
+            <button
+              onClick={() => setInputValue(inputValue + '😊')}
+              style={{
+                padding: '4px 6px',
+                fontSize: '12px',
+                backgroundColor: 'transparent',
+                border: 'none',
+                color: 'var(--gold-400)',
+                cursor: 'pointer'
+              }}
+            >
+              😊
+            </button>
+
+            {/* Botão Enviar */}
+            <button
+              onClick={handleSendMessage}
+              style={{
+                padding: '6px 12px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                backgroundColor: 'var(--gold-400)',
+                border: 'none',
+                borderRadius: '6px',
+                color: 'var(--obsidian-900)',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '0.9';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '1';
+              }}
+            >
+              ➤
+            </button>
+          </div>
+        </div>
+      </motion.div>
       </motion.div>
     </div>
   );
