@@ -142,12 +142,13 @@ export function useAmigosRealtime(meuId: string | undefined) {
   const monitorarPresencaAmigos = useCallback((amigoIds: string[]) => {
     if (presenceChannelsRef.current.has('arena')) return;
 
-    const arenaPresence = supabase.channel('presence-arena', {
-      config: { presence: { key: `user-${idAtual}` } },
-    });
+    try {
+      const arenaPresence = supabase.channel(`presence-arena`, {
+        config: { presence: { key: `user-${idAtual}` } },
+      });
 
-    arenaPresence
-      .on('presence', { event: 'sync' }, () => {
+      // ORDEM CORRETA: .on() ANTES de .subscribe()
+      arenaPresence.on('presence', { event: 'sync' }, () => {
         const state = arenaPresence.presenceState();
         const usuariosAtivos = new Set(
           Object.keys(state).map(key => key.split('-')[1])
@@ -159,8 +160,9 @@ export function useAmigosRealtime(meuId: string | undefined) {
             atualizarAmigoRealtime(amigoId, 'offline');
           }
         });
-      })
-      .on('presence', { event: 'leave' }, () => {
+      });
+
+      arenaPresence.on('presence', { event: 'leave' }, () => {
         setTimeout(() => {
           const state = arenaPresence.presenceState();
           const usuariosAtivos = new Set(
@@ -174,10 +176,19 @@ export function useAmigosRealtime(meuId: string | undefined) {
             }
           });
         }, 100);
-      })
-      .subscribe();
+      });
 
-    presenceChannelsRef.current.set('arena', arenaPresence);
+      // Subscribe apenas DEPOIS de adicionar todos os listeners
+      arenaPresence.subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Presence channel subscribed');
+        }
+      });
+
+      presenceChannelsRef.current.set('arena', arenaPresence);
+    } catch (err) {
+      console.error('❌ Erro ao monitorar presença:', err);
+    }
   }, [idAtual, atualizarAmigoRealtime]);
 
   // Iniciar subscription Realtime (monitora mudanças em tempo real)
