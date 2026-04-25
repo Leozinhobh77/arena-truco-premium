@@ -47,8 +47,8 @@ export function GameRoomOverlay() {
             alignItems: 'center',
             justifyContent: 'space-around',
             width: '100%',
-            padding: '8px 12px',
-            minHeight: '32px',
+            padding: '7px 12px',
+            minHeight: '29px',
             gap: '0'
           }}>
             <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', borderRight: '1px solid var(--border-subtle)' }}>
@@ -121,7 +121,7 @@ export function GameRoomOverlay() {
             alignItems: 'center',
             justifyContent: 'space-around',
             width: '100%',
-            minHeight: '46px',
+            minHeight: '41px',
             gap: '0',
             position: 'relative'
           }}>
@@ -146,16 +146,13 @@ export function GameRoomOverlay() {
             </div>
           </div>
 
-          {/* DIVISOR */}
-          <div style={{ height: '1px', backgroundColor: 'var(--border-subtle)' }} />
-
           {/* LINHA 3: TIME 2 (AZUL) + TENTOS GRANDE */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-around',
             width: '100%',
-            minHeight: '46px',
+            minHeight: '41px',
             gap: '0',
             position: 'relative'
           }}>
