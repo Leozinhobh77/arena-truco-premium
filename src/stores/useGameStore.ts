@@ -45,6 +45,9 @@ interface GameState {
   // Truco aguardando resposta
   trucoAguardandoResposta: TrucoPendente | null;
 
+  // Fim de partida
+  timeVencedorPartida: 'nos' | 'eles' | null; // null = partida em andamento
+
   // Actions
   iniciarPartida: (modo: ModoJogo, userId: string) => void;
   jogarCarta: (jogadorId: string, cartaId: string) => void;
@@ -79,6 +82,7 @@ export const useGameStore = create<GameState>((set) => ({
   },
   ultimoResultado: undefined,
   trucoAguardandoResposta: null,
+  timeVencedorPartida: null,
 
   /**
    * Inicializa uma nova partida: gera e embaralha o baralho, configura
@@ -306,10 +310,21 @@ export const useGameStore = create<GameState>((set) => ({
       console.log(`🏆 Time ${truco.timeQueOfertou} ganha ${pontosGanhos} tentos!`);
       console.log(`📊 Placar: Nós ${newPontoNos} x ${newPontoEles} Eles`);
 
+      // Verifica se alguém atingiu 12 pontos
+      let timeVencedorPartida: 'nos' | 'eles' | null = null;
+      if (newPontoNos >= 12) {
+        timeVencedorPartida = 'nos';
+        console.log(`\n🎊 PARTIDA TERMINADA! Time NÓS vence com ${newPontoNos} pontos!`);
+      } else if (newPontoEles >= 12) {
+        timeVencedorPartida = 'eles';
+        console.log(`\n🎊 PARTIDA TERMINADA! Time ELES vence com ${newPontoEles} pontos!`);
+      }
+
       return {
         pontoNos: newPontoNos,
         pontoEles: newPontoEles,
         trucoAguardandoResposta: null,
+        timeVencedorPartida,
         ultimoResultado: {
           vencedorId: null,
           descricao: `Time ${truco.timeQueOfertou} venceu por recusa do truco!`,
@@ -324,6 +339,7 @@ export const useGameStore = create<GameState>((set) => ({
   /**
    * Determina o vencedor da rodada comparando as cartas
    * Atualiza o estado com o resultado e registra o ponto (usando tentoAtual)
+   * Se alguém atingir 12 pontos, encerra a partida
    */
   determinarVencedor: () => {
     set(state => {
@@ -352,10 +368,21 @@ export const useGameStore = create<GameState>((set) => ({
       console.log(`🏆 ${resultado.vencedorId ? state.jogadores.find(j => j.id === resultado.vencedorId)?.nome : 'Ninguém'} ganhou ${pontosGanhos} TENTOS!`);
       console.log(`📊 Placar: Nós ${newPontoNos} x ${newPontoEles} Eles`);
 
+      // Verifica se alguém atingiu 12 pontos
+      let timeVencedorPartida: 'nos' | 'eles' | null = null;
+      if (newPontoNos >= 12) {
+        timeVencedorPartida = 'nos';
+        console.log(`\n🎊 PARTIDA TERMINADA! Time NÓS vence com ${newPontoNos} pontos!`);
+      } else if (newPontoEles >= 12) {
+        timeVencedorPartida = 'eles';
+        console.log(`\n🎊 PARTIDA TERMINADA! Time ELES vence com ${newPontoEles} pontos!`);
+      }
+
       return {
         ultimoResultado: resultado,
         pontoNos: newPontoNos,
         pontoEles: newPontoEles,
+        timeVencedorPartida,
       };
     });
   },
