@@ -37,17 +37,17 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
     >
       <div
         style={{
-          width: '80px',
-          height: '120px',
+          width: '56px',
+          height: '84px',
           backgroundColor: '#ffffff',
-          border: '2px solid #1a1a1a',
-          borderRadius: '8px',
-          boxShadow: '0 8px 16px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.5)',
+          border: '1.5px solid #1a1a1a',
+          borderRadius: '6px',
+          boxShadow: '0 4px 8px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.5)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '8px',
+          padding: '5px',
           position: 'relative',
           overflow: 'hidden',
           transition: 'all 0.3s ease'
@@ -59,12 +59,12 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '2px'
+            gap: '1px'
           }}
         >
           <div
             style={{
-              fontSize: '14px',
+              fontSize: '10px',
               fontWeight: 'bold',
               color: color,
               lineHeight: '1'
@@ -74,7 +74,7 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
           </div>
           <div
             style={{
-              fontSize: '12px',
+              fontSize: '8px',
               color: color,
               lineHeight: '1'
             }}
@@ -86,7 +86,7 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
         {/* Centro - grande símbolo */}
         <div
           style={{
-            fontSize: '36px',
+            fontSize: '24px',
             color: color,
             opacity: 0.3
           }}
@@ -100,13 +100,13 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '2px',
+            gap: '1px',
             transform: 'rotate(180deg)'
           }}
         >
           <div
             style={{
-              fontSize: '14px',
+              fontSize: '10px',
               fontWeight: 'bold',
               color: color,
               lineHeight: '1'
@@ -116,7 +116,7 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
           </div>
           <div
             style={{
-              fontSize: '12px',
+              fontSize: '8px',
               color: color,
               lineHeight: '1'
             }}

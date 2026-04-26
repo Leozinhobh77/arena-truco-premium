@@ -328,12 +328,12 @@ export function GameRoomOverlay() {
         <div
           style={{
             position: 'absolute',
-            bottom: '-75px',
+            bottom: '-5px',
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
             justifyContent: 'center',
-            gap: '16px',
+            gap: '2px',
             zIndex: 10
           }}
         >
