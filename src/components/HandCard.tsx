@@ -94,7 +94,7 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
             justifyContent: 'flex-end',
             alignItems: 'flex-end',
             width: '100%',
-            marginBottom: '-4px',
+            marginBottom: '-2px',
             marginRight: '-4px'
           }}
         >
@@ -103,7 +103,7 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
           ) : (
             <div
               style={{
-                fontSize: '40px',
+                fontSize: '44px',
                 color: color,
                 lineHeight: '1'
               }}
