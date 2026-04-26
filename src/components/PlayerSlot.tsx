@@ -125,7 +125,9 @@ export function PlayerSlot({ name, position, team, avatar, namePosition, nameOri
             color: teamColor,
             backgroundImage: avatar ? `url(${avatar})` : undefined,
             backgroundSize: 'cover',
-            backgroundPosition: 'center'
+            backgroundPosition: 'center',
+            padding: '4px',
+            boxSizing: 'border-box'
           }}
         >
           {!avatar && name.charAt(0).toUpperCase()}

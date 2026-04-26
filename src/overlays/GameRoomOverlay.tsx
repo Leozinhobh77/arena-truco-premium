@@ -297,28 +297,28 @@ export function GameRoomOverlay() {
           name="Morena_40"
           position="top-right"
           team="vermelho"
-          avatar=""
+          avatar="https://randomuser.me/api/portraits/women/47.jpg"
           namePosition="top"
         />
         <PlayerSlot
           name="Leozinhobh"
           position="bottom-left"
           team="vermelho"
-          avatar=""
+          avatar="https://randomuser.me/api/portraits/men/32.jpg"
           namePosition="bottom"
         />
         <PlayerSlot
           name="Alex"
           position="top-left"
           team="azul"
-          avatar=""
+          avatar="https://randomuser.me/api/portraits/men/15.jpg"
           nameOrientation="vertical"
         />
         <PlayerSlot
           name="Brunetts"
           position="bottom-right"
           team="azul"
-          avatar=""
+          avatar="https://randomuser.me/api/portraits/women/8.jpg"
           nameOrientation="vertical"
         />
       </div>
