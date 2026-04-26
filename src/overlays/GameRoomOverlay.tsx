@@ -323,30 +323,26 @@ export function GameRoomOverlay() {
           avatar="https://randomuser.me/api/portraits/women/8.jpg"
           nameOrientation="vertical"
         />
+
+        {/* SUAS CARTAS - Position Absolute (não empurra nada) */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '-75px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '16px',
+            zIndex: 10
+          }}
+        >
+          <HandCard valor="4" naipe="paus" />
+          <HandCard valor="3" naipe="copas" />
+          <HandCard valor="5" naipe="ouros" />
+        </div>
       </div>
 
-      {/* SUAS CARTAS - 3 CARTAS VISÍVEIS */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15 }}
-        style={{
-          width: '100%',
-          paddingLeft: '16px',
-          paddingRight: '16px',
-          paddingTop: '12px',
-          paddingBottom: '6px',
-          backgroundColor: 'var(--obsidian-900)',
-          display: 'flex',
-          justifyContent: 'center',
-          gap: '16px',
-          alignItems: 'flex-end'
-        }}
-      >
-        <HandCard valor="4" naipe="paus" />
-        <HandCard valor="3" naipe="copas" />
-        <HandCard valor="5" naipe="ouros" />
-      </motion.div>
 
       {/* CHAT ROOM FOOTER - COMPACTO */}
       <motion.div
