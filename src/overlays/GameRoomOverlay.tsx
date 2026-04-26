@@ -328,7 +328,7 @@ export function GameRoomOverlay() {
         <div
           style={{
             position: 'absolute',
-            bottom: '-5px',
+            bottom: '10px',
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
@@ -339,7 +339,7 @@ export function GameRoomOverlay() {
         >
           <HandCard valor="4" naipe="paus" />
           <HandCard valor="3" naipe="copas" />
-          <HandCard valor="5" naipe="ouros" />
+          <HandCard valor="Q" naipe="ouros" />
         </div>
       </div>
 
