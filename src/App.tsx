@@ -30,6 +30,7 @@ const SolicitacoesOverlay = lazy(() => import('./overlays/SolicitacoesOverlay').
 const StatusEditorOverlay = lazy(() => import('./overlays/StatusEditorOverlay').then(m => ({ default: m.StatusEditorOverlay })));
 const ChatPrivadoOverlay = lazy(() => import('./overlays/ChatPrivadoOverlay').then(m => ({ default: m.ChatPrivadoOverlay })));
 const GameRoomOverlay = lazy(() => import('./overlays/GameRoomOverlay').then(m => ({ default: m.GameRoomOverlay })));
+const CardsGalleryOverlay = lazy(() => import('./overlays/CardsGalleryOverlay').then(m => ({ default: m.CardsGalleryOverlay })));
 import { ChatConviteBanner } from './components/ChatConviteBanner';
 import { useChatConvite } from './hooks/useChatConvite';
 import type { Amigo } from './types';
@@ -281,6 +282,7 @@ export function App() {
               />
             )}
             {activeOverlay === 'game-room' && <GameRoomOverlay key="game-room" />}
+            {activeOverlay === 'cards-gallery' && <CardsGalleryOverlay key="cards-gallery" />}
             {activeOverlay === 'friend-action' && (
               <FriendActionSheet
                 key="friend-action"

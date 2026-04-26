@@ -60,6 +60,10 @@ export function ConfiguracoesOverlay() {
     pushOverlay('game-room');
   };
 
+  const handleCartas = () => {
+    pushOverlay('cards-gallery');
+  };
+
   return (
     <div className="overlay">
       <div className="overlay-backdrop" onClick={popOverlay} />
@@ -156,6 +160,28 @@ export function ConfiguracoesOverlay() {
           >
             <span style={{ fontSize: 20 }}>🎴</span>
             <span style={{ fontSize: 15, fontWeight: 600 }}>Sala 2v2</span>
+          </button>
+
+          <button
+            onClick={handleCartas}
+            style={{
+              width: '100%', padding: 16, textAlign: 'left',
+              background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)',
+              borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: 12,
+              color: 'var(--text-primary)', cursor: 'pointer', marginTop: 8,
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(212,160,23,0.1)';
+              e.currentTarget.style.borderColor = 'var(--gold-400)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+              e.currentTarget.style.borderColor = 'var(--border-subtle)';
+            }}
+          >
+            <span style={{ fontSize: 20 }}>📋</span>
+            <span style={{ fontSize: 15, fontWeight: 600 }}>Cartas</span>
           </button>
 
           <button
