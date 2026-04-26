@@ -10,10 +10,10 @@ export function GameRoomOverlay() {
   const [soundDisabled, setSoundDisabled] = useState(false);
   const [confirmExit, setConfirmExit] = useState(false);
   const [messages, setMessages] = useState([
-    { id: 1, author: '🤖 BOT SILVA', text: 'Vou colocar uma carta aí! 🎴', timestamp: '14:25' },
+    { id: 1, author: '🎮 MORENA_40', text: 'Vou colocar uma carta aí! 🎴', timestamp: '14:25' },
     { id: 2, author: '👤 VOCÊ', text: 'Bora! Dá uma boa carta aí! 😎🔥', timestamp: '14:26' },
-    { id: 3, author: '🤖 BOT ZEH', text: 'Boa jogada! 👏👏', timestamp: '14:26' },
-    { id: 4, author: '🤖 BOT JAUM', text: 'Eita, essa foi pesada! 💪🎯', timestamp: '14:27' },
+    { id: 3, author: '🎮 ALEX', text: 'Boa jogada! 👏👏', timestamp: '14:26' },
+    { id: 4, author: '🎮 BRUNETTS', text: 'Eita, essa foi pesada! 💪🎯', timestamp: '14:27' },
   ]);
   const [inputValue, setInputValue] = useState('');
 
@@ -30,7 +30,7 @@ export function GameRoomOverlay() {
 
       // Auto resposta de bot
       setTimeout(() => {
-        const bots = ['🤖 BOT SILVA', '🤖 BOT ZEH', '🤖 BOT JAUM'];
+        const bots = ['🎮 MORENA_40', '🎮 ALEX', '🎮 BRUNETTS'];
         const botResponses = [
           'Boa! 🎯',
           'Topado! 💪',
