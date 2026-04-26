@@ -55,17 +55,17 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
         <div
           style={{
             display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '0px'
+            justifyContent: 'flex-start',
+            width: '100%',
+            paddingLeft: '2px'
           }}
         >
           <div
             style={{
-              fontSize: '18px',
-              fontWeight: 'bold',
+              fontSize: '24px',
+              fontWeight: '900',
               color: color,
-              lineHeight: '1.1'
+              lineHeight: '1'
             }}
           >
             {valorDisplay}
@@ -78,8 +78,10 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
             flex: 1,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '28px',
+            justifyContent: 'flex-start',
+            paddingLeft: '4px',
+            paddingTop: '2px',
+            fontSize: '36px',
             color: color,
             opacity: 0.4
           }}
@@ -93,12 +95,14 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
             display: 'flex',
             justifyContent: 'flex-end',
             alignItems: 'flex-end',
-            width: '100%'
+            width: '100%',
+            paddingRight: '2px',
+            paddingBottom: '1px'
           }}
         >
           <div
             style={{
-              fontSize: '8px',
+              fontSize: '12px',
               color: color,
               lineHeight: '1'
             }}
