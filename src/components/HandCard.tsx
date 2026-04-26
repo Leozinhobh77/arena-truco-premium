@@ -95,7 +95,7 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
             alignItems: 'flex-end',
             width: '100%',
             marginBottom: '-2px',
-            marginRight: '-4px'
+            marginRight: isFigure ? '-16px' : '-4px'
           }}
         >
           {isFigure ? (

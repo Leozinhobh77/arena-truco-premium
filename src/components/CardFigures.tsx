@@ -18,7 +18,7 @@ export function CardFigure({ tipo, color }: FigureProps) {
 
   if (tipo === 'Q') {
     return (
-      <svg viewBox="0 0 100 100" width="50" height="70" style={{ overflow: 'visible' }}>
+      <svg viewBox="0 0 100 100" width="80" height="112" style={{ overflow: 'visible' }}>
         {/* Capa/Manto traseiro grande */}
         <ellipse cx="50" cy="50" rx="32" ry="38" fill={queenColor.cape} opacity="0.7" />
 
@@ -73,7 +73,7 @@ export function CardFigure({ tipo, color }: FigureProps) {
 
   if (tipo === 'J') {
     return (
-      <svg viewBox="0 0 100 100" width="50" height="70" style={{ overflow: 'visible' }}>
+      <svg viewBox="0 0 100 100" width="80" height="112" style={{ overflow: 'visible' }}>
         {/* Capa/Manto traseiro */}
         <ellipse cx="50" cy="55" rx="28" ry="32" fill={knightColor.accent} opacity="0.5" />
 
@@ -153,7 +153,7 @@ export function CardFigure({ tipo, color }: FigureProps) {
 
   if (tipo === 'K') {
     return (
-      <svg viewBox="0 0 100 100" width="50" height="70" style={{ overflow: 'visible' }}>
+      <svg viewBox="0 0 100 100" width="80" height="112" style={{ overflow: 'visible' }}>
         {/* Capa/Manto real traseiro MAJESTOSO */}
         <ellipse cx="50" cy="55" rx="32" ry="38" fill={kingColor.cape} opacity="0.8" />
 
