@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { Carta, Jogador, ModoJogo, StatusSala } from '../types';
 import { gerarBaralho, embaralhar, configurarManilhas } from '../lib/truco/rules';
+import { determinarVencedorRodada, rodadaPronta, limparRodada, obterTimeVencedor, type ResultadoRodada } from '../lib/truco/rodada';
 
 interface GameState {
   modo: ModoJogo;
@@ -10,15 +11,20 @@ interface GameState {
   rodadaAtual: number;
   vira?: Carta;
   manilha?: Carta;
-  
+
   // Jogadores na mesa
   myUserId: string; // Para identificar quem sou eu no array
   jogadores: Jogador[];
   mesa: Carta[];
 
+  // Resultado da rodada (para exibição)
+  ultimoResultado?: ResultadoRodada;
+
   // Actions
   iniciarPartida: (modo: ModoJogo, userId: string) => void;
   jogarCarta: (jogadorId: string, cartaId: string) => void;
+  determinarVencedor: () => void;
+  proximaRodada: () => void;
 }
 
 // Cria 3 bots hardcoded para simular uma sala com 4 jogadores
@@ -28,7 +34,7 @@ const criarBotsDeZoeira = (): Jogador[] => [
   { id: 'bot_3', nome: 'Marcos_Pro', avatar: 'https://i.pravatar.cc/150?u=3', nivel: 99, pontos: 0, time: 'eles', pronto: true, isBot: true, cartas: [] }
 ];
 
-export const useGameStore = create<GameState>((set) => ({
+export const useGameStore = create<GameState>((set, get) => ({
   modo: 'paulista',
   status: 'waiting',
   pontoNos: 0,
@@ -37,6 +43,7 @@ export const useGameStore = create<GameState>((set) => ({
   mesa: [],
   myUserId: '',
   jogadores: [],
+  ultimoResultado: undefined,
 
   /**
    * Inicializa uma nova partida: gera e embaralha o baralho, configura
@@ -129,5 +136,61 @@ export const useGameStore = create<GameState>((set) => ({
         mesa: newMesa
       };
     });
-  }
+  },
+
+  /**
+   * Determina o vencedor da rodada comparando as cartas
+   * Atualiza o estado com o resultado e registra o ponto
+   */
+  determinarVencedor: () => {
+    set(state => {
+      // Verifica se a rodada está pronta (todos jogaram)
+      if (!rodadaPronta(state.jogadores)) {
+        console.warn('Rodada não pronta - nem todos jogadores jogaram');
+        return state;
+      }
+
+      // Calcula o vencedor
+      const resultado = determinarVencedorRodada(
+        state.jogadores,
+        state.modo,
+        state.vira
+      );
+
+      // Obtém o time do vencedor
+      const timeVencedor = obterTimeVencedor(state.jogadores, resultado.vencedorId);
+
+      // Atualiza pontos
+      const newPontoNos = timeVencedor === 'nos' ? state.pontoNos + 1 : state.pontoNos;
+      const newPontoEles = timeVencedor === 'eles' ? state.pontoEles + 1 : state.pontoEles;
+
+      console.log(`🎯 Rodada ${state.rodadaAtual}: ${resultado.descricao}`);
+      console.log(`📊 Placar: Nós ${newPontoNos} x ${newPontoEles} Eles`);
+
+      return {
+        ultimoResultado: resultado,
+        pontoNos: newPontoNos,
+        pontoEles: newPontoEles,
+      };
+    });
+  },
+
+  /**
+   * Prepara para a próxima rodada: limpa cartas jogadas, avança rodada
+   */
+  proximaRodada: () => {
+    set(state => {
+      const jogadoresLimpos = limparRodada(state.jogadores);
+      const novaRodada = state.rodadaAtual + 1;
+
+      console.log(`🎴 Próxima rodada: ${novaRodada}`);
+
+      return {
+        jogadores: jogadoresLimpos,
+        mesa: [],
+        rodadaAtual: novaRodada,
+        ultimoResultado: undefined,
+      };
+    });
+  },
 }));
