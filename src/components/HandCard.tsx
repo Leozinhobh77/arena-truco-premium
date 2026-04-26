@@ -45,75 +45,57 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
           boxShadow: '0 4px 8px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.5)',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '5px',
+          padding: '4px',
           position: 'relative',
           overflow: 'hidden',
           transition: 'all 0.3s ease'
         }}
       >
-        {/* Canto superior esquerdo */}
+        {/* Canto superior esquerdo - número grande */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '1px'
+            gap: '0px'
           }}
         >
           <div
             style={{
-              fontSize: '10px',
+              fontSize: '18px',
               fontWeight: 'bold',
               color: color,
-              lineHeight: '1'
+              lineHeight: '1.1'
             }}
           >
             {valorDisplay}
           </div>
-          <div
-            style={{
-              fontSize: '8px',
-              color: color,
-              lineHeight: '1'
-            }}
-          >
-            {naipeSymbol}
-          </div>
         </div>
 
-        {/* Centro - grande símbolo */}
+        {/* Centro - grande símbolo do naipe */}
         <div
           style={{
-            fontSize: '24px',
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '28px',
             color: color,
-            opacity: 0.3
+            opacity: 0.4
           }}
         >
           {naipeSymbol}
         </div>
 
-        {/* Canto inferior direito (invertido) */}
+        {/* Canto inferior direito - naipe pequeno */}
         <div
           style={{
             display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '1px',
-            transform: 'rotate(180deg)'
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+            width: '100%'
           }}
         >
-          <div
-            style={{
-              fontSize: '10px',
-              fontWeight: 'bold',
-              color: color,
-              lineHeight: '1'
-            }}
-          >
-            {valorDisplay}
-          </div>
           <div
             style={{
               fontSize: '8px',
@@ -129,10 +111,10 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
         <div
           style={{
             position: 'absolute',
-            top: '4px',
-            left: '4px',
-            right: '4px',
-            bottom: '4px',
+            top: '3px',
+            left: '3px',
+            right: '3px',
+            bottom: '3px',
             border: '1px solid rgba(0,0,0,0.1)',
             borderRadius: '4px',
             pointerEvents: 'none'
