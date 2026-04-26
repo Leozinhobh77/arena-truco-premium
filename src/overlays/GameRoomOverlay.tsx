@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigationStore } from '../stores/useNavigationStore';
 import { useState } from 'react';
 import { PlayerSlot } from '../components/PlayerSlot';
+import { CardDeck } from '../components/CardDeck';
 
 export function GameRoomOverlay() {
   const { popOverlay } = useNavigationStore();
@@ -280,15 +281,15 @@ export function GameRoomOverlay() {
             pointerEvents: 'none'
           }} />
 
-          {/* Conteúdo - Área de Jogo */}
+          {/* Baralho Centralizado */}
           <div style={{
-            position: 'relative',
-            zIndex: 1,
-            textAlign: 'center',
-            color: 'var(--text-muted)',
-            fontSize: '12px'
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 10
           }}>
-            Área de Jogo
+            <CardDeck />
           </div>
         </div>
 
