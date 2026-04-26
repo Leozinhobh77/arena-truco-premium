@@ -45,65 +45,58 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
           boxShadow: '0 4px 8px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.5)',
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'space-between',
           padding: '4px',
           position: 'relative',
           overflow: 'hidden',
           transition: 'all 0.3s ease'
         }}
       >
-        {/* Canto superior esquerdo - número grande */}
+        {/* Canto superior esquerdo - número grande + naipe pequeno */}
         <div
           style={{
             display: 'flex',
-            justifyContent: 'flex-start',
-            width: '100%',
-            paddingLeft: '2px'
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: '1px'
           }}
         >
           <div
             style={{
-              fontSize: '24px',
+              fontSize: '26px',
               fontWeight: '900',
               color: color,
-              lineHeight: '1'
+              lineHeight: '1',
+              letterSpacing: '-1px'
             }}
           >
             {valorDisplay}
           </div>
+          <div
+            style={{
+              fontSize: '10px',
+              color: color,
+              lineHeight: '1'
+            }}
+          >
+            {naipeSymbol}
+          </div>
         </div>
 
-        {/* Centro - grande símbolo do naipe */}
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            paddingLeft: '4px',
-            paddingTop: '2px',
-            fontSize: '36px',
-            color: color,
-            opacity: 0.4
-          }}
-        >
-          {naipeSymbol}
-        </div>
-
-        {/* Canto inferior direito - naipe pequeno */}
+        {/* Canto inferior direito - naipe grande */}
         <div
           style={{
             display: 'flex',
             justifyContent: 'flex-end',
             alignItems: 'flex-end',
-            width: '100%',
-            paddingRight: '2px',
-            paddingBottom: '1px'
+            width: '100%'
           }}
         >
           <div
             style={{
-              fontSize: '12px',
+              fontSize: '36px',
               color: color,
+              opacity: 0.4,
               lineHeight: '1'
             }}
           >
