@@ -3,6 +3,7 @@ import { useNavigationStore } from '../stores/useNavigationStore';
 import { useState } from 'react';
 import { PlayerSlot } from '../components/PlayerSlot';
 import { CardDeck } from '../components/CardDeck';
+import { HandCard } from '../components/HandCard';
 
 export function GameRoomOverlay() {
   const { popOverlay } = useNavigationStore();
@@ -323,6 +324,29 @@ export function GameRoomOverlay() {
           nameOrientation="vertical"
         />
       </div>
+
+      {/* SUAS CARTAS - 3 CARTAS VISÍVEIS */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        style={{
+          width: '100%',
+          paddingLeft: '16px',
+          paddingRight: '16px',
+          paddingTop: '12px',
+          paddingBottom: '6px',
+          backgroundColor: 'var(--obsidian-900)',
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '16px',
+          alignItems: 'flex-end'
+        }}
+      >
+        <HandCard valor="4" naipe="paus" />
+        <HandCard valor="3" naipe="copas" />
+        <HandCard valor="5" naipe="ouros" />
+      </motion.div>
 
       {/* CHAT ROOM FOOTER - COMPACTO */}
       <motion.div
