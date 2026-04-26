@@ -2,6 +2,18 @@ import { create } from 'zustand';
 import type { Carta, Jogador, ModoJogo, StatusSala } from '../types';
 import { gerarBaralho, embaralhar, configurarManilhas } from '../lib/truco/rules';
 import { determinarVencedorRodada, rodadaPronta, limparRodada, obterTimeVencedor, type ResultadoRodada } from '../lib/truco/rodada';
+import {
+  obterProximoTentoMineiro,
+  obterProximoTentoPaulista,
+  obterTentoPorComandoMineiro,
+  obterTentoPorComandoPaulista,
+  obterDescricaoTentoMineiro,
+  obterDescricaoTentoPaulista,
+  type TentoMineiro,
+  type TentoPaulista,
+  type ComandoMineiro,
+  type ComandoPaulista,
+} from '../config/tentosRules';
 
 interface GameState {
   modo: ModoJogo;
@@ -17,12 +29,21 @@ interface GameState {
   jogadores: Jogador[];
   mesa: Carta[];
 
+  // Tentos (pontuação da rodada)
+  tentoAtual: TentoMineiro | TentoPaulista;
+  historicoTrucos: {
+    tentosOfertados: (TentoMineiro | TentoPaulista)[];
+    quemOfertou: string[];
+    comandos: (ComandoMineiro | ComandoPaulista)[];
+  };
+
   // Resultado da rodada (para exibição)
   ultimoResultado?: ResultadoRodada;
 
   // Actions
   iniciarPartida: (modo: ModoJogo, userId: string) => void;
   jogarCarta: (jogadorId: string, cartaId: string) => void;
+  aumentarTento: (jogadorId: string, comando: ComandoMineiro | ComandoPaulista) => void;
   determinarVencedor: () => void;
   proximaRodada: () => void;
 }
@@ -43,6 +64,12 @@ export const useGameStore = create<GameState>((set, get) => ({
   mesa: [],
   myUserId: '',
   jogadores: [],
+  tentoAtual: 1 as any, // Será atualizado no iniciarPartida
+  historicoTrucos: {
+    tentosOfertados: [],
+    quemOfertou: [],
+    comandos: [],
+  },
   ultimoResultado: undefined,
 
   /**
@@ -83,6 +110,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       };
     });
 
+    // ── Inicializar tentos conforme o modo ──
+    const tentoInicial = modo === 'mineiro' ? (2 as TentoMineiro) : (1 as TentoPaulista);
+
     set({
       modo,
       status: 'playing',
@@ -92,7 +122,13 @@ export const useGameStore = create<GameState>((set, get) => ({
       pontoNos: 0,
       pontoEles: 0,
       rodadaAtual: 1,
-      myUserId: userId
+      myUserId: userId,
+      tentoAtual: tentoInicial,
+      historicoTrucos: {
+        tentosOfertados: [tentoInicial],
+        quemOfertou: ['sistema'],
+        comandos: ['inicial'],
+      },
     });
   },
 
@@ -139,8 +175,52 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   /**
+   * Aumenta os tentos quando um jogador grita um comando (TRUCO, SEIS, NOVE, DOZE)
+   * @param jogadorId ID do jogador que está aumentando
+   * @param comando Tipo de aumento (truco, seis, nove, doze)
+   */
+  aumentarTento: (jogadorId, comando) => {
+    set(state => {
+      // Determinar o próximo tentos baseado no modo
+      let proximoTento: TentoMineiro | TentoPaulista | null;
+
+      if (state.modo === 'mineiro') {
+        proximoTento = obterProximoTentoMineiro(state.tentoAtual as TentoMineiro);
+      } else {
+        proximoTento = obterProximoTentoPaulista(state.tentoAtual as TentoPaulista);
+      }
+
+      if (!proximoTento) {
+        console.warn('❌ Já está no máximo de tentos (12)');
+        return state;
+      }
+
+      // Registrar no histórico
+      const novoHistorico = {
+        tentosOfertados: [...state.historicoTrucos.tentosOfertados, proximoTento],
+        quemOfertou: [...state.historicoTrucos.quemOfertou, jogadorId],
+        comandos: [...state.historicoTrucos.comandos, comando],
+      };
+
+      // Obter descrição
+      const descricao = state.modo === 'mineiro'
+        ? obterDescricaoTentoMineiro(proximoTento as TentoMineiro)
+        : obterDescricaoTentoPaulista(proximoTento as TentoPaulista);
+
+      const nomeJogador = state.jogadores.find(j => j.id === jogadorId)?.nome || jogadorId;
+      console.log(`🎯 ${nomeJogador} gritou "${comando.toUpperCase()}"!`);
+      console.log(`📈 Tentos: ${state.tentoAtual} → ${proximoTento} (${descricao})`);
+
+      return {
+        tentoAtual: proximoTento,
+        historicoTrucos: novoHistorico,
+      };
+    });
+  },
+
+  /**
    * Determina o vencedor da rodada comparando as cartas
-   * Atualiza o estado com o resultado e registra o ponto
+   * Atualiza o estado com o resultado e registra o ponto (usando tentoAtual)
    */
   determinarVencedor: () => {
     set(state => {
@@ -160,11 +240,13 @@ export const useGameStore = create<GameState>((set, get) => ({
       // Obtém o time do vencedor
       const timeVencedor = obterTimeVencedor(state.jogadores, resultado.vencedorId);
 
-      // Atualiza pontos
-      const newPontoNos = timeVencedor === 'nos' ? state.pontoNos + 1 : state.pontoNos;
-      const newPontoEles = timeVencedor === 'eles' ? state.pontoEles + 1 : state.pontoEles;
+      // Atualiza pontos com os tentos em jogo (não fixo em 1)
+      const pontosGanhos = state.tentoAtual;
+      const newPontoNos = timeVencedor === 'nos' ? state.pontoNos + pontosGanhos : state.pontoNos;
+      const newPontoEles = timeVencedor === 'eles' ? state.pontoEles + pontosGanhos : state.pontoEles;
 
       console.log(`🎯 Rodada ${state.rodadaAtual}: ${resultado.descricao}`);
+      console.log(`🏆 ${resultado.vencedorId ? state.jogadores.find(j => j.id === resultado.vencedorId)?.nome : 'Ninguém'} ganhou ${pontosGanhos} TENTOS!`);
       console.log(`📊 Placar: Nós ${newPontoNos} x ${newPontoEles} Eles`);
 
       return {
@@ -185,10 +267,19 @@ export const useGameStore = create<GameState>((set, get) => ({
 
       console.log(`🎴 Próxima rodada: ${novaRodada}`);
 
+      // Reset dos tentos para próxima rodada
+      const tentoNovaRodada = state.modo === 'mineiro' ? (2 as TentoMineiro) : (1 as TentoPaulista);
+
       return {
         jogadores: jogadoresLimpos,
         mesa: [],
         rodadaAtual: novaRodada,
+        tentoAtual: tentoNovaRodada,
+        historicoTrucos: {
+          tentosOfertados: [tentoNovaRodada],
+          quemOfertou: ['sistema'],
+          comandos: ['inicial'],
+        },
         ultimoResultado: undefined,
       };
     });
