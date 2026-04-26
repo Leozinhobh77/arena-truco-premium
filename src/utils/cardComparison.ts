@@ -1,10 +1,11 @@
 // ============================================================
 // CARD COMPARISON — Sistema de Comparação de Cartas
-// Banco de Consulta Rápida (O(1)) para o Truco Mineiro
+// Banco de Consulta Rápida (O(1)) para Truco Mineiro e Paulista
 // ============================================================
 
 import { TRUCO_MINEIRO_RULES } from '../config/cardRules/mineiro';
-import type { Carta, Naipe, Valor } from '../types';
+import { TrucoPaulistaRegras } from '../config/cardRules/paulista';
+import type { Carta, Naipe, Valor, ModoJogo } from '../types';
 
 /**
  * Resultado da comparação entre duas cartas
@@ -121,17 +122,97 @@ export function obterNomeManilha(carta: Carta): string | null {
 }
 
 /**
+ * Compara duas cartas no Truco Paulista (com manilhas variáveis)
+ * @param carta1 Primeira carta a comparar
+ * @param carta2 Segunda carta a comparar
+ * @param regras Instância de TrucoPaulistaRegras com a vira definida
+ * @returns 'carta1' se carta1 vence, 'carta2' se carta2 vence, 'empate' se são iguais
+ */
+export function comparaCartasPaulista(
+  carta1: Carta,
+  carta2: Carta,
+  regras: TrucoPaulistaRegras
+): CartaComparacaoResultado {
+  const forçaCarta1 = obterForçaCartaPaulista(carta1, regras);
+  const forçaCarta2 = obterForçaCartaPaulista(carta2, regras);
+
+  if (forçaCarta1.forçaTotal > forçaCarta2.forçaTotal) {
+    return 'carta1';
+  }
+
+  if (forçaCarta2.forçaTotal > forçaCarta1.forçaTotal) {
+    return 'carta2';
+  }
+
+  return 'empate';
+}
+
+/**
+ * Obtém a força de uma carta no Truco Paulista
+ * @param carta Carta a analisar
+ * @param regras Instância de TrucoPaulistaRegras com a vira definida
+ * @returns Objeto com informações completas da força da carta
+ */
+export function obterForçaCartaPaulista(
+  carta: Carta,
+  regras: TrucoPaulistaRegras
+): CartaForça {
+  // ── PASSO 1: Verificar se é manilha ──
+  const forçaManilha = regras.obterForçaManilha(carta.valor, carta.naipe);
+
+  if (forçaManilha !== null) {
+    const forçaTotal = 1000 + forçaManilha;
+
+    return {
+      valor: carta.valor,
+      naipe: carta.naipe,
+      forçaTotal,
+      éManilha: true,
+      forçaInterna: forçaManilha,
+    };
+  }
+
+  // ── PASSO 2: Se não é manilha, usar força normal ──
+  const forçaNormal = regras.obterForçaCartaNormal(carta.valor);
+
+  return {
+    valor: carta.valor,
+    naipe: carta.naipe,
+    forçaTotal: forçaNormal,
+    éManilha: false,
+    forçaInterna: forçaNormal,
+  };
+}
+
+/**
  * Exibe no console uma comparação detalhada de duas cartas (DEBUG)
  * @param carta1 Primeira carta
  * @param carta2 Segunda carta
+ * @param modo Modo de jogo ('mineiro' ou 'paulista')
+ * @param regrasPaulista Regras paulista (obrigatório se modo === 'paulista')
  */
-export function exibirComparacaoDebug(carta1: Carta, carta2: Carta): void {
-  const força1 = obterForçaCarta(carta1);
-  const força2 = obterForçaCarta(carta2);
-  const resultado = comparaCartas(carta1, carta2);
+export function exibirComparacaoDebug(
+  carta1: Carta,
+  carta2: Carta,
+  modo: ModoJogo = 'mineiro',
+  regrasPaulista?: TrucoPaulistaRegras
+): void {
+  let força1: CartaForça;
+  let força2: CartaForça;
+  let resultado: CartaComparacaoResultado;
+
+  if (modo === 'paulista' && regrasPaulista) {
+    força1 = obterForçaCartaPaulista(carta1, regrasPaulista);
+    força2 = obterForçaCartaPaulista(carta2, regrasPaulista);
+    resultado = comparaCartasPaulista(carta1, carta2, regrasPaulista);
+  } else {
+    força1 = obterForçaCarta(carta1);
+    força2 = obterForçaCarta(carta2);
+    resultado = comparaCartas(carta1, carta2);
+  }
 
   console.log('╔════════════════════════════════════════════╗');
-  console.log('║  COMPARAÇÃO DE CARTAS (DEBUG)             ║');
+  console.log(`║  COMPARAÇÃO DE CARTAS (${modo.toUpperCase()})         ║`);
   console.log('╚════════════════════════════════════════════╝');
   console.log(`Carta 1: ${carta1.valor} de ${carta1.naipe}`);
   console.log(`  → Força Total: ${força1.forçaTotal}`);
