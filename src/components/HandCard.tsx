@@ -57,8 +57,9 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            gap: '1px'
+            alignItems: 'flex-start',
+            gap: '2px',
+            paddingLeft: '3px'
           }}
         >
           <div
@@ -74,7 +75,7 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
           </div>
           <div
             style={{
-              fontSize: '14px',
+              fontSize: '15px',
               color: color,
               lineHeight: '1'
             }}
