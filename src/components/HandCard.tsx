@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { CardFigure } from './CardFigures';
 
 interface PlayingCardProps {
   valor: '4' | '5' | '6' | '7' | 'Q' | 'J' | 'K' | 'A' | '2' | '3';
@@ -18,6 +19,8 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
 
   const isRed = naipe === 'copas' || naipe === 'ouros';
   const color = isRed ? '#d91e3f' : '#1a1a1a';
+
+  const isFigure = valor === 'Q' || valor === 'J' || valor === 'K';
 
   const valorDisplay = {
     '4': '4', '5': '5', '6': '6', '7': '7',
@@ -84,24 +87,30 @@ export function HandCard({ valor, naipe }: PlayingCardProps) {
           </div>
         </div>
 
-        {/* Canto inferior direito - naipe grande */}
+        {/* Canto inferior direito - naipe grande OU figura */}
         <div
           style={{
             display: 'flex',
             justifyContent: 'flex-end',
             alignItems: 'flex-end',
-            width: '100%'
+            width: '100%',
+            marginBottom: '-4px',
+            marginRight: '-4px'
           }}
         >
-          <div
-            style={{
-              fontSize: '40px',
-              color: color,
-              lineHeight: '1'
-            }}
-          >
-            {naipeSymbol}
-          </div>
+          {isFigure ? (
+            <CardFigure tipo={valor as 'Q' | 'J' | 'K'} color={color} />
+          ) : (
+            <div
+              style={{
+                fontSize: '40px',
+                color: color,
+                lineHeight: '1'
+              }}
+            >
+              {naipeSymbol}
+            </div>
+          )}
         </div>
 
         {/* Decoração na borda */}
