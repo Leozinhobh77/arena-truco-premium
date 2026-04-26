@@ -8,70 +8,70 @@ export function CardFigure({ tipo, color }: FigureProps) {
 
   if (tipo === 'Q') {
     return (
-      <svg viewBox="0 0 80 100" width="58" height="72" style={{ overflow: 'visible' }}>
+      <svg viewBox="0 0 100 100" width="58" height="72" style={{ overflow: 'visible' }}>
         {/* Capa/Manto traseiro */}
-        <ellipse cx="40" cy="45" rx="28" ry="35" fill={isRed ? '#B22234' : '#1a3a6f'} opacity="0.8" />
+        <ellipse cx="60" cy="45" rx="28" ry="35" fill={isRed ? '#B22234' : '#1a3a6f'} opacity="0.8" />
 
         {/* Corpo/Vestido */}
-        <path d="M 28 35 Q 25 50 28 75 L 52 75 Q 55 50 52 35 Z"
+        <path d="M 48 35 Q 45 50 48 75 L 72 75 Q 75 50 72 35 Z"
               fill={isRed ? '#DC143C' : '#FFD700'} />
 
         {/* Ombro/Capa elegante direita */}
-        <path d="M 52 35 Q 60 38 62 50 Q 61 52 55 48 L 52 40"
+        <path d="M 72 35 Q 80 38 82 50 Q 81 52 75 48 L 72 40"
               fill={isRed ? '#8B0000' : '#0052CC'} />
 
         {/* Ombro/Capa elegante esquerda */}
-        <path d="M 28 35 Q 20 38 18 50 Q 19 52 25 48 L 28 40"
+        <path d="M 48 35 Q 40 38 38 50 Q 39 52 45 48 L 48 40"
               fill={isRed ? '#8B0000' : '#0052CC'} />
 
         {/* Pescoço */}
-        <rect x="36" y="28" width="8" height="8" fill="#E8C4A0" />
+        <rect x="56" y="28" width="8" height="8" fill="#E8C4A0" />
 
         {/* Cabeça */}
-        <circle cx="40" cy="22" r="11" fill="#E8C4A0" />
+        <circle cx="60" cy="22" r="11" fill="#E8C4A0" />
 
         {/* Cabelo longo (vermelho/castanho) */}
-        <path d="M 29 18 Q 25 15 25 25 Q 25 35 29 38"
+        <path d="M 49 18 Q 45 15 45 25 Q 45 35 49 38"
               fill={isRed ? '#C41E3A' : '#3D2817'} />
-        <path d="M 51 18 Q 55 15 55 25 Q 55 35 51 38"
+        <path d="M 71 18 Q 75 15 75 25 Q 75 35 71 38"
               fill={isRed ? '#C41E3A' : '#3D2817'} />
 
         {/* Franja de cabelo */}
-        <path d="M 32 10 Q 40 8 48 10"
+        <path d="M 52 10 Q 60 8 68 10"
               fill={isRed ? '#C41E3A' : '#3D2817'} />
 
         {/* Coroa detalhada */}
         <g>
           {/* Base da coroa */}
-          <path d="M 28 12 Q 40 6 52 12"
+          <path d="M 48 12 Q 60 6 72 12"
                 fill="#FFD700" stroke="#DAA520" strokeWidth="1.5" />
 
           {/* Picos da coroa */}
-          <path d="M 32 12 L 33 5 L 35 12" fill="#FFD700" stroke="#DAA520" strokeWidth="1" />
-          <path d="M 40 12 L 41 4 L 43 12" fill="#FFD700" stroke="#DAA520" strokeWidth="1" />
-          <path d="M 48 12 L 49 5 L 51 12" fill="#FFD700" stroke="#DAA520" strokeWidth="1" />
+          <path d="M 52 12 L 53 5 L 55 12" fill="#FFD700" stroke="#DAA520" strokeWidth="1" />
+          <path d="M 60 12 L 61 4 L 63 12" fill="#FFD700" stroke="#DAA520" strokeWidth="1" />
+          <path d="M 68 12 L 69 5 L 71 12" fill="#FFD700" stroke="#DAA520" strokeWidth="1" />
 
           {/* Gemas/Jóias na coroa */}
-          <circle cx="33" cy="8" r="1.5" fill={isRed ? '#E8341C' : '#FF1493'} />
-          <circle cx="41" cy="5" r="1.5" fill={isRed ? '#E8341C' : '#FF1493'} />
-          <circle cx="49" cy="8" r="1.5" fill={isRed ? '#E8341C' : '#FF1493'} />
+          <circle cx="53" cy="8" r="1.5" fill={isRed ? '#E8341C' : '#FF1493'} />
+          <circle cx="61" cy="5" r="1.5" fill={isRed ? '#E8341C' : '#FF1493'} />
+          <circle cx="69" cy="8" r="1.5" fill={isRed ? '#E8341C' : '#FF1493'} />
         </g>
 
         {/* Rosto - características */}
-        <circle cx="36" cy="20" r="1.5" fill="#000" />
-        <circle cx="44" cy="20" r="1.5" fill="#000" />
+        <circle cx="56" cy="20" r="1.5" fill="#000" />
+        <circle cx="64" cy="20" r="1.5" fill="#000" />
 
         {/* Nariz */}
-        <line x1="40" y1="20" x2="40" y2="24" stroke="#D4A574" strokeWidth="1" />
+        <line x1="60" y1="20" x2="60" y2="24" stroke="#D4A574" strokeWidth="1" />
 
         {/* Boca */}
-        <path d="M 37 26 Q 40 28 43 26" stroke="#C41E3A" strokeWidth="1.5" fill="none" />
+        <path d="M 57 26 Q 60 28 63 26" stroke="#C41E3A" strokeWidth="1.5" fill="none" />
 
         {/* Brinco esquerdo */}
-        <circle cx="29" cy="23" r="1.5" fill="#FFD700" />
+        <circle cx="49" cy="23" r="1.5" fill="#FFD700" />
 
         {/* Colar/Jóia no peito */}
-        <circle cx="40" cy="33" r="2" fill="#FFD700" stroke="#DAA520" strokeWidth="1" />
+        <circle cx="60" cy="33" r="2" fill="#FFD700" stroke="#DAA520" strokeWidth="1" />
       </svg>
     );
   }
