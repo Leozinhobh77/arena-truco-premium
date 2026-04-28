@@ -7,6 +7,7 @@ export interface Manilha {
   naipe: 'paus' | 'copas' | 'espadas' | 'ouros';
   forçaManilha: number;
   nome: string;
+  descricao: string;
 }
 
 export const TRUCO_MINEIRO_RULES = {

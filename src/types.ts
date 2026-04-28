@@ -100,6 +100,7 @@ export type OverlayId =
   | 'salas'
   | 'jogo'
   | 'game-room'
+  | 'sala-2v2-1'
   | 'cards-gallery'
   | 'amigos-online'
   | 'clan-chat'
