@@ -60,6 +60,10 @@ export function ConfiguracoesOverlay() {
     pushOverlay('game-room');
   };
 
+  const handleGameRoom2v2_1 = () => {
+    pushOverlay('sala-2v2-1');
+  };
+
   const handleCartas = () => {
     pushOverlay('cards-gallery');
   };
@@ -77,6 +81,10 @@ export function ConfiguracoesOverlay() {
         style={{
           background: 'var(--obsidian-800)',
           paddingBottom: 'max(24px, env(safe-area-inset-bottom))',
+          display: 'flex',
+          flexDirection: 'column',
+          maxHeight: '90dvh',
+          overflow: 'hidden',
         }}
       >
         {/* Alça de arraste */}
@@ -92,7 +100,7 @@ export function ConfiguracoesOverlay() {
         </div>
 
         {/* Menu Items */}
-        <div style={{ padding: '0 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ padding: '0 16px', display: 'flex', flexDirection: 'column', gap: 10, overflow: 'y-auto', flex: 1 }}>
           
           <div className="glass-card" style={{ padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -160,6 +168,26 @@ export function ConfiguracoesOverlay() {
           >
             <span style={{ fontSize: 20 }}>🎴</span>
             <span style={{ fontSize: 15, fontWeight: 600 }}>Sala 2v2</span>
+          </button>
+
+          <button
+            onClick={handleGameRoom2v2_1}
+            style={{
+              width: '100%', padding: 16, textAlign: 'left',
+              background: 'rgba(212,160,23,0.1)', border: '1px solid var(--gold-400)',
+              borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: 12,
+              color: 'var(--text-primary)', cursor: 'pointer', marginTop: 8,
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(212,160,23,0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(212,160,23,0.1)';
+            }}
+          >
+            <span style={{ fontSize: 20 }}>🎴</span>
+            <span style={{ fontSize: 15, fontWeight: 600 }}>Sala 2v2.1</span>
           </button>
 
           <button
